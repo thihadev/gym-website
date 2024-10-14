@@ -40,6 +40,7 @@
         align-items: center;
         padding: 1rem 0;
         border-radius: 2%;
+       
     }
 
     .header-menu.open {
@@ -48,6 +49,14 @@
 
     .header-menu li {
         margin: 1rem 0;
+    }
+
+    .header-menu li a {
+        text-decoration: none;
+        font-size: 1rem;
+        color : black;
+        cursor: pointer;
+        font-weight: bold;
     }
 
     .hamburger-menu {

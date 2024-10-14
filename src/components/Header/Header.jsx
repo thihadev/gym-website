@@ -40,6 +40,11 @@ const Header = () => {
                     <li>
                         <Link to="testimonials" spy={true} smooth={true}>Testimonials</Link>
                     </li>
+                    <li>
+                        <Link to="signup" spy={true} smooth={true} style={{ backgroundColor: 'white', color: 'black', padding: '10px 20px', borderRadius: '5px', textDecoration: 'none' }}>
+                            Sign Up
+                        </Link>
+                    </li>
                 </ul>
             )}
 
@@ -60,6 +65,10 @@ const Header = () => {
                     </li>
                     <li>
                         <Link onClick={() => setMenuOpened(false)} to="testimonials" spy={true} smooth={true}>Testimonials</Link>
+                    </li>
+
+                    <li>
+                        <Link onClick={() => setMenuOpened(false)} to="signup" spy={true} smooth={true}>Sign Up</Link>
                     </li>
                 </ul>
             )}
