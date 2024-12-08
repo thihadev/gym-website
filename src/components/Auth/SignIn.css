@@ -1,0 +1,90 @@
+/* SignIn Form Container */
+.signin-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* Title */
+.signin-container h2 {
+    color: var(--black);
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* Input Fields */
+.signin-container input {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--gray);
+    border-radius: 5px;
+    font-size: 1rem;
+    background-color: var(--caloryCard);
+    color: var(--black);
+    box-sizing: border-box;
+    transition: border 0.3s ease-in-out;
+}
+.signin-container input:focus {
+    outline: none;
+    border-color: var(--orange);
+}
+
+/* Buttons */
+.signin-container button {
+    width: 100%;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--orange);
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+/* .signin-container button:hover {
+    background-color: var(--gray);
+} */
+
+/* Paragraph and Links */
+.signin-container p {
+    margin-top: 1rem;
+    color: var(--darkGrey);
+    font-size: 0.9rem;
+    text-align: center;
+}
+.signin-container p button {
+    background: none;
+    border: none;
+    color: var(--orange);
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: underline;
+}
+/* .signin-container p button:hover {
+    color: var(--gray);
+} */
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .signin-container {
+        padding: 1.5rem;
+    }
+    .signin-container h2 {
+        font-size: 1.2rem;
+    }
+    .signin-container input,
+    .signin-container button {
+        font-size: 0.9rem;
+    }
+}

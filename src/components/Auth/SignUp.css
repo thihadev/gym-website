@@ -1,0 +1,94 @@
+
+/* SignUp Form Container */
+.signup-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Title */
+.signup-container h2 {
+    color: var(--black);
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* Input Fields */
+.signup-container input {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--gray);
+    border-radius: 5px;
+    font-size: 1rem;
+    background-color: var(--caloryCard);
+    color: var(--black);
+    box-sizing: border-box;
+    transition: border 0.3s ease-in-out;
+}
+.signup-container input:focus {
+    outline: none;
+    border-color: var(--orange);
+}
+
+/* Buttons */
+.signup-container button,
+.signup-btn,
+.signin-btn {
+    width: 100%;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--orange);
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    margin-top: 0.5rem;
+}
+/* .signup-container button:hover,
+.signup-btn:hover,
+.signin-btn:hover {
+    background-color: black;
+} */
+
+/* Paragraph and Links */
+.signup-container p {
+    margin-top: 1rem;
+    color: var(--darkGrey);
+    font-size: 0.9rem;
+    text-align: center;
+}
+.signup-container p button {
+    background: none;
+    border: none;
+    color: var(--orange);
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: underline;
+}
+/* .signup-container p button:hover {
+    color: var(--gray);
+} */
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .signup-container {
+        padding: 1.5rem;
+    }
+    .signup-container h2 {
+        font-size: 1.2rem;
+    }
+    .signup-container input,
+    .signup-container button {
+        font-size: 0.9rem;
+    }
+}

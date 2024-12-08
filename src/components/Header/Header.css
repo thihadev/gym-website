@@ -2,7 +2,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem;
+    padding: 0rem 2rem;
     position: relative;
 }
 
@@ -14,6 +14,7 @@
     display: flex;
     list-style: none;
     gap: 2rem;
+    align-items: center;
 }
 
 .header-menu li a {
@@ -22,11 +23,13 @@
     font-size: 1rem;
     cursor: pointer;
     font-weight: bold;
+    align-items: center;
 }
 
 .header-menu li a:hover {
     color: var(--lightgray);
 }
+
 
 @media only screen and (max-width: 768px) {
     .header-menu {
@@ -65,5 +68,96 @@
         padding: 0.5rem;
         border-radius: 5px;
         cursor: pointer;
+    }
+
+}
+
+
+
+/* Profile Avatar */
+.profile-section {
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.profile-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+    cursor: pointer;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    position: absolute;
+    top: 60px; /* Adjust to position below the avatar */
+    right: 0;
+    background-color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    z-index: 10;
+    min-width: 150px;
+}
+
+.dropdown-menu p.dropdown-user {
+    padding: 10px;
+    margin: 0;
+    font-weight: bold;
+    color: #333;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.dropdown-menu button.logout-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 0 0 8px 8px;
+}
+
+.dropdown-menu button.logout-btn:hover {
+    background-color: #d94444;
+}
+
+/* Hide menu by default */
+.dropdown-menu {
+    display: none;
+}
+
+/* Show menu if dropdown is open */
+.profile-section .dropdown-menu {
+    display: block;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .hamburger-menu {
+        display: block;
+    }
+
+    .header-menu {
+        display: none;
+        flex-direction: column;
+    }
+
+    .header-menu.open {
+        display: flex;
+    }
+
+    .profile-avatar {
+        width: 30px;
+        height: 30px;
+    }
+
+    .dropdown-menu {
+        top: 50px;
+        right: 10px;
     }
 }

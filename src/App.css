@@ -9,7 +9,7 @@
   /* --planCard: linear-gradient(210.41deg, #fa5042 1.14%, #ffa739 100.75%); */
   --planCard: linear-gradient(210.41deg, #f7f7f8 1.14%, #d0d3d6 100.75%);
   /* --planCard: linear-gradient(210.41deg, #1e41f0 1.14%, #39a3ff 100.75%); */
-  --appColor: ##0e0e0e;
+  --appColor: #0e0e0e;
 }
 
 .App {
