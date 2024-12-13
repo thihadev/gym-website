@@ -88,3 +88,18 @@
         font-size: 0.9rem;
     }
 }
+
+  
+  .error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+  }
+  
+  .global-error {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  

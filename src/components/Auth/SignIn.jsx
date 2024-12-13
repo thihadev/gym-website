@@ -1,34 +1,41 @@
 import React, { useState } from "react";
 // import { supabase } from "../../SupabaseClient";
 import "./SignIn.css";
-import axios from '../../axios';
+import axios from "../../axios";
 
 const SignIn = ({ switchToSignUp, onSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(""); // Single error for global messages
 
   const handleSignIn = async (e) => {
     e.preventDefault();
+    setError(""); // Clear previous errors
+
     try {
-      const response = await axios.post('/login', { email, password });
+      const response = await axios.post("/login", { email, password });
       const { access_token } = response.data;
 
       // Save the token in localStorage
-      localStorage.setItem('accessToken', access_token);
+      localStorage.setItem("accessToken", access_token);
 
       // Trigger parent callback to set the user profile and navigate
       onSuccess();
     } catch (error) {
-      setError(error.response.data);
-        console.error('Login Failed', error.response.data);
+      const { data } = error.response;
+      console.error("Login Failed", data);
+
+      // Set global error message
+      if (data.message) {
+        setError(data.message); // Set global error message for invalid credentials
+      }
     }
-};
+  };
 
   return (
     <div className="signin-container">
       <h2>Sign In</h2>
-      {error && <p className="error">{error}</p>}
+      {error && <span className="error global-error">{error}</span>}
       <form onSubmit={handleSignIn}>
         <input
           type="email"
@@ -36,6 +43,7 @@ const SignIn = ({ switchToSignUp, onSuccess }) => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
+
         <input
           type="password"
           placeholder="Password"
@@ -45,8 +53,7 @@ const SignIn = ({ switchToSignUp, onSuccess }) => {
         <button type="submit">Sign In</button>
       </form>
       <p>
-        Don't have an account?{" "}
-        <button onClick={switchToSignUp}>Sign Up</button>
+        Don't have an account? <button onClick={switchToSignUp}>Sign Up</button>
       </p>
     </div>
   );
