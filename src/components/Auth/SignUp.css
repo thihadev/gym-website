@@ -38,6 +38,20 @@
     border-color: var(--orange);
 }
 
+.signup-container select {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--gray);
+    border-radius: 5px;
+    font-size: 1rem;
+    background-color: var(--caloryCard);
+    color: var(--black);
+    box-sizing: border-box;
+    transition: border 0.3s ease-in-out;
+  }
+  
+
 /* Buttons */
 .signup-container button,
 .signup-btn,
@@ -92,3 +106,30 @@
         font-size: 0.9rem;
     }
 }
+
+.success {
+    color: green;
+    font-weight: bold;
+    margin-top: 10px;
+}
+/* Red border for input fields with errors */
+.input-error {
+    border: 2px solid red;
+    background-color: #ffe6e6; /* Light red background */
+  }
+  
+  /* Error message styling (red color, smaller font, positioned under the input) */
+  .error-text {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+    text-align: left;
+  }
+  
+  /* General error message at the top */
+  .error {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  

@@ -7,8 +7,8 @@ import { Link } from "react-scroll";
 import Modal from '../Modal';
 import SignIn from '../Auth/SignIn';
 import SignUp from '../Auth/SignUp';
-import { supabase } from '../../SupabaseClient'; // Import Supabase client
 import DefaultAvatar from '../../assets/default-avatar.png';
+import axios from 'axios';
 
 const Header = () => {
     const [menuOpened, setMenuOpened] = useState(false);
@@ -20,42 +20,70 @@ const Header = () => {
 
     const navigate = useNavigate(); // For navigation after login/logout
 
-    // Fetch user session and listen for changes
     useEffect(() => {
-        const fetchUser = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            setUser(session?.user);
-        };
+        const token = localStorage.getItem('accessToken');
+        console.log(token);
         
-        fetchUser(); // Initial fetch when component mounts
-        
-        // Listen for auth state changes
-        const authListener = supabase.auth.onAuthStateChange((event, session) => {
-            if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
-                setUser(session?.user || null); // Update user state
-            }
-        });
-        
-        // No need to manually unsubscribe; Supabase will clean up automatically when the component is unmounted
-        return () => {
-            authListener?.subscription?.unsubscribe(); // Optionally call unsubscribe if necessary
-        };
+        if (token) {
+            axios.get('http://localhost:8000/api/profile', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            })
+            .then(response => {
+                setUser(response.data.data);  // Set user profile data
+            })
+            .catch(error => {
+                console.error('Error fetching profile', error);
+                setUser(null);  // Clear user if error occurs
+                localStorage.removeItem('accessToken');  // Clear token
+            });
+        }
     }, []);
-    
+
     // Logout user
     const handleLogout = async () => {
-        const { error } = await supabase.auth.signOut();
-        if (!error) {
-            setUser(null); // Clear user state on logout
-            setDropdownOpen(false);
-            navigate('/'); // Optionally navigate to home or other page after logout
+        const token = localStorage.getItem('accessToken');
+        
+        if (!token) {
+            console.log('No access token found');
+            return; // No token found, can't log out
+        }
+
+        axios.get('http://localhost:8000/api/logout', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        })
+        .then(response => {
+            setUser(response.data);  // Set user profile data
+        })
+        .catch(error => {
+            console.error('Error fetching profile', error);
+            setUser(null);  // Clear user if error occurs
+            localStorage.removeItem('accessToken');  // Clear token
+        });
+    
+        try {
+            // Send logout request with the token in the Authorization header
+            await axios.post('http://localhost:8000/api/logout', {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`, // Include token in header
+                },
+            });
+    
+            // On success, remove the token from localStorage and reset user state
+            localStorage.removeItem('accessToken');
+            setUser(null); // Reset the user state
+            navigate('/'); // Redirect to home page or login page
+        } catch (error) {
+            console.error('Logout failed', error);
         }
     };
 
     const toggleDropdown = () => {
         setDropdownOpen(!dropdownOpen);
     };
-
 
     // Open Sign-In modal
     const openSignIn = () => {
@@ -91,20 +119,21 @@ const Header = () => {
                 </li>
                 {user ? (
                     <>
-                     <li className="profile-section">
-                        <img
-                            src={user?.user_metadata?.avatar_url || DefaultAvatar}
-                            alt="User Avatar"
-                            className="profile-avatar"
-                            onClick={toggleDropdown}
-                        />
-                        {dropdownOpen && (
-                            <div className="dropdown-menu">
-                                <p className="dropdown-user">{user?.user_metadata?.name || user.email}</p>
-                                <button onClick={handleLogout} className="logout-btn">Logout</button>
-                            </div>
-                        )}
-                    </li>
+                        {/* Show user profile if logged in */}
+                        <li className="profile-section">
+                            <img
+                                src={user?.avatar || DefaultAvatar}
+                                alt="User Avatar"
+                                className="profile-avatar"
+                                onClick={toggleDropdown}
+                            />
+                            {dropdownOpen && (
+                                <div className="dropdown-menu">
+                                    <p className="dropdown-user">{user?.name || user.email}</p>
+                                    <button onClick={handleLogout} className="logout-btn">Logout</button>
+                                </div>
+                            )}
+                        </li>
                     </>
                 ) : (
                     <li>
@@ -114,7 +143,6 @@ const Header = () => {
                     </li>
                 )}
             </ul>
-            
             )}
 
             {/* Mobile menu (only visible when menuOpened state is true) */}
@@ -147,12 +175,29 @@ const Header = () => {
                     {isSignUpPage ? (
                         <SignUp
                             switchToSignIn={() => setIsSignUpPage(false)}
-                            onSuccess={() => setShowModal(false)}
+                            onSuccess={() => setIsSignUpPage(false)}
                         />
                     ) : (
                         <SignIn
                             switchToSignUp={() => setIsSignUpPage(true)}
-                            onSuccess={() => setShowModal(false)}
+                            onSuccess={() => {
+                                // Update the user immediately after successful login
+                                const token = localStorage.getItem('accessToken');
+                                if (token) {
+                                    axios.get('http://localhost:8000/api/profile', {
+                                        headers: {
+                                            Authorization: `Bearer ${token}`,
+                                        }
+                                    })
+                                    .then(response => {
+                                        setUser(response.data.data);  // Set user profile data
+                                        setShowModal(false);
+                                    })
+                                    .catch(error => {
+                                        console.error('Error fetching profile', error);
+                                    });
+                                }
+                            }}
                         />
                     )}
                 </Modal>

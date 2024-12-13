@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const instance = axios.create({
-    baseURL: 'https://fitness-latest.test/api',
-    withCredentials: true, // Include cookies for Sanctum
+    baseURL: 'http://localhost:8000/api',
+    withCredentials: true,
 });
 
 export default instance;

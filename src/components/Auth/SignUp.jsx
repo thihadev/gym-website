@@ -1,72 +1,118 @@
 import React, { useState } from "react";
-import { supabase } from "../../SupabaseClient"; // Make sure this is pointing to your Supabase client file
 import "./SignUp.css";
+import axios from "../../axios";
 
 const SignUp = ({ switchToSignIn, onSuccess }) => {
-  const [name, setName] = useState("");
+  const [first_name, setFirstName] = useState("");
+  const [last_name, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [gender, setGender] = useState("");
+  const [errors, setErrors] = useState({}); // Track errors for each field
 
   // Handle Sign Up
   const handleSignUp = async (e) => {
     e.preventDefault();
+    setErrors({}); // Clear previous errors
 
-    const { error } = await supabase.auth.signUp({ email, password });
+    try {
+      const response = await axios.post("/register", { 
+        email, 
+        password,
+        first_name,
+        last_name,
+        gender,
+      });
+      const { access_token } = response.data;
 
-    if (error) {
-      setError(error.message);
-    } else {
-      onSuccess(); // Call the success callback to redirect or open login
+      // Save the token in localStorage
+      localStorage.setItem("accessToken", access_token);
+
+      // Show success alert
+      alert("Sign up successful! You can now log in.");
+
+      // Trigger parent callback to set the user profile and navigate
+      onSuccess();
+    } catch (error) {
+      if (error.response && error.response.data) {
+        // Handle validation errors from the backend
+        setErrors(error.response.data.errors || {});
+      } else {
+        setErrors({ general: "An unknown error occurred. Please try again." });
+      }
+      console.error("Sign Up Failed", error.response.data);
     }
   };
 
-//   // Subscription Setup (for example, real-time subscription to table changes)
-//   useEffect(() => {
-//     const channel = supabase
-//       .from('your_table') // Replace 'your_table' with your actual table name
-//       .on('INSERT', (payload) => {
-//         console.log("New record inserted:", payload);
-//       })
-//       .subscribe();
-
-//     // Store subscription object in state
-//     setSubscription(channel);
-
-//     // Cleanup: unsubscribe when the component unmounts
-//     return () => {
-//       if (subscription) {
-//         // Correct method to unsubscribe in Supabase v2
-//         supabase.removeSubscription(subscription); // Remove subscription properly
-//       }
-//     };
-//   }, [subscription]);
+  // Helper function to determine if a field has an error
+  const getFieldClass = (fieldName) => {
+    return errors[fieldName] ? "input-error" : "";
+  };
 
   return (
     <div className="signup-container">
       <h2>Sign Up</h2>
-      {error && <p className="error">{error}</p>}
+
+      {/* Display general error message */}
+      {errors.general && <span className="error">{errors.general}</span>}
+
       <form onSubmit={handleSignUp}>
+        {errors.first_name && <span className="error-text">{errors.first_name}</span>}
         <input
           type="text"
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          placeholder="First Name"
+          value={first_name}
+          onChange={(e) => setFirstName(e.target.value)}
+          className={getFieldClass('first_name')} // Apply error class if needed
         />
+        {/* Show error for First Name */}
+
+        {errors.last_name && <span className="error-text">{errors.last_name}</span>}
+        <input
+          type="text"
+          placeholder="Last Name"
+          value={last_name}
+          onChange={(e) => setLastName(e.target.value)}
+          className={getFieldClass('last_name')} // Apply error class if needed
+        />
+        {/* Show error for Last Name */}
+
+        {errors.email && <span className="error-text">{errors.email}</span>}
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          className={getFieldClass('email')} // Apply error class if needed
         />
+
+        {errors.password && <span className="error-text">{errors.password}</span>}
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          className={getFieldClass('password')} // Apply error class if needed
         />
+        {/* Show error for Password */}
+
+        {/* Gender Dropdown */}
+        {errors.gender && <span className="error-text">{errors.gender}</span>}
+        <select 
+          value={gender} 
+          onChange={(e) => setGender(e.target.value)} 
+          className={getFieldClass('gender')} // Apply error class if needed
+        >
+          <option value="" disabled>Select Gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
+        {/* Show error for Gender */}
+
         <button type="submit">Sign Up</button>
       </form>
+
       <p>
         Already have an account?{" "}
         <button onClick={switchToSignIn}>Sign In</button>
