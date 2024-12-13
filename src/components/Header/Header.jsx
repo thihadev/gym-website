@@ -8,7 +8,7 @@ import Modal from '../Modal';
 import SignIn from '../Auth/SignIn';
 import SignUp from '../Auth/SignUp';
 import DefaultAvatar from '../../assets/default-avatar.png';
-import axios from 'axios';
+import axios from '../../axios';
 
 const Header = () => {
     const [menuOpened, setMenuOpened] = useState(false);
@@ -25,7 +25,7 @@ const Header = () => {
         console.log(token);
         
         if (token) {
-            axios.get('http://localhost:8000/api/profile', {
+            axios.get('profile', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 }
@@ -50,7 +50,7 @@ const Header = () => {
             return; // No token found, can't log out
         }
 
-        axios.get('http://localhost:8000/api/logout', {
+        axios.get('logout', {
             headers: {
                 Authorization: `Bearer ${token}`,
             }
@@ -66,7 +66,7 @@ const Header = () => {
     
         try {
             // Send logout request with the token in the Authorization header
-            await axios.post('http://localhost:8000/api/logout', {}, {
+            await axios.post('logout', {}, {
                 headers: {
                     Authorization: `Bearer ${token}`, // Include token in header
                 },
@@ -184,7 +184,7 @@ const Header = () => {
                                 // Update the user immediately after successful login
                                 const token = localStorage.getItem('accessToken');
                                 if (token) {
-                                    axios.get('http://localhost:8000/api/profile', {
+                                    axios.get('profile', {
                                         headers: {
                                             Authorization: `Bearer ${token}`,
                                         }
