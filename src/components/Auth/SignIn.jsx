@@ -1,33 +1,48 @@
 import React, { useState } from "react";
-import { supabase } from "../../SupabaseClient";
+// import { supabase } from "../../SupabaseClient";
 import "./SignIn.css";
+import axios from '../../axios';
+
 
 const SignIn = ({ switchToSignUp, onSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  // const [error, setError] = useState("");
 
-  // Handle Sign-In
   const handleSignIn = async (e) => {
     e.preventDefault();
-    
-    // Call Supabase signIn method
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const response = await axios.post('/login', { email, password });
+      console.log('Login Successful', response);
+      localStorage.setItem('token', response.data.token);
+  } catch (error) {
+      console.error('Login Failed', error);
+  }
+};
 
-    if (error) {
-      setError(error.message); // Show error message
-    } else {
-      onSuccess(); // Trigger onSuccess callback to close modal and navigate
-    }
-  };
+
+  // // Handle Sign-In
+  // const handleSignIn = async (e) => {
+  //   e.preventDefault();
+    
+    
+  //   // Call Supabase signIn method
+  //   const { error } = await supabase.auth.signInWithPassword({
+  //     email,
+  //     password,
+  //   });
+
+  //   if (error) {
+  //     setError(error.message); // Show error message
+  //   } else {
+  //     onSuccess(); // Trigger onSuccess callback to close modal and navigate
+  //   }
+  // };
 
   return (
     <div className="signin-container">
       <h2>Sign In</h2>
-      {error && <p className="error">{error}</p>}
+      {/* {error && <p className="error">{error}</p>} */}
       <form onSubmit={handleSignIn}>
         <input
           type="email"
