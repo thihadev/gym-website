@@ -46,11 +46,10 @@ const Header = () => {
         const token = localStorage.getItem('accessToken');
         
         if (!token) {
-            console.log('No access token found');
             return; // No token found, can't log out
         }
 
-        axios.get('logout', {
+        axios.post('logout', {
             headers: {
                 Authorization: `Bearer ${token}`,
             }
