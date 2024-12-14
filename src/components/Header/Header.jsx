@@ -172,6 +172,7 @@ const Header = () => {
                                     .then(response => {
                                         setUser(response.data.data);  // Set user profile data
                                         setShowModal(false);
+                                        setDropdownOpen(false);
                                     })
                                     .catch(error => {
                                         console.error('Error fetching profile', error);
