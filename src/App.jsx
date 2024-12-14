@@ -7,14 +7,12 @@ import Plans from "./components/Plans/Plans";
 import Testimonials from "./components/Testimonials/Testimonials";
 import Join from "./components/Join/Join";
 import Footer from "./components/Footer/Footer";
-import Header from "./components/Header/Header"; // Import your Header component
 import Profile from "./components/Profile/Profile"; // Import the Profile page
 
 function App() {
   return (
     <Router>
       <div className="App">
-        {/* <Header /> */}
         <Routes>
           {/* Public routes */}
           <Route path="/" element={

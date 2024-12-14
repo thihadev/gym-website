@@ -43,25 +43,7 @@ const Header = () => {
     // Logout user
     const handleLogout = async () => {
         const token = localStorage.getItem('accessToken');
-        
-        if (!token) {
-            return; // No token found, can't log out
-        }
 
-        axios.post('logout', {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-        })
-        .then(response => {
-            setUser(response.data);  // Set user profile data
-        })
-        .catch(error => {
-            console.error('Error fetching profile', error);
-            setUser(null);  // Clear user if error occurs
-            localStorage.removeItem('accessToken');  // Clear token
-        });
-    
         try {
             // Send logout request with the token in the Authorization header
             await axios.post('logout', {}, {
