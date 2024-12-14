@@ -11,19 +11,18 @@ import DefaultAvatar from '../../assets/default-avatar.png';
 import axios from '../../axios';
 
 const Header = () => {
+    const token = localStorage.getItem('accessToken');
+    const token_init = token ? token : null;
     const [menuOpened, setMenuOpened] = useState(false);
     const [mobile, setMobile] = useState(window.innerWidth < 768);
     const [showModal, setShowModal] = useState(false);
     const [isSignUpPage, setIsSignUpPage] = useState(false); // Track which page to display
-    const [user, setUser] = useState(null); // Track current user
+    const [user, setUser] = useState(token_init); // Track current user
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
     const navigate = useNavigate(); // For navigation after login/logout
 
     useEffect(() => {
-        const token = localStorage.getItem('accessToken');
-        console.log(token);
-        
         if (token) {
             axios.get('profile', {
                 headers: {
@@ -39,7 +38,7 @@ const Header = () => {
                 localStorage.removeItem('accessToken');  // Clear token
             });
         }
-    }, []);
+    }, [token]);
 
     // Logout user
     const handleLogout = async () => {
