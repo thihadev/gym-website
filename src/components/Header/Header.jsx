@@ -34,7 +34,7 @@ const Header = () => {
             })
             .catch(error => {
                 console.error('Error fetching profile', error);
-                setUser(null);  // Clear user if error occurs
+                setUser(null);
                 localStorage.removeItem('accessToken');  // Clear token
             });
         }
