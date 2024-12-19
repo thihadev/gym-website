@@ -15,8 +15,8 @@ const SignIn = ({ switchToSignUp, onSuccess }) => {
     try {
       const response = await axios.post("/login", { email, password });
       const { access_token } = response.data;
-
       // Save the token in localStorage
+
       localStorage.setItem("accessToken", access_token);
 
       // Trigger parent callback to set the user profile and navigate

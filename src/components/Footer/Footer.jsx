@@ -1,26 +1,32 @@
-import './Footer.css'
-import Github from '../../assets/github.png'
-import Instagram from '../../assets/instagram.png'
-import LinkedIn from '../../assets/linkedin.png'
-import Logo from '../../assets/logo.png'
+import React from "react";
+import Github from "../../assets/github.png";
+import Instagram from "../../assets/instagram.png";
+import LinkedIn from "../../assets/linkedin.png";
+import Logo from "../../assets/logo.png";
 
 const Footer = () => {
-    return (
-        <div className="footer-container">
-            <hr className='hr' />
-            <div className="footer">
-                <div className="social-links">
-                    <img src={Github} alt="github" />
-                    <img src={Instagram} alt="instagram" />
-                    <img src={LinkedIn} alt="linkedin" />
-                </div>
-                <div className="logo-f">
-                    <img src={Logo} alt="logo" />
-                </div>
-            </div>
-            <div className="blur blur-f-1"></div>
-            <div className="blur blur-f-2"></div>
-        </div>
-    )
-}
-export default Footer
+  return (
+<div className="relative mt-5 text-white">
+  {/* Blur Backgrounds */}
+  <div className="absolute bottom-0 right-[15%] w-[26rem] h-[12rem] blur-[200px] -z-10 bg-blue-custom-1"></div>
+  <div className="absolute bottom-0 left-[15%] w-[26rem] h-[12rem] blur-[200px] -z-10 bg-blue-custom-2"></div>
+
+  {/* Footer Content */}
+  <div className="relative container mx-auto py-6 px-4 flex flex-col lg:flex-row items-center justify-between">
+    {/* Social Links */}
+    <div className="flex space-x-6">
+      <img src={Github} alt="github" className="w-8 h-8" />
+      <img src={Instagram} alt="instagram" className="w-8 h-8" />
+      <img src={LinkedIn} alt="linkedin" className="w-8 h-8" />
+    </div>
+    {/* Logo */}
+    <div className="mt-4 lg:mt-0">
+      <img src={Logo} alt="logo" className="w-32" />
+    </div>
+  </div>
+</div>
+
+  );
+};
+
+export default Footer;

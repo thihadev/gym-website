@@ -1,4 +1,5 @@
 import Header from "../Header/Header";
+import HomeHeader from "../Header/HomeHeader";
 import './Hero.css';
 import NumberCounter from 'number-counter'
 
@@ -7,7 +8,7 @@ const Hero = () => {
         <div className="hero" id="hero">
             <div className="blur hero-blur"></div>
             <div className="left-h">
-                <Header />
+                <HomeHeader />
                 {/* the best add */}
                 <div className="the-best-add">
 
