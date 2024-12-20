@@ -42,6 +42,8 @@ const AppContent = () => {
     }
   }, [location]);
 
+  console.log(location);
+
   return (
     
     <div className="App flex flex-col min-h-screen">

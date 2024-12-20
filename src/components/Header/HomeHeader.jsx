@@ -94,7 +94,7 @@ const HomeHeader = () => {
         <ul className="flex gap-4 items-center font-semibold">
           <li className="p-4">
             <Link
-              to="/"
+              to="hero"
               smooth={true}
               className="cursor-pointer hover:text-gray-400"
             >
