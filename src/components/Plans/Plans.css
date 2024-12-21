@@ -41,11 +41,15 @@
     font-size: 1rem;
     font-weight: bold;
 }
-
-.plan:nth-child(3) {
+.plan>:nth-child(1) {
     font-size: 1rem;
     font-weight: bold;
 }
+
+/* .plan:nth-child(3) {
+    font-size: 1rem;
+    font-weight: bold;
+} */
 
 .plan>:nth-child(5) {
     font-size: 0.8rem;

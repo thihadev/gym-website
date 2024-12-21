@@ -19,7 +19,6 @@ const HomeHeader = () => {
   const [showModal, setShowModal] = useState(false);
   const [isSignUpPage, setIsSignUpPage] = useState(false); // Track which page to display
   const [user, setUser] = useState(token_init); // Track current user
-  // const [dropdownOpen, setDropdownOpen] = useState(false); // Track if dropdown is open
 
   const navigate = useNavigate(); // For navigation after login/logout
 
@@ -98,7 +97,7 @@ const HomeHeader = () => {
               smooth={true}
               className="cursor-pointer hover:text-gray-400"
             >
-              Hero
+              Home
             </Link>
           </li>
           <li className="p-4">
@@ -173,7 +172,7 @@ const HomeHeader = () => {
             smooth={true}
             className="cursor-pointer hover:text-gray-300"
           >
-            Hero
+            Home
           </Link>
         </li>
         <li className="p-4">

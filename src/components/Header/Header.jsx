@@ -98,7 +98,7 @@ const Header = () => {
                     state={{ scrollToSection: '/' }}
                     className="cursor-pointer hover:text-gray-400"
                   >
-                    Hero
+                    Home
                   </Link>
                 </li>
                 <li className="p-4">

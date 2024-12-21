@@ -3,6 +3,7 @@ import Github from "../../assets/github.png";
 import Instagram from "../../assets/instagram.png";
 import LinkedIn from "../../assets/linkedin.png";
 import Logo from "../../assets/logo.png";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -21,7 +22,9 @@ const Footer = () => {
     </div>
     {/* Logo */}
     <div className="mt-4 lg:mt-0">
+      <Link to="/">
       <img src={Logo} alt="logo" className="w-32" />
+      </Link>
     </div>
   </div>
 </div>
