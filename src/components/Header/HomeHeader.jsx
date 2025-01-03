@@ -252,7 +252,25 @@ const HomeHeader = () => {
           {isSignUpPage ? (
             <SignUp
               switchToSignIn={() => setIsSignUpPage(false)}
-              onSuccess={() => setIsSignUpPage(false)}
+              onSuccess={() => {
+                const token = localStorage.getItem("accessToken");
+
+                if (token) {
+                  axios
+                    .get("profile", {
+                      headers: {
+                        Authorization: `Bearer ${token}`,
+                      },
+                    })
+                    .then((response) => {
+                      setUser(response.data.data);
+                      setShowModal(false);
+                    })
+                    .catch((error) => {
+                      console.error("Error fetching profile", error);
+                    });
+                }
+              }}
             />
           ) : (
             <SignIn

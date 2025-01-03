@@ -25,6 +25,7 @@ const SignUp = ({ switchToSignIn, onSuccess }) => {
       });
       const { access_token } = response.data;
 
+      
       // Save the token in localStorage
       localStorage.setItem("accessToken", access_token);
 

@@ -241,39 +241,57 @@ const Header = () => {
             </ul>
           )}
 
-          {showModal && (
-            <Modal onClose={() => setShowModal(false)}>
-              {isSignUpPage ? (
-                <SignUp
-                  switchToSignIn={() => setIsSignUpPage(false)}
-                  onSuccess={() => setIsSignUpPage(false)}
-                />
-              ) : (
-                <SignIn
-                  switchToSignUp={() => setIsSignUpPage(true)}
-                  onSuccess={() => {
-                    const token = localStorage.getItem("accessToken");
+        {showModal && (
+        <Modal onClose={() => setShowModal(false)}>
+          {isSignUpPage ? (
+            <SignUp
+              switchToSignIn={() => setIsSignUpPage(false)}
+              onSuccess={() => {
+                const token = localStorage.getItem("accessToken");
+                console.log(token);
+                if (token) {
+                  axios
+                    .get("profile", {
+                      headers: {
+                        Authorization: `Bearer ${token}`,
+                      },
+                    })
+                    .then((response) => {
+                      setUser(response.data.data);
+                      setShowModal(false);
+                    })
+                    .catch((error) => {
+                      console.error("Error fetching profile", error);
+                    });
+                }
+              }}
+            />
+          ) : (
+            <SignIn
+              switchToSignUp={() => setIsSignUpPage(true)}
+              onSuccess={() => {
+                const token = localStorage.getItem("accessToken");
 
-                    if (token) {
-                      axios
-                        .get("profile", {
-                          headers: {
-                            Authorization: `Bearer ${token}`,
-                          },
-                        })
-                        .then((response) => {
-                          setUser(response.data.data);
-                          setShowModal(false);
-                        })
-                        .catch((error) => {
-                          console.error("Error fetching profile", error);
-                        });
-                    }
-                  }}
-                />
-              )}
-            </Modal>
+                if (token) {
+                  axios
+                    .get("profile", {
+                      headers: {
+                        Authorization: `Bearer ${token}`,
+                      },
+                    })
+                    .then((response) => {
+                      setUser(response.data.data);
+                      setShowModal(false);
+                    })
+                    .catch((error) => {
+                      console.error("Error fetching profile", error);
+                    });
+                }
+              }}
+            />
           )}
+        </Modal>
+      )}
         </div>
       </div>
     </div>

@@ -4,8 +4,9 @@ import QR2 from "../assets/wave.png";
 import { useLocation } from "react-router-dom";
 import axios from "../axios";
 import { useNavigate } from "react-router-dom";
-import Modal from "../components/Modal"; // Modal component
-import SignIn from "../components/Auth/SignIn"; // SignIn component
+import Modal from "../components/Modal";
+import SignIn from "../components/Auth/SignIn";
+import SignUp from "../components/Auth/SignUp";
 
 const SubscriptionPage = () => {
   const navigate = useNavigate();
@@ -16,7 +17,8 @@ const SubscriptionPage = () => {
   const [selectedPlan, setSelectedPlan] = useState(plan);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
   const [showQRCode, setShowQRCode] = useState(false);
-  const [showModal, setShowModal] = useState(false); // Modal state
+  const [showModal, setShowModal] = useState(false);
+  const [isSignUpPage, setIsSignUpPage] = useState(false);
   const [user, setUser] = useState(null); // User state
 
   const paymentMethods = [
@@ -24,21 +26,9 @@ const SubscriptionPage = () => {
     { id: "wavepay", name: "WavePay", icon: QR2 },
   ];
 
-  useEffect(() => {
-    // Fetch subscription plans
-    axios
-      .get("/plans")
-      .then((response) => {
-        setPlan(response.data.data);
-      })
-      .catch((error) => {
-        setPlan(null);
-      });
-
-    // Check if the user is logged in
+  const fetchUserProfile = () => {
     const token = localStorage.getItem("accessToken");
     if (token) {
-      // If logged in, fetch user profile
       axios
         .get("profile", {
           headers: {
@@ -52,6 +42,21 @@ const SubscriptionPage = () => {
           console.error("Error fetching profile", error);
         });
     }
+  };
+
+  useEffect(() => {
+    // Fetch subscription plans
+    axios
+      .get("/plans")
+      .then((response) => {
+        setPlan(response.data.data);
+      })
+      .catch((error) => {
+        setPlan(null);
+      });
+
+    // Fetch user profile
+    fetchUserProfile();
   }, []);
 
   const handlePlanSelect = (plan) => {
@@ -75,17 +80,22 @@ const SubscriptionPage = () => {
     }
 
     if (!user) {
-      setShowModal(true); // Show login modal if the user is not logged in
+      setShowModal(true);
       return;
     }
 
     const orderDetails = {
-      orderId: selectedPlan.title, // Use a unique identifier for the plan
-      amount: selectedPlan.price, // Price for the plan
-      paymentMethod: selectedPaymentMethod, // Payment method
+      orderId: selectedPlan.title,
+      amount: selectedPlan.price,
+      paymentMethod: selectedPaymentMethod,
     };
 
     navigate("/image-uploader", { state: orderDetails });
+  };
+
+  const handleAuthSuccess = () => {
+    fetchUserProfile(); 
+    setShowModal(false);
   };
 
   const getQRCode = () => {
@@ -165,27 +175,17 @@ const SubscriptionPage = () => {
       {/* Modal for Login */}
       {showModal && (
         <Modal onClose={() => setShowModal(false)}>
-          <SignIn
-            onSuccess={() => {
-              const token = localStorage.getItem("accessToken");
-
-              if (token) {
-                axios
-                  .get("profile", {
-                    headers: {
-                      Authorization: `Bearer ${token}`,
-                    },
-                  })
-                  .then((response) => {
-                    setUser(response.data.data);
-                    setShowModal(false); // Close modal after successful login
-                  })
-                  .catch((error) => {
-                    console.error("Error fetching profile", error);
-                  });
-              }
-            }}
-          />
+          {isSignUpPage ? (
+            <SignUp
+              switchToSignIn={() => setIsSignUpPage(false)}
+              onSuccess={handleAuthSuccess}
+            />
+          ) : (
+            <SignIn
+              switchToSignUp={() => setIsSignUpPage(true)}
+              onSuccess={handleAuthSuccess}
+            />
+          )}
         </Modal>
       )}
     </div>
