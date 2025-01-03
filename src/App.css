@@ -59,3 +59,11 @@
   filter: blur(150px);
   z-index: -9;
 }
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}

@@ -3,7 +3,7 @@
     flex-direction: column;
     gap: 2rem;
     padding: 0 2rem;
-
+    position: relative; /* Ensure stacking context */
 }
 /* */
 
@@ -16,6 +16,7 @@
     color: white;
     text-transform: uppercase;
     font-style: italic;
+    /* position: relative; */
 }
 
 .program-categories {
@@ -23,12 +24,15 @@
     gap: 1rem;
 }
 
+.program-categories:hover {
+    background-color: gray;
+}
+
 .category {
     display: flex;
     border-radius: 5%;
     flex-direction: column;
-    background-color: var(--lightgray);
-    padding: 2rem;
+    background-color: white;
     color: black;
     gap: 1rem;
     justify-content: space-between;

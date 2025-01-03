@@ -16,10 +16,10 @@ const Programs = () => {
     axios
       .get("categories")
       .then((response) => {
-        setCategories(response.data.data); // Set courses data
+        setCategories(response.data.data); // Set categories data
       })
       .catch((error) => {
-        console.error("Error fetching courses:", error);
+        console.error("Error fetching categories:", error);
         setCategories(null);
         localStorage.removeItem("accessToken"); // Clear token
       });
@@ -48,37 +48,32 @@ const Programs = () => {
         breakpoints={{
           640: { slidesPerView: 2 },
           1024: { slidesPerView: 3 },
-          1280: { slidesPerView: 4 },
+          1280: { slidesPerView: 5 },
         }}
-        className="w-full "
+        className="w-full"
       >
-        <div className="program-categories">
+        <div className="program-categories hover:bg-gray-300 ">
           {categories.map((category) => (
             <SwiperSlide key={category.id}>
               <Link
                 to={`/courses/${category.slug}`}
-                smooth={true}
                 state={{ categoryName: category.name }}
               >
-                <div className="category bg-white shadow-md rounded-lg flex flex-col justify-between p-4 hover:shadow-lg transition-shadow duration-300 h-full">
-                  {/* Category Name */}
-                  <span className="text-lg font-semibold text-gray-800 mb-2">
-                    {category.name}
-                  </span>
-
-                  {/* Category Description */}
-                  <span className="text-sm text-gray-600 mb-4 flex-grow">
-                    {category.short_description}
-                  </span>
-
-                  {/* Join Now Button */}
-                  <div className="join-now flex items-center mt-auto">
-                    <span className="text-blue-500 font-bold">Join Now</span>
+                <div className="category p-2 hover:bg-gray-300 bg-white shadow-md rounded-lg flex flex-col justify-between h-full">
+                  {/* Category Image */}
+                  <div className="relative w-full h-40">
                     <img
-                      src={RightArrow}
-                      alt="arrow mark"
-                      className="w-5 h-5 object-contain ml-2"
+                      src={category.image} // Assuming image is the field in the API response
+                      alt={category.name}
+                      className="w-full bg-cover h-full"
                     />
+                  </div>
+
+                  {/* Category Name */}
+                  <div className="text-center py-3 hover:text-blue-700">
+                    <span className="text-lg font-semibold">
+                      {category.name}
+                    </span>
                   </div>
                 </div>
               </Link>

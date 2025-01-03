@@ -13,6 +13,8 @@ import CoursesPage from "./pages/Courses";
 import Header from "./components/Header/Header";
 import CourseDetailPage from "./pages/CourseDetail";
 import { scroller } from "react-scroll";
+import SubscriptionPage from "./pages/Order";
+import ImageUploader from "./pages/ImageUploader";
 // Component for conditional rendering of the header
 const ConditionalHeader = () => {
   const location = useLocation();
@@ -34,15 +36,15 @@ const AppContent = () => {
   useEffect(() => {
     if (location.state?.scrollToSection) {
       const section = location.state.scrollToSection;
-      scroller.scrollTo(section, {
-        smooth: true,
-        duration: 500,
-        offset: -70, // Adjust for headers if needed
-      });
+      if (typeof section === "string") {
+        scroller.scrollTo(section, {
+          smooth: true,
+          duration: 500,
+          offset: -70,
+        });
+      }
     }
   }, [location]);
-
-  console.log(location);
 
   return (
     
@@ -70,6 +72,8 @@ const AppContent = () => {
           />
           <Route path="/courses/:category" element={<CoursesPage />} />
           <Route path="/course/:slug" element={<CourseDetailPage />} />
+          <Route path="/order" element={<SubscriptionPage />} />
+          <Route path="/image-uploader" element={<ImageUploader />} />
         </Routes>
       </div>
 

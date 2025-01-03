@@ -1,6 +1,7 @@
 import './Plans.css'
 import { useState, useEffect } from "react";
 import axios from "../../axios.js";
+import { Link } from 'react-router-dom';
 
 const Plans = () => {
     const [plans, setPlan] = useState([]);
@@ -51,7 +52,8 @@ const Plans = () => {
                         </div>
                         {/* <span>See more benefits &rarr;</span> */}
 
-                        <button className="btn">Get Now</button>
+                        <Link to="order" state={{ plan: plan }} className="btn">Get Now</Link>
+
                     </div>
                 ))}
             </div>
