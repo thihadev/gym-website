@@ -40,18 +40,23 @@ export default function ImageUploader() {
     formData.append("package", orderId);
     formData.append("amount", amount);
     formData.append("payment_channel", paymentMethod);
-    formData.append("payslip", file); // Only one image, so append it as "image"
+    formData.append("payslip", file); // Only one image, so append it as "payslip"
+
+    // Get the token from localStorage or sessionStorage
+    const token = localStorage.getItem("accessToken");
 
     try {
       setIsSubmitting(true);
 
+      // Make the POST request with the Bearer token
       const response = await axios.post("/upload-images", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
+          "Authorization": `Bearer ${token}`, // Add Bearer token here
         },
       });
 
-      alert("Image uploaded successfully!");
+      alert("Order successfully!");
       console.log("Server Response:", response.data);
 
       // Optionally, navigate to a success page or reset the form
