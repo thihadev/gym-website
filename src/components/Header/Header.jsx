@@ -9,6 +9,8 @@ import SignIn from "../Auth/SignIn";
 import SignUp from "../Auth/SignUp";
 import axios from "../../axios";
 import ProfileDropdown from "../ProfileDropdown";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Header = () => {
   const token = localStorage.getItem("accessToken");
@@ -113,6 +115,15 @@ const Header = () => {
                 <li className="p-4">
                   <Link
                     to="/"
+                    state={{ scrollToSection: 'aboutus' }}
+                    className="cursor-pointer hover:text-gray-400"
+                  >
+                    About Us
+                  </Link>
+                </li>
+                <li className="p-4">
+                  <Link
+                    to="/"
                     state={{ scrollToSection: 'reasons' }}
                     className="cursor-pointer hover:text-gray-400"
                   >
@@ -128,15 +139,7 @@ const Header = () => {
                     Plans
                   </Link>
                 </li>
-                <li className="p-4">
-                  <Link
-                    to="/"
-                    state={{ scrollToSection: 'testimonials' }}
-                    className="cursor-pointer hover:text-gray-400"
-                  >
-                    Testimonials
-                  </Link>
-                </li>
+
               </ul>
 
               {/* Profile or Login */}
@@ -187,6 +190,15 @@ const Header = () => {
               <li className="p-4">
                 <Link
                   onClick={() => setMenuOpened(false)}
+                  to="aboutus"
+                  className="cursor-pointer hover:text-gray-300"
+                >
+                  About Us
+                </Link>
+              </li>
+              <li className="p-4">
+                <Link
+                  onClick={() => setMenuOpened(false)}
                   to="reasons"
                   className="cursor-pointer hover:text-gray-300"
                 >
@@ -202,15 +214,7 @@ const Header = () => {
                   Plans
                 </Link>
               </li>
-              <li className="p-4">
-                <Link
-                  onClick={() => setMenuOpened(false)}
-                  to="testimonials"
-                  className="cursor-pointer hover:text-gray-300"
-                >
-                  Testimonials
-                </Link>
-              </li>
+             
 
               {/* Mobile Login Button */}
               {!user && (
@@ -259,6 +263,8 @@ const Header = () => {
                     .then((response) => {
                       setUser(response.data.data);
                       setShowModal(false);
+                      toast.success('Login successful!');
+
                     })
                     .catch((error) => {
                       console.error("Error fetching profile", error);
@@ -282,6 +288,7 @@ const Header = () => {
                     .then((response) => {
                       setUser(response.data.data);
                       setShowModal(false);
+                      toast.success('Login Successfully.');
                     })
                     .catch((error) => {
                       console.error("Error fetching profile", error);

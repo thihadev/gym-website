@@ -1,6 +1,6 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import LoadingSpinner from "./components/LoadingSpinner";
 import Hero from "./components/Hero/Hero";
 import Programs from "./components/Programs/Programs";
@@ -15,6 +15,9 @@ import CourseDetailPage from "./pages/CourseDetail";
 import { scroller } from "react-scroll";
 import SubscriptionPage from "./pages/Order";
 import ImageUploader from "./pages/ImageUploader";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 // Component for conditional rendering of the header
 const ConditionalHeader = () => {
   const location = useLocation();
@@ -26,6 +29,7 @@ const ConditionalHeader = () => {
 const AppContent = () => {
   const [loading, setLoading] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true);
@@ -44,7 +48,8 @@ const AppContent = () => {
         });
       }
     }
-  }, [location]);
+    navigate(location.pathname, { replace: true });
+  }, [location, navigate]);
 
   return (
     
@@ -63,10 +68,10 @@ const AppContent = () => {
               <>
                 <Hero />
                 <Programs />
+                <Testimonials />
                 <Reasons />
                 <Plans />
-                <Testimonials />
-                <Join />
+                {/* <Join /> */}
               </>
             }
           />
@@ -87,6 +92,7 @@ const AppContent = () => {
 const App = () => {
   return (
     <Router>
+      <ToastContainer />
       <AppContent />
     </Router>
   );

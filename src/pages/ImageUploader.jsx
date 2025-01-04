@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "../axios"; // Ensure you have configured axios to point to your Laravel backend
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function ImageUploader() {
   const location = useLocation();
@@ -32,7 +34,7 @@ export default function ImageUploader() {
     e.preventDefault();
 
     if (!file) {
-      alert("Please select an image to upload.");
+      toast.error("Please select an payslip to upload.");
       return;
     }
 
@@ -56,14 +58,14 @@ export default function ImageUploader() {
         },
       });
 
-      alert("Order successfully!");
+      toast.success("Order successfully!");
       console.log("Server Response:", response.data);
 
       // Optionally, navigate to a success page or reset the form
       navigate("/");
     } catch (error) {
       console.error("Error uploading image:", error);
-      alert("Failed to upload image. Please try again.");
+      toast.error("Failed. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

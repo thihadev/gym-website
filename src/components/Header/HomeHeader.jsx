@@ -10,6 +10,8 @@ import SignIn from "../Auth/SignIn";
 import SignUp from "../Auth/SignUp";
 import axios from "../../axios";
 import ProfileDropdown from "../ProfileDropdown";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const HomeHeader = () => {
   const token = localStorage.getItem("accessToken");
@@ -17,8 +19,8 @@ const HomeHeader = () => {
   const [menuOpened, setMenuOpened] = useState(false);
   const [mobile, setMobile] = useState(window.innerWidth < 768);
   const [showModal, setShowModal] = useState(false);
-  const [isSignUpPage, setIsSignUpPage] = useState(false); // Track which page to display
-  const [user, setUser] = useState(token_init); // Track current user
+  const [isSignUpPage, setIsSignUpPage] = useState(false);
+  const [user, setUser] = useState(token_init);
 
   const navigate = useNavigate(); // For navigation after login/logout
 
@@ -111,6 +113,15 @@ const HomeHeader = () => {
           </li>
           <li className="p-4">
             <Link
+              to="aboutus"
+              smooth={true}
+              className="cursor-pointer hover:text-gray-400"
+            >
+              About Us
+            </Link>
+          </li>
+          <li className="p-4">
+            <Link
               to="reasons"
               smooth={true}
               className="cursor-pointer hover:text-gray-400"
@@ -127,15 +138,7 @@ const HomeHeader = () => {
               Plans
             </Link>
           </li>
-          <li className="p-4">
-            <Link
-              to="testimonials"
-              smooth={true}
-              className="cursor-pointer hover:text-gray-400"
-            >
-              Testimonials
-            </Link>
-          </li>
+          
         </ul>
 
         {/* Profile or Login */}
@@ -188,6 +191,16 @@ const HomeHeader = () => {
         <li className="p-4">
           <Link
             onClick={() => setMenuOpened(false)}
+            to="aboutus"
+            smooth={true}
+            className="cursor-pointer hover:text-gray-300"
+          >
+            About Us
+          </Link>
+        </li>
+        <li className="p-4">
+          <Link
+            onClick={() => setMenuOpened(false)}
             to="reasons"
             smooth={true}
             className="cursor-pointer hover:text-gray-300"
@@ -205,16 +218,7 @@ const HomeHeader = () => {
             Plans
           </Link>
         </li>
-        <li className="p-4">
-          <Link
-            onClick={() => setMenuOpened(false)}
-            to="testimonials"
-            smooth={true}
-            className="cursor-pointer hover:text-gray-300"
-          >
-            Testimonials
-          </Link>
-        </li>
+        
 
         {/* Mobile Login Button */}
         {!user && (
@@ -265,8 +269,10 @@ const HomeHeader = () => {
                     .then((response) => {
                       setUser(response.data.data);
                       setShowModal(false);
+                      toast.success('Login Successfully.');
                     })
                     .catch((error) => {
+                      toast.error(error);
                       console.error("Error fetching profile", error);
                     });
                 }
@@ -288,6 +294,7 @@ const HomeHeader = () => {
                     .then((response) => {
                       setUser(response.data.data);
                       setShowModal(false);
+                      toast.success('Login Successfully.');
                     })
                     .catch((error) => {
                       console.error("Error fetching profile", error);

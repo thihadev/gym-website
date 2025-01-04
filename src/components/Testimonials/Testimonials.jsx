@@ -1,74 +1,32 @@
-import { useState } from 'react'
-import './Testimonials.css'
-import { testimonialsData } from '../../data/testimonialsData'
-import rightArrow from '../../assets/rightArrow.png'
-import leftArrow from '../../assets/leftArrow.png'
-import { motion } from "framer-motion"
-
+import { useState } from 'react';
+import './Testimonials.css';
 
 const Testimonials = () => {
-    const transition = { type: 'spring', duration: 3 }
-
-    const [selected, setSelected] = useState(0)
-    const length = testimonialsData.length;
-
-    return (
-        <div className="testimonials my-8" id="testimonials">
-            <div className="left-t">
-                <span>Testimonials</span>
-                <span className="stroke-text">What they</span>
-                <span>say about us</span>
-                <motion.span
-                    key={selected}
-                    initial={{ opacity: 0, x: -100 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={transition}
-                    exit={{ opacity: 0, x: 100 }}
-                >{testimonialsData[selected].review}</motion.span>
-                <span  >
-                    <span style={{ color: 'var(--lightgray)' }} >  {testimonialsData[selected].name} </span> {' '}
-                    - {testimonialsData[selected].status}
-                </span>
+    const whoWeAre = {
+        title: 'Who We Are',
+        text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+        image: 'https://via.placeholder.com/400x300', // Replace with your image URL
+      };
+    
+      return (
+        <div className="testimonials my-8" id='aboutus'>
+        <div className="m-6 space-y-12 flex items-center justify-center">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4 ">
+            <div className="md:w-1/2 p-10">
+              <img
+                src={whoWeAre.image}
+                alt={whoWeAre.title}
+                className="rounded-lg shadow-lg w-full object-cover"
+              />
             </div>
-            <div className="right-t">
-                <motion.div
-                    initial={{ opacity: 0, x: -100 }}
-                    transition={{ ...transition, duration: 2 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                ></motion.div>
-                <motion.div
-                    initial={{ opacity: 0, x: 100 }}
-                    transition={{ ...transition, duration: 2 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                ></motion.div>
-                <motion.img
-                    key={selected}
-                    initial={{ opacity: 0, x: -100 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={transition}
-                    exit={{ opacity: 0, x: 100 }}
-
-                    src={testimonialsData[selected].image} alt="image" />
-
-                <div className="arrows">
-                    <img
-                        src={leftArrow}
-                        alt="left arrow"
-                        onClick={() => {
-                            setSelected(selected === 0 ? length - 1 : selected - 1)
-
-                        }}
-                    />
-                    <img
-                        src={rightArrow}
-                        alt="right arrow"
-                        onClick={() => {
-                            setSelected(selected === length - 1 ? 0 : selected + 1)
-                        }}
-                    />
-                </div>
+            <div className="md:w-1/2 text-center md:text-left space-y-4 flex justify-center flex-col">
+              <h2 className="text-3xl font-bold text-gray-300 text-center md:text-left">{whoWeAre.title}</h2>
+              <p className="text-gray-400 leading-relaxed text-center md:text-left">{whoWeAre.text}</p>
             </div>
+          </div>
         </div>
-    )
-}
-export default Testimonials
+        </div>
+      );
+};
+
+export default Testimonials;

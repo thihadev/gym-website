@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import Modal from "../components/Modal";
 import SignIn from "../components/Auth/SignIn";
 import SignUp from "../components/Auth/SignUp";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const SubscriptionPage = () => {
   const navigate = useNavigate();
@@ -71,11 +73,13 @@ const SubscriptionPage = () => {
 
   const placeOrder = () => {
     if (!selectedPlan) {
-      alert("Please select a subscription plan.");
+      toast.error("Please select a subscription plan.");
+      // alert("Please select a subscription plan.");
       return;
     }
     if (!selectedPaymentMethod) {
-      alert("Please select a payment method.");
+      toast.error("Please select a payment method.");
+      // alert("Please select a payment method.");
       return;
     }
 
@@ -96,6 +100,7 @@ const SubscriptionPage = () => {
   const handleAuthSuccess = () => {
     fetchUserProfile(); 
     setShowModal(false);
+    toast.success("Login Success");
   };
 
   const getQRCode = () => {
