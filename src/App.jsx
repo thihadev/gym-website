@@ -30,11 +30,11 @@ const AppContent = () => {
   const [loading, setLoading] = useState(false);
   const location = useLocation();
 
-  useEffect(() => {
-    setLoading(true);
-    const timer = setTimeout(() => setLoading(false), 1000);
-    return () => clearTimeout(timer);
-  }, [location]);
+  // useEffect(() => {
+  //   setLoading(true);
+  //   const timer = setTimeout(() => setLoading(false), 1000);
+  //   return () => clearTimeout(timer);
+  // }, [location]);
 
   useEffect(() => {
     if (location.state?.scrollToSection) {
@@ -54,7 +54,7 @@ const AppContent = () => {
     
     <div className="App flex flex-col min-h-screen">
       {/* Loading Spinner */}
-      {loading && <LoadingSpinner />}
+      {/* {loading && <LoadingSpinner />} */}
 
       {/* Content */}
       <div className={`${loading ? "opacity-50" : "opacity-100"} transition-opacity duration-300 flex-grow`}>

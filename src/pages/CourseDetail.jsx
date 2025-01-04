@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import YouTube from "react-youtube";
 import axios from "../axios";
 import { useParams } from "react-router-dom";
-
+import LoadingSpinner from "../components/LoadingSpinner.jsx";
 const CourseDetailPage = () => {
   const { slug } = useParams();
   const [courseData, setCourseData] = useState(null);
   const [currentVideo, setCurrentVideo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     if (!slug) return;
@@ -16,9 +18,14 @@ const CourseDetailPage = () => {
       .then((response) => {
         setCourseData(response.data.data);
         setCurrentVideo(response.data.data.videos?.[0]?.videoId);
+        setLoading(false);
       })
       .catch((error) => {
         setCourseData(null);
+        setError(true);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, [slug]);
 
@@ -30,8 +37,21 @@ const CourseDetailPage = () => {
     },
   };
 
-  if (!courseData) {
-    return <div>Loading...</div>;
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return (
+      <div className="error-message flex flex-col justify-center items-center h-screen text-center">
+        <h2 className="text-xl text-red-600 font-semibold">
+          Error Loading Programs
+        </h2>
+        <p className="text-gray-600">
+          Please try refreshing the page or check your connection.
+        </p>
+      </div>
+    );
   }
 
   return (
@@ -51,15 +71,15 @@ const CourseDetailPage = () => {
           {/* Course Overview */}
           <div>
             <h2 className="text-2xl font-semibold mb-4">Course Overview</h2>
-            <p className="text-white leading-relaxed">{courseData.description}</p>
+            <p className="text-white leading-relaxed">
+              {courseData.description}
+            </p>
           </div>
 
           {/* Requirements */}
           <div>
             <h2 className="text-2xl font-semibold mb-4">Requirements</h2>
-            <ul className="space-y-2">
-              {courseData.requirement}
-            </ul>
+            <ul className="space-y-2">{courseData.requirement}</ul>
           </div>
         </div>
 
@@ -82,7 +102,6 @@ const CourseDetailPage = () => {
             ))}
           </ul>
         </div>
-
       </div>
     </div>
   );

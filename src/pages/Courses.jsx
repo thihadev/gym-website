@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import axios from "../axios";
 import { Link, useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import LoadingSpinner from "../components/LoadingSpinner.jsx";
 
 const CoursesPage = () => {
   const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true); // Track loading state
-  const { category } = useParams(); // Access the dynamic category parameter
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const { category } = useParams();
   const location = useLocation();
   const { categoryName } = location.state || {};
 
@@ -21,22 +23,38 @@ const CoursesPage = () => {
       .catch((error) => {
         console.error("Error fetching courses:", error);
         setCourses([]); // Set an empty array on error
-        setLoading(false); // Set loading to false even if there's an error
+        setLoading(false);
+        setError(true);
         localStorage.removeItem("accessToken");
+      })
+      .finally(() => {
+        setLoading(false); // Stop loading
       });
   }, [category]);
 
-  // Handle loading state
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return (
+      <div className="error-message flex flex-col justify-center items-center h-screen text-center">
+        <h2 className="text-xl text-red-600 font-semibold">
+          Error Loading Programs
+        </h2>
+        <p className="text-gray-600">
+          Please try refreshing the page or check your connection.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 mb-6">
       {/* Breadcrumb/Header */}
       <div className="text-white">
         <h3 className="text-center text-2xl md:text-3xl font-bold tracking-wide">
-          <Link to={'/'}>
-          Home 
-          </Link>
+          <Link to={"/"}>Home</Link>
           <span className="text-gray-400"> /</span> {categoryName || "Category"}
         </h3>
       </div>
@@ -48,7 +66,8 @@ const CoursesPage = () => {
           <div className="text-center text-white py-6">
             <h4 className="text-xl font-semibold">No Training Found</h4>
             <p className="text-gray-400">
-              It seems there are no training available for this category. Please check back later.
+              It seems there are no training available for this category. Please
+              check back later.
             </p>
           </div>
         ) : (
@@ -70,7 +89,9 @@ const CoursesPage = () => {
 
                   {/* Course Content */}
                   <div className="p-4">
-                    <h4 className="text-lg font-semibold mb-2">{course.title}</h4>
+                    <h4 className="text-lg font-semibold mb-2">
+                      {course.title}
+                    </h4>
                     <p className="text-gray-600">{course.short_description}</p>
                   </div>
                 </Link>

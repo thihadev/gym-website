@@ -8,22 +8,45 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
+import LoadingSpinner from "../LoadingSpinner.jsx";
 
 const Programs = () => {
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(false); // Error state
 
   useEffect(() => {
+    setLoading(true); // Start loading
     axios
       .get("categories")
       .then((response) => {
         setCategories(response.data.data); // Set categories data
+        setError(false); // Reset error state
       })
       .catch((error) => {
         console.error("Error fetching categories:", error);
-        setCategories(null);
+        setCategories([]); // Reset categories
+        setError(true); // Set error state
         localStorage.removeItem("accessToken"); // Clear token
+      })
+      .finally(() => {
+        setLoading(false); // Stop loading
       });
   }, []); // Runs only once on component mount
+
+  if (loading )
+  {
+    return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return (
+      <div className="error-message flex flex-col justify-center items-center h-screen text-center">
+        <h2 className="text-xl text-red-600 font-semibold">Error Loading Programs</h2>
+        <p className="text-gray-600">Please try refreshing the page or check your connection.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="programs m-10" id="programs">
