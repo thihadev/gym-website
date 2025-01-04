@@ -2,6 +2,7 @@ import React, { useState } from "react";
 // import { supabase } from "../../SupabaseClient";
 import "./SignIn.css";
 import axios from "../../axios";
+import { toast } from "react-toastify";
 
 const SignIn = ({ switchToSignUp, onSuccess }) => {
   const [email, setEmail] = useState("");
@@ -21,9 +22,11 @@ const SignIn = ({ switchToSignUp, onSuccess }) => {
 
       // Trigger parent callback to set the user profile and navigate
       onSuccess();
+      toast.success(`Welcome, ${response.data.data.name}`);
     } catch (error) {
       const { data } = error.response;
       console.error("Login Failed", data);
+      // toast.error(`Error, ${data}`)
 
       // Set global error message
       if (data.message) {

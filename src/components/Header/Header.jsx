@@ -263,8 +263,6 @@ const Header = () => {
                     .then((response) => {
                       setUser(response.data.data);
                       setShowModal(false);
-                      toast.success('Login successful!');
-
                     })
                     .catch((error) => {
                       console.error("Error fetching profile", error);
@@ -288,7 +286,6 @@ const Header = () => {
                     .then((response) => {
                       setUser(response.data.data);
                       setShowModal(false);
-                      toast.success('Login Successfully.');
                     })
                     .catch((error) => {
                       console.error("Error fetching profile", error);

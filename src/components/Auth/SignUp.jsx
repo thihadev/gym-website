@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./SignUp.css";
 import axios from "../../axios";
+import { toast } from "react-toastify";
 
 const SignUp = ({ switchToSignIn, onSuccess }) => {
   const [first_name, setFirstName] = useState("");
@@ -29,11 +30,8 @@ const SignUp = ({ switchToSignIn, onSuccess }) => {
       // Save the token in localStorage
       localStorage.setItem("accessToken", access_token);
 
-      // Show success alert
-      alert("Sign up successful! You can now log in.");
-
-      // Trigger parent callback to set the user profile and navigate
       onSuccess();
+      toast.success(`Welcome, ${response.data.data.name}`);
     } catch (error) {
       if (error.response && error.response.data) {
         // Handle validation errors from the backend
@@ -42,6 +40,7 @@ const SignUp = ({ switchToSignIn, onSuccess }) => {
         setErrors({ general: "An unknown error occurred. Please try again." });
       }
       console.error("Sign Up Failed", error.response.data);
+      // toast.error(`Error, ${error.response.data}`);
     }
   };
 

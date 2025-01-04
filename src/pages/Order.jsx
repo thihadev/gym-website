@@ -100,7 +100,6 @@ const SubscriptionPage = () => {
   const handleAuthSuccess = () => {
     fetchUserProfile(); 
     setShowModal(false);
-    toast.success("Login Success");
   };
 
   const getQRCode = () => {
