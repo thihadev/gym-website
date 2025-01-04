@@ -7,7 +7,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { Autoplay, Pagination, Navigation } from 'swiper/modules';
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
 
 const Programs = () => {
   const [categories, setCategories] = useState([]);
@@ -52,26 +52,26 @@ const Programs = () => {
         }}
         className="w-full"
       >
-        <div className="program-categories hover:bg-gray-300 ">
+        <div className="program-categories grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 bg-black p-6">
           {categories.map((category) => (
             <SwiperSlide key={category.id}>
               <Link
                 to={`/courses/${category.slug}`}
                 state={{ categoryName: category.name }}
               >
-                <div className="category p-2 hover:bg-gray-300 bg-white shadow-md rounded-lg flex flex-col justify-between h-full">
+                <div className="category bg-white shadow-lg rounded-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:shadow-2">
                   {/* Category Image */}
                   <div className="relative w-full h-40">
                     <img
-                      src={category.image} // Assuming image is the field in the API response
+                      src={category.image}
                       alt={category.name}
-                      className="w-full bg-cover h-full"
+                      className="w-full h-full object-cover"
                     />
                   </div>
 
                   {/* Category Name */}
-                  <div className="text-center py-3 hover:text-blue-700">
-                    <span className="text-lg font-semibold">
+                  <div className="text-center pb-4 px-3">
+                    <span className="text-lg font-semibold text-gray-800 transition-colors duration-200 hover:text-blue-600">
                       {category.name}
                     </span>
                   </div>
