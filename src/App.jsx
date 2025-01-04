@@ -1,6 +1,6 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import LoadingSpinner from "./components/LoadingSpinner";
 import Hero from "./components/Hero/Hero";
 import Programs from "./components/Programs/Programs";
@@ -29,7 +29,6 @@ const ConditionalHeader = () => {
 const AppContent = () => {
   const [loading, setLoading] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true);
@@ -48,8 +47,8 @@ const AppContent = () => {
         });
       }
     }
-    navigate(location.pathname, { replace: true });
-  }, [location, navigate]);
+
+  }, [location]);
 
   return (
     
