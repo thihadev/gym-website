@@ -11,6 +11,9 @@ import axios from "../../axios";
 import ProfileDropdown from "../ProfileDropdown";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import LanguageSelector from "../LanguageSelector";
+import transactions from '../../data/transactions'
+import { useLanguage } from '../LanguageProvider'
 
 const Header = () => {
   const token = localStorage.getItem("accessToken");
@@ -20,7 +23,11 @@ const Header = () => {
   const [showModal, setShowModal] = useState(false);
   const [isSignUpPage, setIsSignUpPage] = useState(false); // Track which page to display
   const [user, setUser] = useState(token_init); // Track current user
-  // const [dropdownOpen, setDropdownOpen] = useState(false); // Track if dropdown is open
+  const { language } = useLanguage();
+  const list = transactions;
+  const lang = list[language];
+
+  const fontSize = (language === "mm") ? "0.9rem" : "1rem";
 
   const navigate = useNavigate(); // For navigation after login/logout
 
@@ -73,9 +80,6 @@ const Header = () => {
     }
   };
 
-  // const toggleDropdown = () => {
-  //   setDropdownOpen(!dropdownOpen);
-  // };
 
   // Open Sign-In modal
   const openSignIn = () => {
@@ -100,8 +104,9 @@ const Header = () => {
                     to="/"
                     state={{ scrollToSection: '/' }}
                     className="cursor-pointer hover:text-gray-400"
+                    style={{ fontSize }}
                   >
-                    Home
+                    {lang.home}
                   </Link>
                 </li>
                 <li className="p-4">
@@ -109,8 +114,9 @@ const Header = () => {
                     to="/"
                     state={{ scrollToSection: 'programs' }}
                     className="cursor-pointer hover:text-gray-400"
+                    style={{ fontSize }}
                   >
-                    Programs
+                    {lang.programs}
                   </Link>
                 </li>
                 <li className="p-4">
@@ -118,8 +124,9 @@ const Header = () => {
                     to="/"
                     state={{ scrollToSection: 'aboutus' }}
                     className="cursor-pointer hover:text-gray-400"
+                    style={{ fontSize }}
                   >
-                    About Us
+                    {lang.aboutUs}
                   </Link>
                 </li>
                 <li className="p-4">
@@ -127,8 +134,9 @@ const Header = () => {
                     to="/"
                     state={{ scrollToSection: 'reasons' }}
                     className="cursor-pointer hover:text-gray-400"
+                    style={{ fontSize }}
                   >
-                    Reasons
+                    {lang.reasons}
                   </Link>
                 </li>
                 <li className="p-4">
@@ -136,9 +144,13 @@ const Header = () => {
                     to="/"
                     state={{ scrollToSection: 'plans' }}
                     className="cursor-pointer hover:text-gray-400"
+                    style={{ fontSize }}
                   >
-                    Plans
+                    {lang.plans}
                   </Link>
+                </li>
+                <li className="p-4">
+                  <LanguageSelector />
                 </li>
 
               </ul>
@@ -151,7 +163,7 @@ const Header = () => {
                   onClick={openSignIn}
                   className="cursor-pointer font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
                 >
-                  Login
+                  {lang.login}
                 </button>
               )}
             </div>
@@ -159,12 +171,18 @@ const Header = () => {
 
           {/* Mobile Hamburger Menu */}
           {mobile && (
-            <div
-              className="flex items-center justify-center p-2 rounded cursor-pointer md:hidden"
-              onClick={() => setMenuOpened(!menuOpened)}
-            >
-              <img src={Bars} alt="menu icon" className="w-6 h-6" />
-            </div>
+           <div className="flex items-center gap-4 md:hidden">
+           {/* Language Selector */}
+           <LanguageSelector />
+       
+           {/* Hamburger Menu */}
+           <div
+             className="flex items-center justify-center p-2 rounded cursor-pointer"
+             onClick={() => setMenuOpened(!menuOpened)}
+           >
+             <img src={Bars} alt="menu icon" className="w-6 h-6" />
+           </div>
+         </div>
           )}
 
           {/* Mobile Dropdown Menu */}
@@ -176,7 +194,7 @@ const Header = () => {
                   to="hero"
                   className="cursor-pointer hover:text-gray-300"
                 >
-                  Hero
+                  {lang.home}
                 </Link>
               </li>
               <li className="p-4">
@@ -185,7 +203,7 @@ const Header = () => {
                   to="/programs"
                   className="cursor-pointer hover:text-gray-300"
                 >
-                  Programs
+                  {lang.programs}
                 </Link>
               </li>
               <li className="p-4">
@@ -194,7 +212,7 @@ const Header = () => {
                   to="aboutus"
                   className="cursor-pointer hover:text-gray-300"
                 >
-                  About Us
+                  {lang.aboutUs}
                 </Link>
               </li>
               <li className="p-4">
@@ -203,7 +221,7 @@ const Header = () => {
                   to="reasons"
                   className="cursor-pointer hover:text-gray-300"
                 >
-                  Reasons
+                  {lang.reasons}
                 </Link>
               </li>
               <li className="p-4">
@@ -212,7 +230,7 @@ const Header = () => {
                   to="plans"
                   className="cursor-pointer hover:text-gray-300"
                 >
-                  Plans
+                  {lang.plans}
                 </Link>
               </li>
              
@@ -227,7 +245,7 @@ const Header = () => {
                     }}
                     className="w-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
                   >
-                    Login
+                    {lang.login}
                   </button>
                 </li>
               )}
@@ -239,7 +257,7 @@ const Header = () => {
                     onClick={handleLogout}
                     className="cursor-pointerw-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
                   >
-                    Logout
+                    {lang.logout}
                   </Link>
                 </li>
               )}

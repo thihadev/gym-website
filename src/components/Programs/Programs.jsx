@@ -27,7 +27,6 @@ const Programs = () => {
         console.error("Error fetching categories:", error);
         setCategories([]); // Reset categories
         setError(true); // Set error state
-        toast.error('ERROR');
         localStorage.removeItem("accessToken"); // Clear token
       })
       .finally(() => {

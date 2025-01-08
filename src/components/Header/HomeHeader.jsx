@@ -1,20 +1,18 @@
-// import './Header.css';
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // For navigation
 import Logo from "../../assets/logo.png";
 import Bars from "../../assets/bars.png";
-// import { Link } from "react-router-dom";
 import { Link } from "react-scroll";
 import Modal from "../Modal";
 import SignIn from "../Auth/SignIn";
 import SignUp from "../Auth/SignUp";
 import axios from "../../axios";
 import ProfileDropdown from "../ProfileDropdown";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import LanguageSelector from "../LanguageSelector";
-import transactions from '../../data/transactions'
-import { useLanguage } from '../LanguageProvider'
+import transactions from "../../data/transactions";
+import { useLanguage } from "../LanguageProvider";
 
 const HomeHeader = () => {
   const token = localStorage.getItem("accessToken");
@@ -27,10 +25,9 @@ const HomeHeader = () => {
   const navigate = useNavigate();
   const { language } = useLanguage();
   const list = transactions;
-  const t = list[language];
+  const lang = list[language];
 
-  const fontSize = (language === "mm") ? "0.9rem" : "1rem";
-
+  const fontSize = language === "mm" ? "0.9rem" : "1rem";
 
   useEffect(() => {
     if (token) {
@@ -91,190 +88,185 @@ const HomeHeader = () => {
   };
 
   return (
-    
     <div className="flex justify-between items-center p-4 text-white relative">
-    {/* Logo */}
-    <img src={Logo} alt="logo img" className="w-32" />
+      {/* Logo */}
+      <img src={Logo} alt="logo img" className="w-32" />
 
-    {/* Desktop Navigation and Profile */}
-    {!mobile && (
-      <div className="flex items-center gap-4">
-        {/* Navigation Links */}
-        <ul className="flex gap-4 items-center font-semibold">
+      {/* Desktop Navigation and Profile */}
+      {!mobile && (
+        <div className="flex items-center gap-4">
+          {/* Navigation Links */}
+          <ul className="flex gap-4 items-center font-semibold">
+            <li className="p-4">
+              <Link
+                to="hero"
+                smooth={true}
+                className="cursor-pointer hover:text-gray-400"
+                style={{ fontSize }}
+              >
+                {lang.home}
+              </Link>
+            </li>
+            <li className="p-4">
+              <Link
+                lango="programs"
+                smooth={true}
+                className="cursor-pointer hover:text-gray-400"
+                style={{ fontSize }}
+              >
+                {lang.programs}
+              </Link>
+            </li>
+            <li className="p-4">
+              <Link
+                to="aboutus"
+                smooth={true}
+                className="cursor-pointer hover:text-gray-400"
+                style={{ fontSize }}
+              >
+                {lang.aboutUs}
+              </Link>
+            </li>
+            <li className="p-4">
+              <Link
+                to="reasons"
+                smooth={true}
+                className="cursor-pointer hover:text-gray-400"
+                style={{ fontSize }}
+              >
+                {lang.reasons}
+              </Link>
+            </li>
+            <li className="p-4">
+              <Link
+                to="plans"
+                smooth={true}
+                className="cursor-pointer hover:text-gray-400"
+                style={{ fontSize }}
+              >
+                {lang.plans}
+              </Link>
+            </li>
+            <li className="p-4">
+              <LanguageSelector />
+            </li>
+          </ul>
+
+          {/* Profile or Login */}
+          {user ? (
+            <ProfileDropdown user={user} handleLogout={handleLogout} />
+          ) : (
+            <button
+              onClick={openSignIn}
+              style={{ fontSize }}
+              className="cursor-pointer font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
+            >
+              {lang.login}
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Mobile Hamburger Menu and Language Selector */}
+      {mobile && (
+        <div className="flex items-center gap-4 md:hidden">
+          {/* Language Selector */}
+          <LanguageSelector />
+
+          {/* Hamburger Menu */}
+          <div
+            className="flex items-center justify-center p-2 rounded cursor-pointer"
+            onClick={() => setMenuOpened(!menuOpened)}
+          >
+            <img src={Bars} alt="menu icon" className="w-6 h-6" />
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Dropdown Menu */}
+      {menuOpened && mobile && (
+        <ul className="absolute top-16 left-0 w-full bg-gray-700 text-white flex flex-col items-center py-4 gap-4 z-50">
           <li className="p-4">
             <Link
+              onClick={() => setMenuOpened(false)}
               to="hero"
               smooth={true}
-              className="cursor-pointer hover:text-gray-400"
-               style={{ fontSize }}
+              className="cursor-pointer hover:text-gray-300"
             >
-             {t.home}
+              {lang.home}
             </Link>
           </li>
           <li className="p-4">
             <Link
+              onClick={() => setMenuOpened(false)}
               to="programs"
               smooth={true}
-              className="cursor-pointer hover:text-gray-400"
-               style={{ fontSize }}
+              className="cursor-pointer hover:text-gray-300"
             >
-              {t.programs}
+              {lang.programs}
             </Link>
           </li>
           <li className="p-4">
             <Link
+              onClick={() => setMenuOpened(false)}
               to="aboutus"
               smooth={true}
-              className="cursor-pointer hover:text-gray-400"
-               style={{ fontSize }}
+              className="cursor-pointer hover:text-gray-300"
             >
-              {t.aboutUs}
+              {lang.aboutUs}
             </Link>
           </li>
           <li className="p-4">
             <Link
+              onClick={() => setMenuOpened(false)}
               to="reasons"
               smooth={true}
-              className="cursor-pointer hover:text-gray-400"
-               style={{ fontSize }}
+              className="cursor-pointer hover:text-gray-300"
             >
-              {t.reasons}
+              {lang.reasons}
             </Link>
           </li>
           <li className="p-4">
             <Link
+              onClick={() => setMenuOpened(false)}
               to="plans"
               smooth={true}
-              className="cursor-pointer hover:text-gray-400"
-               style={{ fontSize }}
+              className="cursor-pointer hover:text-gray-300"
             >
-              {t.plans}
+              {lang.plans}
             </Link>
           </li>
-          <li className="p-4">
-           <LanguageSelector />
-          </li>
-          
+
+          {/* Mobile Login Button */}
+          {!user && (
+            <li className="p-4">
+              <button
+                onClick={() => {
+                  setMenuOpened(false);
+                  openSignIn();
+                }}
+                className="w-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
+              >
+                {lang.login}
+              </button>
+            </li>
+          )}
+
+          {/* Mobile Profile Dropdown (Optional) */}
+          {user && (
+            <li className="p-4">
+              <Link
+                onClick={handleLogout}
+                smooth={true}
+                style={{ fontSize }}
+                className="cursor-pointerw-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
+              >
+                {lang.logout}
+              </Link>
+            </li>
+          )}
         </ul>
-
-        {/* Profile or Login */}
-        {user ? (
-          <ProfileDropdown user={user} handleLogout={handleLogout} />
-        ) : (
-          <button
-            onClick={openSignIn}
-            style={{ fontSize }}
-            className="cursor-pointer font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
-          >
-            {t.login}
-          </button>
-        )}
-      </div>
-    )}
-    
-
-{/* Mobile Hamburger Menu and Language Selector */}
-{mobile && (
-  <div className="flex items-center gap-4 md:hidden">
-    {/* Language Selector */}
-    <LanguageSelector />
-
-    {/* Hamburger Menu */}
-    <div
-      className="flex items-center justify-center p-2 rounded cursor-pointer"
-      onClick={() => setMenuOpened(!menuOpened)}
-    >
-      <img src={Bars} alt="menu icon" className="w-6 h-6" />
-    </div>
-  </div>
-)}
-
-    {/* Mobile Dropdown Menu */}
-    {menuOpened && mobile && (
-      <ul className="absolute top-16 left-0 w-full bg-gray-700 text-white flex flex-col items-center py-4 gap-4 z-50">
-        <li className="p-4">
-          <Link
-            onClick={() => setMenuOpened(false)}
-            to="hero"
-            smooth={true}
-            className="cursor-pointer hover:text-gray-300"
-          >
-            Home
-          </Link>
-        </li>
-        <li className="p-4">
-          <Link
-            onClick={() => setMenuOpened(false)}
-            to="programs"
-            smooth={true}
-            className="cursor-pointer hover:text-gray-300"
-          >
-            Programs
-          </Link>
-        </li>
-        <li className="p-4">
-          <Link
-            onClick={() => setMenuOpened(false)}
-            to="aboutus"
-            smooth={true}
-            className="cursor-pointer hover:text-gray-300"
-          >
-            About Us
-          </Link>
-        </li>
-        <li className="p-4">
-          <Link
-            onClick={() => setMenuOpened(false)}
-            to="reasons"
-            smooth={true}
-            className="cursor-pointer hover:text-gray-300"
-          >
-            Reasons
-          </Link>
-        </li>
-        <li className="p-4">
-          <Link
-            onClick={() => setMenuOpened(false)}
-            to="plans"
-            smooth={true}
-            className="cursor-pointer hover:text-gray-300"
-          >
-            Plans
-          </Link>
-        </li>
-        
-
-        {/* Mobile Login Button */}
-        {!user && (
-          <li className="p-4">
-            <button
-              onClick={() => {
-                setMenuOpened(false);
-                openSignIn();
-              }}
-              className="w-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
-            >
-              Login
-            </button>
-          </li>
-        )}
-
-        {/* Mobile Profile Dropdown (Optional) */}
-        {user && (
-          <li className="p-4">
-          <Link
-            onClick={handleLogout}
-            smooth={true}
-            style={{ fontSize }}
-            className="cursor-pointerw-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
-          >
-            {t.logout}
-          </Link>
-        </li>
-         
-        )}
-      </ul>
-    )}
+      )}
 
       {showModal && (
         <Modal onClose={() => setShowModal(false)}>
