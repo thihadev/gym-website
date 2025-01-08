@@ -5,7 +5,7 @@ import NumberCounter from 'number-counter'
 
 const Hero = () => {
     return (
-        <div className="hero" id="hero">
+        <div className="hero">
             <div className="blur hero-blur"></div>
             <div className="left-h">
                 <HomeHeader />
@@ -28,6 +28,7 @@ const Hero = () => {
                         </span>
                     </div>
                 </div>
+                
                 {/* figures */}
                 <div className="figures">
                     <div>

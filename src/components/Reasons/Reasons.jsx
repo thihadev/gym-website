@@ -10,7 +10,7 @@ import tick from '../../assets/tick.png'
 
 const Reasons = () => {
     return (
-        <div className="reasons" id="reasons">
+        <div className="reasons">
             <div className="left-r">
                 <img src={image1} alt="image1" />
                 <img src={image2} alt="image2" />

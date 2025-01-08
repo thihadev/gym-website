@@ -1,5 +1,4 @@
 import "./Programs.css";
-import RightArrow from "../../assets/rightArrow2.png";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "../../axios.js";
@@ -9,6 +8,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import LoadingSpinner from "../LoadingSpinner.jsx";
+import { toast } from "react-toastify";
 
 const Programs = () => {
   const [categories, setCategories] = useState([]);
@@ -27,6 +27,7 @@ const Programs = () => {
         console.error("Error fetching categories:", error);
         setCategories([]); // Reset categories
         setError(true); // Set error state
+        toast.error('ERROR');
         localStorage.removeItem("accessToken"); // Clear token
       })
       .finally(() => {
@@ -41,7 +42,7 @@ const Programs = () => {
 
   if (error) {
     return (
-      <div className="error-message flex flex-col justify-center items-center h-screen text-center">
+      <div className="error-message flex flex-col justify-center items-center text-center">
         <h2 className="text-xl text-red-600 font-semibold">Error Loading Programs</h2>
         <p className="text-gray-600">Please try refreshing the page or check your connection.</p>
       </div>
@@ -49,7 +50,7 @@ const Programs = () => {
   }
 
   return (
-    <div className="programs m-10" id="programs">
+    <div className="programs m-10">
       {/* header */}
       <div className="programs-header">
         <span className="stroke-text">Explore our</span>
@@ -76,7 +77,7 @@ const Programs = () => {
         className="w-full"
       >
         <div className="program-categories grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 bg-black p-6">
-          {categories.map((category) => (
+          {categories ? categories.map((category) => (
             <SwiperSlide key={category.id}>
               <Link
                 to={`/courses/${category.slug}`}
@@ -101,7 +102,8 @@ const Programs = () => {
                 </div>
               </Link>
             </SwiperSlide>
-          ))}
+          )) : "Loading"
+        }
         </div>
       </Swiper>
     </div>

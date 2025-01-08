@@ -69,6 +69,7 @@ const Header = () => {
       navigate("/"); // Redirect to home page or login page
     } catch (error) {
       console.error("Logout failed", error);
+      toast.error(`Failed. ${error}`);
     }
   };
 

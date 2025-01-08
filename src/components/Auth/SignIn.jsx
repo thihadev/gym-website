@@ -15,25 +15,43 @@ const SignIn = ({ switchToSignUp, onSuccess }) => {
 
     try {
       const response = await axios.post("/login", { email, password });
-      const { access_token } = response.data;
-      // Save the token in localStorage
-
+    
+      const { access_token, data } = response.data;
       localStorage.setItem("accessToken", access_token);
-
-      // Trigger parent callback to set the user profile and navigate
       onSuccess();
-      toast.success(`Welcome, ${response.data.data.name}`);
+      toast.success(`Welcome, ${data.name}`);
     } catch (error) {
-      const { data } = error.response;
-      console.error("Login Failed", data);
-      // toast.error(`Error, ${data}`)
+      // If error.response exists, it means the server responded with an error
+      if (error.response) {
+        const { data } = error.response;
+        if (data && data.message) {
+          console.error("Login Failed", data);
+          setError(data.message);
+        } else {
+          setError("Something went wrong. Please try again.");
+        }
+      }
+      // If no response was received, error.request exists
+      else if (error.request) {
+        setError("Network error: Unable to connect to the server. Please try again.");
+      }
 
-      // Set global error message
-      if (data.message) {
-        setError(data.message); // Set global error message for invalid credentials
+      else {
+        setError("An unexpected error occurred. Please try again.");
       }
     }
+    
   };
+
+  
+  if (error) {
+    return (
+      <div className="error-message flex flex-col justify-center items-center text-center">
+        <h2 className="text-xl text-red-600 font-semibold"> Something went Wrong! </h2>
+        <p className="text-gray-600 text-md">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="signin-container">

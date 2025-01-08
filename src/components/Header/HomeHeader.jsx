@@ -12,6 +12,9 @@ import axios from "../../axios";
 import ProfileDropdown from "../ProfileDropdown";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import LanguageSelector from "../LanguageSelector";
+import transactions from '../../data/transactions'
+import { useLanguage } from '../LanguageProvider'
 
 const HomeHeader = () => {
   const token = localStorage.getItem("accessToken");
@@ -21,8 +24,13 @@ const HomeHeader = () => {
   const [showModal, setShowModal] = useState(false);
   const [isSignUpPage, setIsSignUpPage] = useState(false);
   const [user, setUser] = useState(token_init);
+  const navigate = useNavigate();
+  const { language } = useLanguage();
+  const list = transactions;
+  const t = list[language];
 
-  const navigate = useNavigate(); // For navigation after login/logout
+  const fontSize = (language === "mm") ? "0.9rem" : "1rem";
+
 
   useEffect(() => {
     if (token) {
@@ -98,8 +106,9 @@ const HomeHeader = () => {
               to="hero"
               smooth={true}
               className="cursor-pointer hover:text-gray-400"
+               style={{ fontSize }}
             >
-              Home
+             {t.home}
             </Link>
           </li>
           <li className="p-4">
@@ -107,8 +116,9 @@ const HomeHeader = () => {
               to="programs"
               smooth={true}
               className="cursor-pointer hover:text-gray-400"
+               style={{ fontSize }}
             >
-              Programs
+              {t.programs}
             </Link>
           </li>
           <li className="p-4">
@@ -116,8 +126,9 @@ const HomeHeader = () => {
               to="aboutus"
               smooth={true}
               className="cursor-pointer hover:text-gray-400"
+               style={{ fontSize }}
             >
-              About Us
+              {t.aboutUs}
             </Link>
           </li>
           <li className="p-4">
@@ -125,8 +136,9 @@ const HomeHeader = () => {
               to="reasons"
               smooth={true}
               className="cursor-pointer hover:text-gray-400"
+               style={{ fontSize }}
             >
-              Reasons
+              {t.reasons}
             </Link>
           </li>
           <li className="p-4">
@@ -134,9 +146,13 @@ const HomeHeader = () => {
               to="plans"
               smooth={true}
               className="cursor-pointer hover:text-gray-400"
+               style={{ fontSize }}
             >
-              Plans
+              {t.plans}
             </Link>
+          </li>
+          <li className="p-4">
+           <LanguageSelector />
           </li>
           
         </ul>
@@ -147,23 +163,31 @@ const HomeHeader = () => {
         ) : (
           <button
             onClick={openSignIn}
+            style={{ fontSize }}
             className="cursor-pointer font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
           >
-            Login
+            {t.login}
           </button>
         )}
       </div>
     )}
+    
 
-    {/* Mobile Hamburger Menu */}
-    {mobile && (
-      <div
-        className="flex items-center justify-center p-2 rounded cursor-pointer md:hidden"
-        onClick={() => setMenuOpened(!menuOpened)}
-      >
-        <img src={Bars} alt="menu icon" className="w-6 h-6" />
-      </div>
-    )}
+{/* Mobile Hamburger Menu and Language Selector */}
+{mobile && (
+  <div className="flex items-center gap-4 md:hidden">
+    {/* Language Selector */}
+    <LanguageSelector />
+
+    {/* Hamburger Menu */}
+    <div
+      className="flex items-center justify-center p-2 rounded cursor-pointer"
+      onClick={() => setMenuOpened(!menuOpened)}
+    >
+      <img src={Bars} alt="menu icon" className="w-6 h-6" />
+    </div>
+  </div>
+)}
 
     {/* Mobile Dropdown Menu */}
     {menuOpened && mobile && (
@@ -241,9 +265,10 @@ const HomeHeader = () => {
           <Link
             onClick={handleLogout}
             smooth={true}
+            style={{ fontSize }}
             className="cursor-pointerw-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
           >
-            Logout
+            {t.logout}
           </Link>
         </li>
          

@@ -10,6 +10,7 @@ const SignUp = ({ switchToSignIn, onSuccess }) => {
   const [password, setPassword] = useState("");
   const [gender, setGender] = useState("");
   const [errors, setErrors] = useState({}); // Track errors for each field
+  const [error, setError] = useState(""); // Single error for global messages
 
   // Handle Sign Up
   const handleSignUp = async (e) => {
@@ -33,14 +34,23 @@ const SignUp = ({ switchToSignIn, onSuccess }) => {
       onSuccess();
       toast.success(`Welcome, ${response.data.data.name}`);
     } catch (error) {
-      if (error.response && error.response.data) {
-        // Handle validation errors from the backend
-        setErrors(error.response.data.errors || {});
-      } else {
-        setErrors({ general: "An unknown error occurred. Please try again." });
+      // If error.response exists, it means the server responded with an error
+      if (error.response) {
+        const { data } = error.response;
+        if (data && data.message) {
+          console.error("Login Failed", data);
+          setError(data.message);
+        } else {
+          console.error("Unexpected error response", error);
+          setError("Something went wrong. Please try again.");
+        }
       }
-      console.error("Sign Up Failed", error.response.data);
-      // toast.error(`Error, ${error.response.data}`);
+      else if (error.request) {
+        setError("Network error: Unable to connect to the server. Please try again.");
+      }
+      else {
+        setError("An unexpected error occurred. Please try again.");
+      }
     }
   };
 
@@ -48,6 +58,15 @@ const SignUp = ({ switchToSignIn, onSuccess }) => {
   const getFieldClass = (fieldName) => {
     return errors[fieldName] ? "input-error" : "";
   };
+
+  if (error) {
+    return (
+      <div className="error-message flex flex-col justify-center items-center text-center">
+        <h2 className="text-xl text-red-600 font-semibold"> Something went Wrong! </h2>
+        <p className="text-gray-600 text-md">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="signup-container">
