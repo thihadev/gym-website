@@ -20,7 +20,7 @@ const LanguageSelector = (checkMobile) => {
   return (
     <div className="relative">
       <button
-        className="flex items-center gap-2"
+        className="flex items-center gap-2 cursor-pointer hover:text-gray-400"
         style={{ fontSize }}
         onClick={() => setDropdownOpen(!dropdownOpen)}
       >
