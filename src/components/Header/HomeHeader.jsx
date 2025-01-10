@@ -27,9 +27,10 @@ const HomeHeader = () => {
   const list = transactions;
   const lang = list[language];
 
-  const fontSize = language === "mm" ? "0.9rem" : "1rem";
+  const fontSize = language === "mm" ? "1rem" : "1rem";
 
-  useEffect(() => {
+  const fetchUserProfile = () => {
+    const token = localStorage.getItem("accessToken");
     if (token) {
       axios
         .get("profile", {
@@ -38,14 +39,16 @@ const HomeHeader = () => {
           },
         })
         .then((response) => {
-          setUser(response.data.data); // Set user profile data
+          setUser(response.data.data);
         })
         .catch((error) => {
           console.error("Error fetching profile", error);
-          setUser(null);
-          localStorage.removeItem("accessToken"); // Clear token
         });
     }
+  };
+
+  useEffect(() => {
+    fetchUserProfile();
 
     const handleResize = () => setMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
@@ -68,23 +71,23 @@ const HomeHeader = () => {
         }
       );
 
-      // On success, remove the token from localStorage and reset user state
       localStorage.removeItem("accessToken");
       setUser(null); // Reset the user state
-      navigate("/"); // Redirect to home page or login page
+      navigate("/");
     } catch (error) {
       console.error("Logout failed", error);
     }
   };
 
-  // const toggleDropdown = () => {
-  //   setDropdownOpen(!dropdownOpen);
-  // };
-
   // Open Sign-In modal
   const openSignIn = () => {
     setIsSignUpPage(false); // Open Sign-in page
     setShowModal(true);
+  };
+
+  const handleAuthSuccess = () => {
+    fetchUserProfile(); 
+    setShowModal(false);
   };
 
   return (
@@ -148,7 +151,7 @@ const HomeHeader = () => {
               </Link>
             </li>
             <li className="p-4">
-              <LanguageSelector />
+              <LanguageSelector isMobile={false}/>
             </li>
           </ul>
 
@@ -171,7 +174,7 @@ const HomeHeader = () => {
       {mobile && (
         <div className="flex items-center gap-4 md:hidden">
           {/* Language Selector */}
-          <LanguageSelector />
+          <LanguageSelector isMobile={true}/>
 
           {/* Hamburger Menu */}
           <div
@@ -273,49 +276,12 @@ const HomeHeader = () => {
           {isSignUpPage ? (
             <SignUp
               switchToSignIn={() => setIsSignUpPage(false)}
-              onSuccess={() => {
-                const token = localStorage.getItem("accessToken");
-
-                if (token) {
-                  axios
-                    .get("profile", {
-                      headers: {
-                        Authorization: `Bearer ${token}`,
-                      },
-                    })
-                    .then((response) => {
-                      setUser(response.data.data);
-                      setShowModal(false);
-                    })
-                    .catch((error) => {
-                      toast.error(error);
-                      console.error("Error fetching profile", error);
-                    });
-                }
-              }}
+              onSuccess={handleAuthSuccess}
             />
           ) : (
             <SignIn
               switchToSignUp={() => setIsSignUpPage(true)}
-              onSuccess={() => {
-                const token = localStorage.getItem("accessToken");
-
-                if (token) {
-                  axios
-                    .get("profile", {
-                      headers: {
-                        Authorization: `Bearer ${token}`,
-                      },
-                    })
-                    .then((response) => {
-                      setUser(response.data.data);
-                      setShowModal(false);
-                    })
-                    .catch((error) => {
-                      console.error("Error fetching profile", error);
-                    });
-                }
-              }}
+              onSuccess={handleAuthSuccess}
             />
           )}
         </Modal>

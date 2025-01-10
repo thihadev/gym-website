@@ -3,6 +3,8 @@ import axios from "../axios";
 import { Link, useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
+import transactions from '../data/transactions.js'
+import { useLanguage } from '../components/LanguageProvider'
 
 const CoursesPage = () => {
   const [courses, setCourses] = useState([]);
@@ -10,14 +12,17 @@ const CoursesPage = () => {
   const [error, setError] = useState(false);
   const { category } = useParams();
   const location = useLocation();
-  const { categoryName } = location.state || {};
+  const { categoryName, categoryNameMM } = location.state || {};
+  const { language } = useLanguage();
+  const list = transactions;
+  const lang = list[language];
 
   useEffect(() => {
     setLoading(true); // Set loading to true before fetching data
     axios
       .get(`courses?keyword=${category}`)
       .then((response) => {
-        setCourses(response.data.data || []); // Ensure data is an array
+        setCourses(response.data.data || []);
         setLoading(false); // Set loading to false after fetching
       })
       .catch((error) => {
@@ -54,8 +59,8 @@ const CoursesPage = () => {
       {/* Breadcrumb/Header */}
       <div className="text-white">
         <h3 className="text-center text-2xl md:text-3xl font-bold tracking-wide">
-          <Link to={"/"}>Home</Link>
-          <span className="text-gray-400"> /</span> {categoryName || "Category"}
+          <Link to={"/"}>{lang.home}</Link>
+          <span className="text-gray-400"> /</span> {(language === 'en' ? categoryName : categoryNameMM ) || "Category"}
         </h3>
       </div>
 
@@ -90,9 +95,9 @@ const CoursesPage = () => {
                   {/* Course Content */}
                   <div className="p-4">
                     <h4 className="text-lg font-semibold mb-2">
-                      {course.title}
+                      {course[`title_${language}`]}
                     </h4>
-                    <p className="text-gray-600">{course.short_description}</p>
+                    <p className="text-gray-600">{course[`short_description_${language}`]}</p>
                   </div>
                 </Link>
               </div>

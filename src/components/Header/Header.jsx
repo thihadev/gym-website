@@ -27,11 +27,12 @@ const Header = () => {
   const list = transactions;
   const lang = list[language];
 
-  const fontSize = (language === "mm") ? "0.9rem" : "1rem";
+  const fontSize = (language === "mm") ? "1rem" : "1rem";
 
   const navigate = useNavigate(); // For navigation after login/logout
 
-  useEffect(() => {
+  const fetchUserProfile = () => {
+    const token = localStorage.getItem("accessToken");
     if (token) {
       axios
         .get("profile", {
@@ -40,14 +41,16 @@ const Header = () => {
           },
         })
         .then((response) => {
-          setUser(response.data.data); // Set user profile data
+          setUser(response.data.data);
         })
         .catch((error) => {
           console.error("Error fetching profile", error);
-          setUser(null);
-          localStorage.removeItem("accessToken"); // Clear token
         });
     }
+  };
+
+  useEffect(() => {
+    fetchUserProfile();
 
     const handleResize = () => setMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
@@ -83,8 +86,13 @@ const Header = () => {
 
   // Open Sign-In modal
   const openSignIn = () => {
-    setIsSignUpPage(false); // Open Sign-in page
+    setIsSignUpPage(false);
     setShowModal(true);
+  };
+
+  const handleAuthSuccess = () => {
+    fetchUserProfile(); 
+    setShowModal(false);
   };
 
   return (
@@ -150,7 +158,7 @@ const Header = () => {
                   </Link>
                 </li>
                 <li className="p-4">
-                  <LanguageSelector />
+                  <LanguageSelector isMobile={false}/>
                 </li>
 
               </ul>
@@ -173,7 +181,7 @@ const Header = () => {
           {mobile && (
            <div className="flex items-center gap-4 md:hidden">
            {/* Language Selector */}
-           <LanguageSelector />
+           <LanguageSelector isMobile={true}/>
        
            {/* Hamburger Menu */}
            <div
@@ -269,48 +277,12 @@ const Header = () => {
           {isSignUpPage ? (
             <SignUp
               switchToSignIn={() => setIsSignUpPage(false)}
-              onSuccess={() => {
-                const token = localStorage.getItem("accessToken");
-                console.log(token);
-                if (token) {
-                  axios
-                    .get("profile", {
-                      headers: {
-                        Authorization: `Bearer ${token}`,
-                      },
-                    })
-                    .then((response) => {
-                      setUser(response.data.data);
-                      setShowModal(false);
-                    })
-                    .catch((error) => {
-                      console.error("Error fetching profile", error);
-                    });
-                }
-              }}
+              onSuccess={handleAuthSuccess}
             />
           ) : (
             <SignIn
               switchToSignUp={() => setIsSignUpPage(true)}
-              onSuccess={() => {
-                const token = localStorage.getItem("accessToken");
-
-                if (token) {
-                  axios
-                    .get("profile", {
-                      headers: {
-                        Authorization: `Bearer ${token}`,
-                      },
-                    })
-                    .then((response) => {
-                      setUser(response.data.data);
-                      setShowModal(false);
-                    })
-                    .catch((error) => {
-                      console.error("Error fetching profile", error);
-                    });
-                }
-              }}
+              onSuccess={handleAuthSuccess}
             />
           )}
         </Modal>

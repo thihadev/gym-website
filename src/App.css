@@ -67,3 +67,16 @@
     margin: 0;
     padding: 0;
 }
+@font-face {
+  font-family: 'Pyidaungsu';
+  src: url('./assets/fonts/Pyidaungsu.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Myanmar3';
+  src: url('./assets/fonts/Myanmar3.ttf') format('truetype');
+}
+
+body {
+  font-family: 'Pyidaungsu', 'Myanmar3', sans-serif;
+}

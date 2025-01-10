@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useLanguage } from "../components/LanguageProvider"; // Make sure the path is correct
+import { FaGlobe } from "react-icons/fa";
 
-const LanguageSelector = () => {
+const LanguageSelector = (checkMobile) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { language, switchLanguage } = useLanguage(); // Get current language and switch function
   const languages = [
@@ -9,7 +10,7 @@ const LanguageSelector = () => {
     { code: "mm", label: "မြန်မာ" }, // Burmese
   ];
 
-  const fontSize = (language === "mm") ? "0.9rem" : "1rem";
+  const fontSize = (language === "mm") ? "1rem" : "1rem";
 
   const handleLanguageChange = (code) => {
     switchLanguage(code); // Use the switchLanguage function from the context
@@ -23,7 +24,12 @@ const LanguageSelector = () => {
         style={{ fontSize }}
         onClick={() => setDropdownOpen(!dropdownOpen)}
       >
-        <span>{language === 'en' ? "Language" : "ဘာသာစကား"}</span>
+        {
+          checkMobile.isMobile ?
+          (<FaGlobe size={22}/>)
+          :
+        (<span>{language === 'en' ? "Language" : "ဘာသာစကား"}</span>)
+        }
       </button>
       {dropdownOpen && (
         <ul className="absolute right-0 mt-2 w-32 border rounded shadow-lg">

@@ -1,16 +1,24 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
-// Create Context
 const LanguageContext = createContext();
 
-// Provider Component
 export const LanguageProvider = ({ children }) => {
-  const [language, setLanguage] = useState(localStorage.getItem("language") || "en");
+  const [language, setLanguage] = useState(() => {
+    return localStorage.getItem("language") || "en";
+  });
 
+  // Function to switch the language
   const switchLanguage = (lang) => {
-    setLanguage(lang);
-    localStorage.setItem("language", lang); // Save preference
+    if (lang !== language) {
+      setLanguage(lang);
+      localStorage.setItem("language", lang); // Save preference
+    }
   };
+
+  useEffect(() => {
+    console.log(`Current language: ${language}`);
+    // Optionally add side effects, such as loading translations
+  }, [language]);
 
   return (
     <LanguageContext.Provider value={{ language, switchLanguage }}>
@@ -19,5 +27,13 @@ export const LanguageProvider = ({ children }) => {
   );
 };
 
-// Custom Hook
-export const useLanguage = () => useContext(LanguageContext);
+// Custom Hook for consuming the Language Context
+export const useLanguage = () => {
+  const context = useContext(LanguageContext);
+
+  if (!context) {
+    throw new Error("useLanguage must be used within a LanguageProvider");
+  }
+
+  return context;
+};

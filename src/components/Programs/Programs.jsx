@@ -8,12 +8,13 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import LoadingSpinner from "../LoadingSpinner.jsx";
-import { toast } from "react-toastify";
+import { useLanguage } from "../LanguageProvider";
 
 const Programs = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(false); // Error state
+  const {language} = useLanguage();
 
   useEffect(() => {
     setLoading(true); // Start loading
@@ -80,14 +81,14 @@ const Programs = () => {
             <SwiperSlide key={category.id}>
               <Link
                 to={`/courses/${category.slug}`}
-                state={{ categoryName: category.name }}
+                state={{ categoryName: category.name_en, categoryNameMM : category.name_mm }}
               >
                 <div className="category bg-white shadow-lg rounded-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:shadow-2">
                   {/* Category Image */}
                   <div className="relative w-full h-40">
                     <img
                       src={category.image}
-                      alt={category.name}
+                      alt={ category[`name_${language}`]}
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -95,7 +96,7 @@ const Programs = () => {
                   {/* Category Name */}
                   <div className="text-center pb-4 px-3">
                     <span className="text-lg font-semibold text-gray-800 transition-colors duration-200 hover:text-blue-600">
-                      {category.name}
+                      { category[`name_${language}`]}
                     </span>
                   </div>
                 </div>

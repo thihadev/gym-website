@@ -1,8 +1,13 @@
 import React, { useState } from "react";
 import DefaultAvatar from "../assets/default-avatar.png"
+import transactions from '../data/transactions'
+import { useLanguage } from '../components/LanguageProvider'
 
 const ProfileDropdown = ({ user, handleLogout }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { language } = useLanguage();
+  const list = transactions;
+  const lang = list[language];
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -35,7 +40,7 @@ const ProfileDropdown = ({ user, handleLogout }) => {
                 className="w-full px-4 py-2 text-left text-sm text-gray-600 hover:bg-gray-100"
                 onClick={() => console.log("Go to Profile")}
               >
-                Profile
+                {lang.profile}
               </button>
             </li>
             <li>
@@ -43,7 +48,7 @@ const ProfileDropdown = ({ user, handleLogout }) => {
                 className="w-full px-4 py-2 text-left text-sm text-gray-600 hover:bg-gray-100"
                 onClick={() => console.log("Account Settings")}
               >
-                Settings
+                {lang.settings}
               </button>
             </li>
             <li>
@@ -51,7 +56,7 @@ const ProfileDropdown = ({ user, handleLogout }) => {
                 className="w-full px-4 py-2 text-left text-sm text-gray-600 hover:bg-gray-100"
                 onClick={handleLogout}
               >
-                Logout
+                {lang.logout}
               </button>
             </li>
           </ul>

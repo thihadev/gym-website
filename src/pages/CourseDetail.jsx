@@ -3,12 +3,18 @@ import YouTube from "react-youtube";
 import axios from "../axios";
 import { useParams } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
+import transactions from '../data/transactions.js'
+import { useLanguage } from '../components/LanguageProvider'
+
 const CourseDetailPage = () => {
   const { slug } = useParams();
   const [courseData, setCourseData] = useState(null);
   const [currentVideo, setCurrentVideo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const { language } = useLanguage();
+  const list = transactions;
+  const lang = list[language];
 
   useEffect(() => {
     if (!slug) return;
@@ -57,7 +63,7 @@ const CourseDetailPage = () => {
   return (
     <div className="container mx-auto px-4 text-white">
       <div className="mb-6">
-        <h1 className="text-3xl md:text-4xl font-bold">{courseData.title}</h1>
+        <h1 className="text-3xl md:text-4xl font-bold">{courseData[`title_${language}`]}</h1>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
@@ -70,22 +76,22 @@ const CourseDetailPage = () => {
 
           {/* Course Overview */}
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Course Overview</h2>
+            <h2 className="text-2xl font-semibold mb-4">{lang.overview}</h2>
             <p className="text-white leading-relaxed">
-              {courseData.description}
+              {courseData[`description_${language}`]}
             </p>
           </div>
 
           {/* Requirements */}
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Requirements</h2>
-            <ul className="space-y-2">{courseData.requirement}</ul>
+            <h2 className="text-2xl font-semibold mb-4">{lang.requirements}</h2>
+            <ul className="space-y-2">{courseData[`requirement_${language}`]}</ul>
           </div>
         </div>
 
         {/* Left Section: Fixed Sidebar */}
         <div className="w-full lg:w-1/4 sticky top-0 self-start overflow-y-auto h-screen bg-[#0e1217] p-4 rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold mb-4">Video Lists</h2>
+          <h2 className="text-xl font-semibold mb-4">{lang.videoList}</h2>
           <ul className="space-y-1">
             {courseData.videos.map((video) => (
               <li
