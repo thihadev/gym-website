@@ -8,7 +8,8 @@ import Modal from "../components/Modal";
 import SignIn from "../components/Auth/SignIn";
 import SignUp from "../components/Auth/SignUp";
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import transactions from '../data/transactions.js'
+import { useLanguage } from '../components/LanguageProvider'
 
 const SubscriptionPage = () => {
   const navigate = useNavigate();
@@ -22,10 +23,13 @@ const SubscriptionPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [isSignUpPage, setIsSignUpPage] = useState(false);
   const [user, setUser] = useState(null); // User state
+  const { language } = useLanguage();
+  const list = transactions;
+  const lang = list[language];
 
   const paymentMethods = [
-    { id: "kpay", name: "Kpay", icon: QR },
-    { id: "wavepay", name: "WavePay", icon: QR2 },
+    { id: "Kpay", name: "Kpay", icon: QR },
+    { id: "WavePay", name: "WavePay", icon: QR2 },
   ];
 
   const fetchUserProfile = () => {
@@ -89,9 +93,12 @@ const SubscriptionPage = () => {
     }
 
     const orderDetails = {
-      orderId: selectedPlan.title,
-      amount: selectedPlan.price,
+      orderId : selectedPlan.id,
+      planName: selectedPlan.title_en,
+      amount: selectedPlan.price_en,
       paymentMethod: selectedPaymentMethod,
+      planNameMM: selectedPlan.title_mm,
+      amountMM: selectedPlan.price_mm,
     };
 
     navigate("/image-uploader", { state: orderDetails });
@@ -126,8 +133,8 @@ const SubscriptionPage = () => {
                 }`}
                 onClick={() => handlePlanSelect(plan)}
               >
-                <span className="font-semibold">{plan.title}</span>
-                <span className="font-semibold">{plan.price} mmk/month</span>
+                <span className="font-semibold">{plan[`title_${language}`]}</span>
+                <span className="font-semibold">{plan[`price_${language}`]} / Month</span>
               </label>
             ))}
           </div>
@@ -161,9 +168,9 @@ const SubscriptionPage = () => {
               alt={`${selectedPaymentMethod} QR Code`}
               className="mx-auto w-40 h-40"
             />
-            <p className="text-sm text-gray-500 mt-2">
+            {/* <p className="text-sm text-gray-500 mt-2">
               This QR code is for the {selectedPlan.name} - {selectedPlan.price} mmk/month
-            </p>
+            </p> */}
           </div>
         )}
 

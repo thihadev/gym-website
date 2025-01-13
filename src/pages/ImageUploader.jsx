@@ -2,25 +2,30 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "../axios"; // Ensure you have configured axios to point to your Laravel backend
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import transactions from '../data/transactions.js'
+import { useLanguage } from '../components/LanguageProvider'
 
 export default function ImageUploader() {
   const location = useLocation();
   const navigate = useNavigate();
 
   // Retrieve state from navigation
-  const { orderId, amount, paymentMethod } = location.state || {};
+  const orderDetail  = location.state || {};
   const [file, setFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { language } = useLanguage();
+  const list = transactions;
+  const lang = list[language];
 
   // Redirect if no data is available
   useEffect(() => {
-    if (!orderId || !amount) {
+    if (!orderDetail.orderId || !orderDetail.amount) {
       navigate("/"); // Redirect to the home page
+      toast.error("Check Order & Amount");
     }
-  }, [orderId, amount, navigate]);
+  }, [orderDetail.orderId, orderDetail.amount, navigate]);
 
-  if (!orderId || !amount) {
+  if (!orderDetail.orderId || !orderDetail.amount) {
     // Return null to prevent rendering while redirecting
     return null;
   }
@@ -39,11 +44,12 @@ export default function ImageUploader() {
     }
 
     const formData = new FormData();
-    formData.append("package", orderId);
-    formData.append("amount", amount);
-    formData.append("payment_channel", paymentMethod);
+    formData.append("package", orderDetail.orderId);
+    formData.append("amount", orderDetail.amount);
+    formData.append("payment_channel", orderDetail.paymentMethod);
     formData.append("payslip", file); // Only one image, so append it as "payslip"
 
+    console.log(formData);
     // Get the token from localStorage or sessionStorage
     const token = localStorage.getItem("accessToken");
 
@@ -80,13 +86,13 @@ export default function ImageUploader() {
         <div className="mb-4">
           <div className="flex flex-col gap-2">
             <label className="p-3 border rounded-lg flex justify-between items-center">
-              <span className="font-semibold">Package ID : {orderId}</span>
+              <span className="font-semibold">Package ID : {language === "en" ? orderDetail.planName : orderDetail.planNameMM}</span>
             </label>
             <label className="p-3 border rounded-lg flex justify-between items-center">
-              <span className="font-semibold">Amount : {amount} mmk</span>
+              <span className="font-semibold">Amount : {language === "en" ? orderDetail.amount : orderDetail.amountMM}</span>
             </label>
             <label className="p-3 border rounded-lg flex justify-between items-center">
-              <span className="font-semibold">Payment Method : {paymentMethod}</span>
+              <span className="font-semibold">Payment Method : {orderDetail.paymentMethod}</span>
             </label>
           </div>
         </div>
