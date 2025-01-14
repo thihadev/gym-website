@@ -8,7 +8,7 @@ import Modal from "../components/Modal";
 import SignIn from "../components/Auth/SignIn";
 import SignUp from "../components/Auth/SignUp";
 import { toast } from 'react-toastify';
-import transactions from '../data/transactions.js'
+// import transactions from '../data/transactions.js'
 import { useLanguage } from '../components/LanguageProvider'
 
 const SubscriptionPage = () => {
@@ -24,8 +24,8 @@ const SubscriptionPage = () => {
   const [isSignUpPage, setIsSignUpPage] = useState(false);
   const [user, setUser] = useState(null); // User state
   const { language } = useLanguage();
-  const list = transactions;
-  const lang = list[language];
+  // const list = transactions;
+  // const lang = list[language];
 
   const paymentMethods = [
     { id: "Kpay", name: "Kpay", icon: QR },

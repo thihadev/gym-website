@@ -28,7 +28,7 @@ const LanguageSelector = (checkMobile) => {
           checkMobile.isMobile ?
           (<FaGlobe size={22}/>)
           :
-        (<span>{language === 'en' ? "Language" : "ဘာသာစကား"}</span>)
+        (<span className="font-semibold">{language === 'en' ? "Language" : "ဘာသာစကား"}</span>)
         }
       </button>
       {dropdownOpen && (

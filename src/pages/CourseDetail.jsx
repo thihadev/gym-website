@@ -3,8 +3,9 @@ import YouTube from "react-youtube";
 import axios from "../axios";
 import { useParams } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
-import transactions from '../data/transactions.js'
-import { useLanguage } from '../components/LanguageProvider'
+import transactions from "../data/transactions.js";
+import { useLanguage } from "../components/LanguageProvider";
+import { FaLock, FaPlayCircle } from "react-icons/fa";
 
 const CourseDetailPage = () => {
   const { slug } = useParams();
@@ -18,12 +19,21 @@ const CourseDetailPage = () => {
 
   useEffect(() => {
     if (!slug) return;
-
+  
     axios
       .get(`/course/${slug}`)
       .then((response) => {
-        setCourseData(response.data.data);
-        setCurrentVideo(response.data.data.videos?.[0]?.videoId);
+        const course = response.data.data;
+        setCourseData(course);
+  
+        // Find the first unlocked video
+        const firstUnlockedVideo = course.videos.find((video) => !video.is_locked);
+        if (firstUnlockedVideo) {
+          setCurrentVideo(firstUnlockedVideo.videoId);
+        } else {
+          setCurrentVideo(null);
+        }
+  
         setLoading(false);
       })
       .catch((error) => {
@@ -34,6 +44,7 @@ const CourseDetailPage = () => {
         setLoading(false);
       });
   }, [slug]);
+  
 
   const opts = {
     height: "450",
@@ -43,6 +54,7 @@ const CourseDetailPage = () => {
     },
   };
 
+  console.log(courseData);
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -63,7 +75,9 @@ const CourseDetailPage = () => {
   return (
     <div className="container mx-auto px-4 text-white">
       <div className="mb-6">
-        <h1 className="text-3xl md:text-4xl font-bold">{courseData[`title_${language}`]}</h1>
+        <h1 className="text-3xl md:text-4xl font-bold">
+          {courseData[`title_${language}`]}
+        </h1>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
@@ -71,7 +85,13 @@ const CourseDetailPage = () => {
         <div className="flex-1 space-y-10">
           {/* Video Player */}
           <div className="bg-gray-200 rounded-lg overflow-hidden shadow-lg">
-            {currentVideo && <YouTube videoId={currentVideo} opts={opts} />}
+            {currentVideo ? (
+              <YouTube videoId={currentVideo} opts={opts} />
+            ) : (
+              <div className="text-center text-gray-600 py-20">
+                <p>{lang.videoLockedMessage || "This video is locked."}</p>
+              </div>
+            )}
           </div>
 
           {/* Course Overview */}
@@ -85,25 +105,38 @@ const CourseDetailPage = () => {
           {/* Requirements */}
           <div>
             <h2 className="text-2xl font-semibold mb-4">{lang.requirements}</h2>
-            <ul className="space-y-2">{courseData[`requirement_${language}`]}</ul>
+            <ul className="space-y-2">
+              {courseData[`requirement_${language}`]}
+            </ul>
           </div>
         </div>
 
-        {/* Left Section: Fixed Sidebar */}
+        {/* Right Section: Fixed Sidebar */}
         <div className="w-full lg:w-1/4 sticky top-0 self-start overflow-y-auto h-screen bg-[#0e1217] p-4 rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold mb-4">{lang.videoList}</h2>
           <ul className="space-y-1">
-            {courseData.videos.map((video) => (
+            {courseData.videos.map((video, index) => (
               <li
-                key={video.videoId}
-                className={`p-3 border border-slate-700 rounded-md cursor-pointer transition duration-300 ${
+                key={video.videoId || `locked-${index}`} // Use a fallback key for locked videos
+                className={`p-3 border border-slate-700 rounded-md cursor-pointer transition duration-300 flex items-center ${
                   video.videoId === currentVideo
                     ? "bg-[#293249] text-white border-blue-500"
+                    : video.is_locked
+                    ? "text-white cursor-not-allowed"
                     : "hover:bg-[#293249] hover:text-white"
                 }`}
-                onClick={() => setCurrentVideo(video.videoId)}
+                onClick={() =>
+                  !video.is_locked && setCurrentVideo(video.videoId)
+                }
               >
-                <span className="text-sm font-medium">{video.video_title}</span>
+                <span className="text-sm font-medium flex-1">
+                  {video.video_title}
+                </span>
+                {video.is_locked ? (
+                  <FaLock className="ml-2 text-red-500" />
+                ) : (
+                  <FaPlayCircle className="ml-2 text-gray-400" />
+                )}
               </li>
             ))}
           </ul>

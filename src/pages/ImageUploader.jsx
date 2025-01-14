@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "../axios"; // Ensure you have configured axios to point to your Laravel backend
 import { toast } from 'react-toastify';
-import transactions from '../data/transactions.js'
+// import transactions from '../data/transactions.js'
 import { useLanguage } from '../components/LanguageProvider'
 
 export default function ImageUploader() {
@@ -14,8 +14,8 @@ export default function ImageUploader() {
   const [file, setFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { language } = useLanguage();
-  const list = transactions;
-  const lang = list[language];
+  // const list = transactions;
+  // const lang = list[language];
 
   // Redirect if no data is available
   useEffect(() => {
