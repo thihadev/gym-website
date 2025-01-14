@@ -83,7 +83,10 @@ const CoursesPage = () => {
                 className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300"
               >
                 {/* Course Image */}
-                <Link to={`/course/${course.slug}`}>
+                <Link 
+                to={`/course/${course.slug}`}
+                state={{ courseId: course.id }}
+                >
                   <div className="w-full h-52">
                     <img
                       src={course.cover_image}

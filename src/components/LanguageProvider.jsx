@@ -15,10 +15,10 @@ export const LanguageProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    console.log(`Current language: ${language}`);
-    // Optionally add side effects, such as loading translations
-  }, [language]);
+  // useEffect(() => {
+  //   console.log(`Current language: ${language}`);
+  //   // Optionally add side effects, such as loading translations
+  // }, [language]);
 
   return (
     <LanguageContext.Provider value={{ language, switchLanguage }}>

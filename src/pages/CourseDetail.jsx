@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import YouTube from "react-youtube";
 import axios from "../axios";
-import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
 import transactions from "../data/transactions.js";
 import { useLanguage } from "../components/LanguageProvider";
 import { FaLock, FaPlayCircle } from "react-icons/fa";
 
 const CourseDetailPage = () => {
-  const { slug } = useParams();
+  const location = useLocation();
+  const {courseId}  = location.state || {};
   const [courseData, setCourseData] = useState(null);
   const [currentVideo, setCurrentVideo] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -18,10 +19,10 @@ const CourseDetailPage = () => {
   const lang = list[language];
 
   useEffect(() => {
-    if (!slug) return;
+    if (!courseId) return;
   
     axios
-      .get(`/course/${slug}`)
+      .get(`/course/${courseId}`)
       .then((response) => {
         const course = response.data.data;
         setCourseData(course);
@@ -43,7 +44,7 @@ const CourseDetailPage = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [slug]);
+  }, [courseId]);
   
 
   const opts = {
@@ -54,7 +55,6 @@ const CourseDetailPage = () => {
     },
   };
 
-  console.log(courseData);
   if (loading) {
     return <LoadingSpinner />;
   }
