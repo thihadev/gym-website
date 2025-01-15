@@ -69,8 +69,13 @@ export default function ImageUploader() {
       // Optionally, navigate to a success page or reset the form
       navigate("/");
     } catch (error) {
-      console.error("Error uploading image:", error);
-      toast.error("Failed. Please try again.");
+      const { data } = error.response;
+        if (data && data.message) {
+          toast.info(data.message);
+        } else {
+          toast.error("Something went wrong. Please try again.");
+        }
+      
     } finally {
       setIsSubmitting(false);
     }

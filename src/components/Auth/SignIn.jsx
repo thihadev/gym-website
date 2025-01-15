@@ -20,6 +20,7 @@ const SignIn = ({ switchToSignUp, onSuccess }) => {
       localStorage.setItem("accessToken", access_token);
       onSuccess();
       toast.success(`Welcome, ${data.name}`);
+      window.location.reload();
     } catch (error) {
       // If error.response exists, it means the server responded with an error
       if (error.response) {

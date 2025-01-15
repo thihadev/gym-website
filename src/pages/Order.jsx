@@ -107,7 +107,8 @@ const SubscriptionPage = () => {
   const handleAuthSuccess = () => {
     fetchUserProfile(); 
     setShowModal(false);
-  };
+    window.location.reload(); // Refresh the page
+};
 
   const getQRCode = () => {
     const selectedMethod = paymentMethods.find(
