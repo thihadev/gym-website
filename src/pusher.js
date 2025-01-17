@@ -7,7 +7,7 @@ const createPusherInstance = (token) => {
     encrypted: true,
     forceTLS: true,
     debug: true,
-    authEndpoint: process.env.PUSHER_URL,
+    authEndpoint: process.env.REACT_APP_PUSHER_URL,
     auth: {
       headers: {
         Authorization: `Bearer ${token}`,
