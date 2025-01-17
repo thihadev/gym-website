@@ -13,6 +13,7 @@ const translations = {
       overview: "Overview",
       requirements: "Requirements",
       videoList: "Video Lists",
+      notifications: "Notification",
     },
     mm: {
       home: "ပင်မစာမျက်နှာ",
@@ -28,6 +29,7 @@ const translations = {
       overview: "အနှစ်ချုပ်",
       requirements: "လိုအပ်ချက်များ",
       videoList: "ဗီဒီယိုများ",
+      notifications: "အသိပေးချက်",
     },
   };
   

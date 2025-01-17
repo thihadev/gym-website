@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import "./SignUp.css";
 import axios from "../../axios";
 import { toast } from "react-toastify";
-
+import { setPusherInstance } from "../../../src/pusher";
 const SignUp = ({ switchToSignIn, onSuccess }) => {
+  
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -29,7 +30,8 @@ const SignUp = ({ switchToSignIn, onSuccess }) => {
 
       
       // Save the token in localStorage
-      localStorage.setItem("accessToken", access_token);
+      const token = localStorage.setItem("accessToken", access_token);
+      setPusherInstance(token);
 
       onSuccess();
       toast.success(`Welcome, ${response.data.data.name}`);

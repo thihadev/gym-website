@@ -1,51 +1,28 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // For navigation
+import { useState, useEffect, useContext } from "react";
 import Logo from "../../assets/logo.png";
 import Bars from "../../assets/bars.png";
 import { Link } from "react-scroll";
 import Modal from "../Modal";
 import SignIn from "../Auth/SignIn";
 import SignUp from "../Auth/SignUp";
-import axios from "../../axios";
 import ProfileDropdown from "../ProfileDropdown";
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LanguageSelector from "../LanguageSelector";
 import transactions from "../../data/transactions";
 import { useLanguage } from "../LanguageProvider";
+import { UserContext } from "../../hook/UserContext";
 
 const HomeHeader = () => {
-  const token = localStorage.getItem("accessToken");
-  const token_init = token ? token : null;
   const [menuOpened, setMenuOpened] = useState(false);
   const [mobile, setMobile] = useState(window.innerWidth < 768);
   const [showModal, setShowModal] = useState(false);
   const [isSignUpPage, setIsSignUpPage] = useState(false);
-  const [user, setUser] = useState(token_init);
-  const navigate = useNavigate();
   const { language } = useLanguage();
   const list = transactions;
   const lang = list[language];
+  const { user, fetchUserProfile, logout } = useContext(UserContext);
 
   const fontSize = language === "mm" ? "1rem" : "1rem";
-
-  const fetchUserProfile = () => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      axios
-        .get("profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          setUser(response.data.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching profile", error);
-        });
-    }
-  };
 
   useEffect(() => {
     fetchUserProfile();
@@ -53,31 +30,7 @@ const HomeHeader = () => {
     const handleResize = () => setMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [token]);
-
-  // Logout user
-  const handleLogout = async () => {
-    const token = localStorage.getItem("accessToken");
-
-    try {
-      // Send logout request with the token in the Authorization header
-      await axios.post(
-        "logout",
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include token in header
-          },
-        }
-      );
-
-      localStorage.removeItem("accessToken");
-      setUser(null); // Reset the user state
-      navigate("/");
-    } catch (error) {
-      console.error("Logout failed", error);
-    }
-  };
+  }, [fetchUserProfile]);
 
   // Open Sign-In modal
   const openSignIn = () => {
@@ -112,7 +65,7 @@ const HomeHeader = () => {
             </li>
             <li className="p-4">
               <Link
-                lango="programs"
+                to="programs"
                 smooth={true}
                 className="cursor-pointer hover:text-gray-400"
                 style={{ fontSize }}
@@ -157,7 +110,7 @@ const HomeHeader = () => {
 
           {/* Profile or Login */}
           {user ? (
-            <ProfileDropdown user={user} handleLogout={handleLogout} />
+            <ProfileDropdown user={user} handleLogout={logout} />
           ) : (
             <button
               onClick={openSignIn}
@@ -259,7 +212,7 @@ const HomeHeader = () => {
           {user && (
             <li className="p-4">
               <Link
-                onClick={handleLogout}
+                onClick={logout}
                 smooth={true}
                 style={{ fontSize }}
                 className="cursor-pointerw-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"

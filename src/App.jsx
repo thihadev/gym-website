@@ -16,6 +16,8 @@ import ImageUploader from "./pages/ImageUploader";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { LanguageProvider } from "./components/LanguageProvider";
+import TransactionNotifications from "./components/TransactionNotifications";
+import { UserProvider, UserContext } from "./hook/UserContext";
 
 
 // Component for conditional rendering of the header
@@ -105,11 +107,20 @@ const AppContent = () => {
 // Main App Component with Router
 const App = () => {
   return (
-    <Router>
-      <LanguageProvider>
-      <AppContent />
-      <ToastContainer />
-      </LanguageProvider>
+<Router>
+      <UserProvider>
+        <LanguageProvider>
+          <UserContext.Consumer>
+            {({ user, loading }) =>
+              !loading && user ? (
+                <TransactionNotifications user={user} />
+              ) : null
+            }
+          </UserContext.Consumer>
+          <AppContent />
+          <ToastContainer />
+        </LanguageProvider>
+      </UserProvider>
     </Router>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import QR from "../assets/kpay-logo.png";
 import QR2 from "../assets/wave.png";
 import { useLocation } from "react-router-dom";
@@ -10,11 +10,13 @@ import SignUp from "../components/Auth/SignUp";
 import { toast } from 'react-toastify';
 // import transactions from '../data/transactions.js'
 import { useLanguage } from '../components/LanguageProvider'
+import { UserContext } from "../hook/UserContext";
 
 const SubscriptionPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { plan } = location.state || {};
+  const { user, fetchUserProfile } = useContext(UserContext);
 
   const [plans, setPlan] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(plan);
@@ -22,7 +24,6 @@ const SubscriptionPage = () => {
   const [showQRCode, setShowQRCode] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [isSignUpPage, setIsSignUpPage] = useState(false);
-  const [user, setUser] = useState(null); // User state
   const { language } = useLanguage();
   // const list = transactions;
   // const lang = list[language];
@@ -32,26 +33,7 @@ const SubscriptionPage = () => {
     { id: "WavePay", name: "WavePay", icon: QR2 },
   ];
 
-  const fetchUserProfile = () => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      axios
-        .get("profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          setUser(response.data.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching profile", error);
-        });
-    }
-  };
-
   useEffect(() => {
-    // Fetch subscription plans
     axios
       .get("/plans")
       .then((response) => {
@@ -60,9 +42,6 @@ const SubscriptionPage = () => {
       .catch((error) => {
         setPlan(null);
       });
-
-    // Fetch user profile
-    fetchUserProfile();
   }, []);
 
   const handlePlanSelect = (plan) => {
@@ -87,6 +66,7 @@ const SubscriptionPage = () => {
       return;
     }
 
+    console.log(user);
     if (!user) {
       setShowModal(true);
       return;
@@ -105,9 +85,10 @@ const SubscriptionPage = () => {
   };
 
   const handleAuthSuccess = () => {
-    fetchUserProfile(); 
+    if (!user) {
+      fetchUserProfile();
+    }
     setShowModal(false);
-    window.location.reload(); // Refresh the page
 };
 
   const getQRCode = () => {

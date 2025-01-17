@@ -1,87 +1,41 @@
 // import './Header.css';
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // For navigation
+import { useState, useEffect, useContext } from "react";
 import Logo from "../../assets/logo.png";
 import Bars from "../../assets/bars.png";
 import { Link } from "react-router-dom";
 import Modal from "../Modal";
 import SignIn from "../Auth/SignIn";
 import SignUp from "../Auth/SignUp";
-import axios from "../../axios";
 import ProfileDropdown from "../ProfileDropdown";
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LanguageSelector from "../LanguageSelector";
 import transactions from '../../data/transactions'
 import { useLanguage } from '../LanguageProvider'
+import { UserContext } from "../../hook/UserContext";
+import LoadingSpinner from "../LoadingSpinner.jsx";
 
 const Header = () => {
-  const token = localStorage.getItem("accessToken");
-  const token_init = token ? token : null;
+  // const token = localStorage.getItem("accessToken");
   const [menuOpened, setMenuOpened] = useState(false);
   const [mobile, setMobile] = useState(window.innerWidth < 768);
   const [showModal, setShowModal] = useState(false);
-  const [isSignUpPage, setIsSignUpPage] = useState(false); // Track which page to display
-  const [user, setUser] = useState(token_init); // Track current user
+  const [isSignUpPage, setIsSignUpPage] = useState(false);
+  const { user, fetchUserProfile, loading, logout } = useContext(UserContext);
   const { language } = useLanguage();
   const list = transactions;
   const lang = list[language];
 
   const fontSize = (language === "mm") ? "1rem" : "1rem";
 
-  const navigate = useNavigate(); // For navigation after login/logout
-
-  const fetchUserProfile = () => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      axios
-        .get("profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          setUser(response.data.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching profile", error);
-        });
-    }
-  };
-
   useEffect(() => {
+   
     fetchUserProfile();
-
+  
     const handleResize = () => setMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
+    
     return () => window.removeEventListener("resize", handleResize);
-  }, [token]);
-
-  // Logout user
-  const handleLogout = async () => {
-    const token = localStorage.getItem("accessToken");
-
-    try {
-      // Send logout request with the token in the Authorization header
-      await axios.post(
-        "logout",
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include token in header
-          },
-        }
-      );
-
-      // On success, remove the token from localStorage and reset user state
-      localStorage.removeItem("accessToken");
-      setUser(null); // Reset the user state
-      navigate("/"); // Redirect to home page or login page
-    } catch (error) {
-      console.error("Logout failed", error);
-      toast.error(`Failed. ${error}`);
-    }
-  };
+  }, [fetchUserProfile]);
 
 
   // Open Sign-In modal
@@ -94,6 +48,11 @@ const Header = () => {
     fetchUserProfile(); 
     setShowModal(false);
   };
+
+  if (loading )
+    {
+      return <LoadingSpinner />;
+    }
 
   return (
     <div className="flex justify-between relative bg-none w-full">
@@ -165,7 +124,7 @@ const Header = () => {
 
               {/* Profile or Login */}
               {user ? (
-                <ProfileDropdown user={user} handleLogout={handleLogout} />
+                <ProfileDropdown user={user} handleLogout={logout} />
               ) : (
                 <button
                   onClick={openSignIn}
@@ -262,7 +221,7 @@ const Header = () => {
               {user && (
                 <li className="p-4">
                   <Link
-                    onClick={handleLogout}
+                    onClick={logout}
                     className="cursor-pointerw-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
                   >
                     {lang.logout}

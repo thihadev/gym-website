@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 // import { supabase } from "../../SupabaseClient";
 import "./SignIn.css";
 import axios from "../../axios";
 import { toast } from "react-toastify";
+import { UserContext } from "../../hook/UserContext";
+import { setPusherInstance } from "../../../src/pusher";
 
 const SignIn = ({ switchToSignUp, onSuccess }) => {
+  const { fetchUserProfile } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); // Single error for global messages
@@ -17,10 +20,16 @@ const SignIn = ({ switchToSignUp, onSuccess }) => {
       const response = await axios.post("/login", { email, password });
     
       const { access_token, data } = response.data;
-      localStorage.setItem("accessToken", access_token);
+      const token = localStorage.setItem("accessToken", access_token);
+      localStorage.setItem("userId", data.id);
+
+      await fetchUserProfile();
+
+      setPusherInstance(token);
+
       onSuccess();
       toast.success(`Welcome, ${data.name}`);
-      window.location.reload();
+      // window.location.reload();
     } catch (error) {
       // If error.response exists, it means the server responded with an error
       if (error.response) {

@@ -80,3 +80,42 @@
 body {
   font-family: 'Pyidaungsu', 'Myanmar3', sans-serif;
 }
+
+@keyframes elastic-bounce {
+  0% {
+    transform: scale(1);
+  }
+  20% {
+    transform: scale(1.2) translateY(-10px);
+  }
+  40% {
+    transform: scale(1) translateY(5px);
+  }
+  60% {
+    transform: scale(1.1) translateY(-3px);
+  }
+  80% {
+    transform: scale(1) translateY(1px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes wave {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(10deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  75% {
+    transform: rotate(-10deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
