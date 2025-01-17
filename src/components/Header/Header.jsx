@@ -7,10 +7,10 @@ import Modal from "../Modal";
 import SignIn from "../Auth/SignIn";
 import SignUp from "../Auth/SignUp";
 import ProfileDropdown from "../ProfileDropdown";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import LanguageSelector from "../LanguageSelector";
-import transactions from '../../data/transactions'
-import { useLanguage } from '../LanguageProvider'
+import transactions from "../../data/transactions";
+import { useLanguage } from "../LanguageProvider";
 import { UserContext } from "../../hook/UserContext";
 import LoadingSpinner from "../LoadingSpinner.jsx";
 
@@ -25,18 +25,16 @@ const Header = () => {
   const list = transactions;
   const lang = list[language];
 
-  const fontSize = (language === "mm") ? "1rem" : "1rem";
+  const fontSize = language === "mm" ? "1rem" : "1rem";
 
   useEffect(() => {
-   
     fetchUserProfile();
-  
+
     const handleResize = () => setMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
-    
+
     return () => window.removeEventListener("resize", handleResize);
   }, [fetchUserProfile]);
-
 
   // Open Sign-In modal
   const openSignIn = () => {
@@ -45,14 +43,13 @@ const Header = () => {
   };
 
   const handleAuthSuccess = () => {
-    fetchUserProfile(); 
+    fetchUserProfile();
     setShowModal(false);
   };
 
-  if (loading )
-    {
-      return <LoadingSpinner />;
-    }
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="flex justify-between relative bg-none w-full">
@@ -69,7 +66,7 @@ const Header = () => {
                 <li className="p-4">
                   <Link
                     to="/"
-                    state={{ scrollToSection: '/' }}
+                    state={{ scrollToSection: "/" }}
                     className="cursor-pointer hover:text-gray-400"
                     style={{ fontSize }}
                   >
@@ -79,7 +76,7 @@ const Header = () => {
                 <li className="p-4">
                   <Link
                     to="/"
-                    state={{ scrollToSection: 'programs' }}
+                    state={{ scrollToSection: "programs" }}
                     className="cursor-pointer hover:text-gray-400"
                     style={{ fontSize }}
                   >
@@ -89,7 +86,7 @@ const Header = () => {
                 <li className="p-4">
                   <Link
                     to="/"
-                    state={{ scrollToSection: 'aboutus' }}
+                    state={{ scrollToSection: "aboutus" }}
                     className="cursor-pointer hover:text-gray-400"
                     style={{ fontSize }}
                   >
@@ -99,7 +96,7 @@ const Header = () => {
                 <li className="p-4">
                   <Link
                     to="/"
-                    state={{ scrollToSection: 'reasons' }}
+                    state={{ scrollToSection: "reasons" }}
                     className="cursor-pointer hover:text-gray-400"
                     style={{ fontSize }}
                   >
@@ -109,7 +106,7 @@ const Header = () => {
                 <li className="p-4">
                   <Link
                     to="/"
-                    state={{ scrollToSection: 'plans' }}
+                    state={{ scrollToSection: "plans" }}
                     className="cursor-pointer hover:text-gray-400"
                     style={{ fontSize }}
                   >
@@ -117,9 +114,8 @@ const Header = () => {
                   </Link>
                 </li>
                 <li className="p-4">
-                  <LanguageSelector isMobile={false}/>
+                  <LanguageSelector isMobile={false} />
                 </li>
-
               </ul>
 
               {/* Profile or Login */}
@@ -138,18 +134,18 @@ const Header = () => {
 
           {/* Mobile Hamburger Menu */}
           {mobile && (
-           <div className="flex items-center gap-4 md:hidden">
-           {/* Language Selector */}
-           <LanguageSelector isMobile={true}/>
-       
-           {/* Hamburger Menu */}
-           <div
-             className="flex items-center justify-center p-2 rounded cursor-pointer"
-             onClick={() => setMenuOpened(!menuOpened)}
-           >
-             <img src={Bars} alt="menu icon" className="w-6 h-6" />
-           </div>
-         </div>
+            <div className="flex items-center gap-4 md:hidden">
+              {/* Language Selector */}
+              <LanguageSelector isMobile={true} />
+
+              {/* Hamburger Menu */}
+              <div
+                className="flex items-center justify-center p-2 rounded cursor-pointer"
+                onClick={() => setMenuOpened(!menuOpened)}
+              >
+                <img src={Bars} alt="menu icon" className="w-6 h-6" />
+              </div>
+            </div>
           )}
 
           {/* Mobile Dropdown Menu */}
@@ -200,7 +196,6 @@ const Header = () => {
                   {lang.plans}
                 </Link>
               </li>
-             
 
               {/* Mobile Login Button */}
               {!user && (
@@ -228,24 +223,32 @@ const Header = () => {
                   </Link>
                 </li>
               )}
+
+              <button
+                onClick={() => setMenuOpened(false)}
+                className="absolute top-4 right-4 text-gray-300 text-xl"
+                aria-label="Close menu"
+              >
+                &times;
+              </button>
             </ul>
           )}
 
-        {showModal && (
-        <Modal onClose={() => setShowModal(false)}>
-          {isSignUpPage ? (
-            <SignUp
-              switchToSignIn={() => setIsSignUpPage(false)}
-              onSuccess={handleAuthSuccess}
-            />
-          ) : (
-            <SignIn
-              switchToSignUp={() => setIsSignUpPage(true)}
-              onSuccess={handleAuthSuccess}
-            />
+          {showModal && (
+            <Modal onClose={() => setShowModal(false)}>
+              {isSignUpPage ? (
+                <SignUp
+                  switchToSignIn={() => setIsSignUpPage(false)}
+                  onSuccess={handleAuthSuccess}
+                />
+              ) : (
+                <SignIn
+                  switchToSignUp={() => setIsSignUpPage(true)}
+                  onSuccess={handleAuthSuccess}
+                />
+              )}
+            </Modal>
           )}
-        </Modal>
-      )}
         </div>
       </div>
     </div>
