@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useContext } from "react";
-import QR from "../assets/kpay-logo.png";
-import QR2 from "../assets/wave.png";
+import QR from "../../assets/kpay-logo.png";
+import QR2 from "../../assets/wave.png";
 import { useLocation } from "react-router-dom";
-import axios from "../axios";
+import axios from "../../axios";
 import { useNavigate } from "react-router-dom";
-import Modal from "../components/Modal";
-import SignIn from "../components/Auth/SignIn";
-import SignUp from "../components/Auth/SignUp";
+import Modal from "../Modal";
+import SignIn from "../Auth/SignIn";
+import SignUp from "../Auth/SignUp";
 import { toast } from 'react-toastify';
 // import transactions from '../data/transactions.js'
-import { useLanguage } from '../components/LanguageProvider'
-import { UserContext } from "../hook/UserContext";
+import { useLanguage } from '../LanguageProvider'
+import { UserContext } from "../../hook/UserContext";
 
-const SubscriptionPage = () => {
+const Checkout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { plan } = location.state || {};
@@ -57,12 +57,10 @@ const SubscriptionPage = () => {
   const placeOrder = () => {
     if (!selectedPlan) {
       toast.error("Please select a subscription plan.");
-      // alert("Please select a subscription plan.");
       return;
     }
     if (!selectedPaymentMethod) {
       toast.error("Please select a payment method.");
-      // alert("Please select a payment method.");
       return;
     }
 
@@ -81,7 +79,7 @@ const SubscriptionPage = () => {
       amountMM: selectedPlan.price_mm,
     };
 
-    navigate("/image-uploader", { state: orderDetails });
+    navigate("/order", { state: orderDetails });
   };
 
   const handleAuthSuccess = () => {
@@ -185,4 +183,4 @@ const SubscriptionPage = () => {
   );
 };
 
-export default SubscriptionPage;
+export default Checkout;

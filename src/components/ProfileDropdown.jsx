@@ -45,7 +45,7 @@ const ProfileDropdown = ({ user, handleLogout }) => {
               <ul className="">
                 <li>
                   <Link
-                    to="/notifications"
+                    to="/settings"
                     state={{ scrollToSection: "profile" }}
                     className="w-full px-4 py-3 text-left text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-800 transition duration-200 flex items-center"
                   >
@@ -54,7 +54,7 @@ const ProfileDropdown = ({ user, handleLogout }) => {
                 </li>
                 <li>
                   <Link
-                    to="/notifications"
+                    to="/settings"
                     state={{ scrollToSection: "notifications" }}
                     className="w-full px-4 py-3 text-left text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-800 transition duration-200 flex items-center"
                   >

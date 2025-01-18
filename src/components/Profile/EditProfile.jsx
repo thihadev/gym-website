@@ -21,22 +21,20 @@ const EditProfile = ({ user, setUser, setEditProfile }) => {
         },
       });
 
-      console.log("Profile updated successfully:", response.data);
       setUser(response.data.data);
-      return true; // Return true to indicate success
+      return true;
     } catch (error) {
       console.error(
         "Error updating profile:",
         error.response?.data || error.message
       );
-      return false; // Return false to indicate failure
+      return false;
     }
   };
 
   const saveProfile = async () => {
     setEditProfile(false);
 
-    // Use the current user state for the API payload
     const success = await updateUserProfile(user);
 
     if (success) {

@@ -68,7 +68,7 @@ const Plans = () => {
                 { plan[`short_description_${language}`]}
               </div>
 
-              <Link to="order" state={{ plan: plan }} className="btn">
+              <Link to="checkout" state={{ plan: plan }} className="btn">
                 {lang.getnow}
               </Link>
             </div>

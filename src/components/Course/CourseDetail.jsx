@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useContext } from "react";
 import YouTube from "react-youtube";
-import axios from "../axios";
+import axios from "../../axios";
 import { Link, useLocation } from "react-router-dom";
-import LoadingSpinner from "../components/LoadingSpinner.jsx";
-import transactions from "../data/transactions.js";
-import { useLanguage } from "../components/LanguageProvider";
+import LoadingSpinner from "../LoadingSpinner";
+import transactions from "../../data/transactions.js";
+import { useLanguage } from "../../components/LanguageProvider";
 import { FaLock, FaPlayCircle } from "react-icons/fa";
-import Modal from "../components/Modal";
-import SignIn from "../components/Auth/SignIn";
-import SignUp from "../components/Auth/SignUp";
-import { UserContext } from "../hook/UserContext.js";
+import Modal from "../../components/Modal";
+import SignIn from "../../components/Auth/SignIn";
+import SignUp from "../../components/Auth/SignUp";
+import { UserContext } from "../../hook/UserContext";
 
 const CourseDetailPage = () => {
   const { user, fetchUserProfile } = useContext(UserContext);

@@ -19,9 +19,9 @@ const UserProfile = () => {
               Authorization: `Bearer ${token}`,
             },
           });
+
           setUser(response.data.data);
         } catch (error) {
-          console.error("Error fetching profile", error);
           setUser(null);
           setError("ERROR");
         }
@@ -32,7 +32,7 @@ const UserProfile = () => {
     fetchUserData();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div> Loading..</div>;
   if (error) return <div>{error}</div>;
 
   return (

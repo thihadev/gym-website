@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import axios from "../axios";
+import axios from "../../axios";
 import { Link, useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import LoadingSpinner from "../components/LoadingSpinner.jsx";
-import transactions from '../data/transactions.js'
-import { useLanguage } from '../components/LanguageProvider'
+import LoadingSpinner from "../../components/LoadingSpinner.jsx";
+import transactions from '../../data/transactions.js'
+import { useLanguage } from '../../components/LanguageProvider'
 
 const CoursesPage = () => {
   const [courses, setCourses] = useState([]);

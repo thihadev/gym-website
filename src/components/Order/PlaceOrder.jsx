@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "../axios"; // Ensure you have configured axios to point to your Laravel backend
+import axios from "../../axios"; // Ensure you have configured axios to point to your Laravel backend
 import { toast } from 'react-toastify';
-// import transactions from '../data/transactions.js'
-import { useLanguage } from '../components/LanguageProvider'
+import { useLanguage } from '../LanguageProvider'
 
 export default function ImageUploader() {
   const location = useLocation();

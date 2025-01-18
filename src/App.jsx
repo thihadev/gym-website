@@ -7,18 +7,18 @@ import Reasons from "./components/Reasons/Reasons";
 import Plans from "./components/Plans/Plans";
 import Testimonials from "./components/Testimonials/Testimonials";
 import Footer from "./components/Footer/Footer";
-import CoursesPage from "./pages/Courses";
+import CoursesPage from "./components/Course/Courses";
 import Header from "./components/Header/Header";
-import CourseDetailPage from "./pages/CourseDetail";
+import CourseDetailPage from "./components/Course/CourseDetail";
 import { scroller } from "react-scroll";
-import SubscriptionPage from "./pages/Order";
-import ImageUploader from "./pages/ImageUploader";
+import Checkout from "./components/Order/Checkout";
+import PlaceOrder from "./components/Order/PlaceOrder";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { LanguageProvider } from "./components/LanguageProvider";
 import TransactionNotifications from "./components/TransactionNotifications";
 import { UserProvider, UserContext } from "./hook/UserContext";
-import NotificationSettings from "./components/Notification/Notification";
+import Setting from "./components/Setting/Setting";
 
 
 // Component for conditional rendering of the header
@@ -95,9 +95,9 @@ const AppContent = () => {
           />
           <Route path="/courses/:category" element={<CoursesPage />} />
           <Route path="/course/:slug" element={<CourseDetailPage />} />
-          <Route path="/order" element={<SubscriptionPage />} />
-          <Route path="/image-uploader" element={<ImageUploader />} />
-          <Route path="/notifications" element={<NotificationSettings />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order" element={<PlaceOrder />} />
+          <Route path="/settings" element={<Setting />} />
         </Routes>
       </div>
       <Footer />
@@ -112,7 +112,7 @@ const App = () => {
 <Router>
       <UserProvider>
         <LanguageProvider>
-          <UserContext.Consumer>
+        <UserContext.Consumer>
             {({ user, loading }) =>
               !loading && user ? (
                 <TransactionNotifications user={user} />
