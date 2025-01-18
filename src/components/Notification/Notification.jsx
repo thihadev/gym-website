@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { UserContext } from "../../hook/UserContext";
+import axios from "../../axios";
+import LoadingSpinner from "../LoadingSpinner";
+import EditProfile from "../Profile/EditProfile";
 
 const Notification = () => {
   const [activeTab, setActiveTab] = useState("profile");
@@ -8,12 +10,34 @@ const Notification = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const location = useLocation();
   const { scrollToSection } = location.state || {};
-    const { user } = useContext(UserContext);
-  console.log(user);
-
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // To manage loading state
+  const [error, setError] = useState(null); // To manage error state
   const [editProfile, setEditProfile] = useState(false);
 
   useEffect(() => {
+    const fetchUserData = async () => {
+      const token = localStorage.getItem("accessToken");
+
+      if (token) {
+        try {
+          const response = await axios.get("profile", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setUser(response.data.data);
+        } catch (error) {
+          console.error("Error fetching profile", error);
+          setUser(null);
+          setError("ERROR");
+        }
+      }
+      setLoading(false);
+    };
+
+    fetchUserData();
+
     const fetchedNotifications = [
       { id: 1, message: "You have a new follower", read: false },
       { id: 2, message: "Your post received a comment", read: false },
@@ -40,17 +64,73 @@ const Notification = () => {
   };
 
   const handleProfileChange = (e) => {
-    // const { name, value } = e.target;
-    // setProfile((prev) => ({ ...prev, [name]: value }));
+    const { name, value } = e.target;
+
+    setUser((prevUser) => ({
+      ...prevUser,
+      [name]: value,
+    }));
   };
 
-  const saveProfile = () => {
-    setEditProfile(false);
-    // console.log("Profile saved:", profile);
+  const updateUserProfile = async (updatedFields) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      const response = await axios.post(
+        "/profile-update",
+        updatedFields,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("Profile updated successfully:", response.data);
+      return true; // Return true to indicate success
+    } catch (error) {
+      console.error("Error updating profile:", error.response?.data || error.message);
+      return false; // Return false to indicate failure
+    }
   };
+
+  const saveProfile = async () => {
+    setEditProfile(false);
+
+    // Use the current `user` state for the API payload
+    const success = await updateUserProfile(user);
+
+    if (success) {
+      console.log("Profile saved locally and on the server.");
+    } else {
+      console.error("Failed to save profile to the server.");
+    }
+  };
+
+  const closeProfile = async () => {
+    setEditProfile(false);
+  };
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return (
+      <div className="error-message flex flex-col justify-center items-center h-screen text-center">
+        <h2 className="text-xl text-red-600 font-semibold">
+          Error Loading Notifications
+        </h2>
+        <p className="text-gray-600">
+          Please try refreshing the page or check your connection.
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex justify-center items-center p-4 max-h-screen">
+    <div className="flex justify-center items-center p-4 h-vh">
       <div className="w-full sm:w-3/4 lg:w-2/3 xl:w-1/2 bg-white shadow-lg rounded-lg p-6">
         {/* Tabs */}
         <div className="flex justify-center space-x-8 mb-6">
@@ -59,6 +139,7 @@ const Notification = () => {
               activeTab === "profile" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-600"
             }`}
             onClick={() => setActiveTab("profile")}
+            
           >
             Profile
           </div>
@@ -81,77 +162,28 @@ const Notification = () => {
         <div>
           {activeTab === "profile" && (
             <section>
-              <h2 className="text-xl font-bold mb-4 text-gray-700">Profile</h2>
               <div
                 className="flex items-start gap-6 overflow-y-auto"
-                style={{ maxHeight: "300px" }} // Fixed height and scroll for profile section
+                style={{ maxHeight: "450px" }} // Fixed height and scroll for profile section
               >
                 <img
-                  src={user.avatar}
+                  src={user?.avatar || "/default-avatar.png"} // fallback to a default avatar
                   alt="Avatar"
                   className="w-32 h-32 rounded-full border-4 border-gray-200"
                 />
                 {editProfile ? (
-                  <div className="flex-grow space-y-4">
-                    <div>
-                      <label className="block text-sm text-gray-600 mb-1">First Name</label>
-                      <input
-                        type="text"
-                        name="firstname"
-                        value={user.firstname || ""}
-                        onChange={handleProfileChange}
-                        className="w-full p-2 border border-gray-300 rounded text-sm text-gray-800"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm text-gray-600 mb-1">Last Name</label>
-                      <input
-                        type="text"
-                        name="lastname"
-                        value={user.lastname || ""}
-                        onChange={handleProfileChange}
-                        className="w-full p-2 border border-gray-300 rounded text-sm text-gray-800"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm text-gray-600 mb-1">Date of Birth</label>
-                      <input
-                        type="date"
-                        name="dob"
-                        value={user.dob || ""}
-                        onChange={handleProfileChange}
-                        className="w-full p-2 border border-gray-300 rounded text-sm text-gray-800"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm text-gray-600 mb-1">Gender</label>
-                      <select
-                        name="gender"
-                        value={user.gender || ""}
-                        onChange={handleProfileChange}
-                        className="w-full p-2 border border-gray-300 rounded text-sm text-gray-800"
-                      >
-                        <option value="">Select Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                      </select>
-                    </div>
-                    <button
-                      onClick={saveProfile}
-                      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                    >
-                      Save
-                    </button>
-                  </div>
+                  <EditProfile 
+                    user={user}
+                    handleProfileChange={handleProfileChange}
+                    saveProfile={saveProfile}
+                    closeProfile={closeProfile}
+                  />
                 ) : (
                   <div className="flex-grow space-y-2">
-                    <p className="text-lg font-semibold text-gray-800">
-                      {user.name}
-                    </p>
-                    <p className="text-sm text-gray-600">DOB: {user.dob || "N/A"}</p>
-                    <p className="text-sm text-gray-600">Gender: {user.gender || "N/A"}</p>
-                    <p className="text-sm text-gray-600">Email: {user.email}</p>
+                    <p className="text-lg font-semibold text-gray-800">{user?.name}</p>
+                    <p className="text-sm text-gray-600">DOB: {user?.dob || "N/A"}</p>
+                    <p className="text-sm text-gray-600">Gender: {user?.gender || "N/A"}</p>
+                    <p className="text-sm text-gray-600">Email: {user?.email}</p>
                     <button
                       onClick={() => setEditProfile(true)}
                       className="text-blue-600 hover:underline"
@@ -168,13 +200,13 @@ const Notification = () => {
             <section>
               <h2 className="text-xl font-bold mb-4 text-gray-700">Notifications</h2>
               <div
-                className="space-y-3 overflow-y-auto"
-                style={{ maxHeight: "300px" }} // Fixed height and scroll for notifications
+                className="space-y-2 overflow-y-auto"
+                style={{ maxHeight: "394px" }}
               >
                 {notifications.map((notification) => (
                   <div
                     key={notification.id}
-                    className={`p-4 rounded-lg shadow ${
+                    className={`p-2 rounded-lg shadow ${
                       notification.read
                         ? "bg-gray-100"
                         : "bg-blue-100 border-l-4 border-blue-500"
