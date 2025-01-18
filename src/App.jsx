@@ -19,7 +19,6 @@ import { LanguageProvider } from "./components/LanguageProvider";
 import TransactionNotifications from "./components/TransactionNotifications";
 import { UserProvider, UserContext } from "./hook/UserContext";
 import NotificationSettings from "./components/Notification/Notification";
-import ProfileSettings from "./components/Profile/UserProfile";
 
 
 // Component for conditional rendering of the header
@@ -98,7 +97,6 @@ const AppContent = () => {
           <Route path="/course/:slug" element={<CourseDetailPage />} />
           <Route path="/order" element={<SubscriptionPage />} />
           <Route path="/image-uploader" element={<ImageUploader />} />
-          <Route path="/profile" element={<ProfileSettings />} />
           <Route path="/notifications" element={<NotificationSettings />} />
         </Routes>
       </div>

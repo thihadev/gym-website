@@ -1,56 +1,76 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
+import EditProfile from "./EditProfile";
+import axios from "../../axios";
 
-const ProfileSettings = ({ user }) => {
-  const [name, setName] = useState(user.name);
-  const [email, setEmail] = useState(user.email);
-  const [avatar, setAvatar] = useState(user.avatar);
+const UserProfile = () => {
+  const [user, setUser] = useState(null);
+  const [editProfile, setEditProfile] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const handleUpdateProfile = () => {
-    // Logic to update profile (API call, etc.)
-    console.log('Profile updated:', { name, email, avatar });
-  };
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = localStorage.getItem("accessToken");
+
+      if (token) {
+        try {
+          const response = await axios.get("profile", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setUser(response.data.data);
+        } catch (error) {
+          console.error("Error fetching profile", error);
+          setUser(null);
+          setError("ERROR");
+        }
+      }
+      setLoading(false);
+    };
+
+    fetchUserData();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-semibold">Profile Settings</h2>
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Name:</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Email:</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Avatar:</label>
-          <input
-            type="file"
-            onChange={(e) => setAvatar(e.target.files[0])}
-            className="mt-1 block w-full text-sm text-gray-500 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-indigo-100 file:text-indigo-700"
-          />
-        </div>
-      </div>
-      <button
-        onClick={handleUpdateProfile}
-        className="w-full mt-4 py-2 px-4 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    <section className="p-6 bg-gray-50">
+      <div
+        className="flex flex-col md:flex-row items-center md:items-start gap-6 overflow-y-auto"
+        style={{ maxHeight: "380px" }}
       >
-        Update Profile
-      </button>
-    </div>
+        {/* User Avatar */}
+        <img
+          src={user?.avatar || "/default-avatar.png"}
+          alt="User Avatar"
+          className="w-32 h-32 rounded-full border-4 border-gray-200"
+        />
+
+        {/* User Details or Edit Profile */}
+        {editProfile ? (
+          <EditProfile
+            user={user}
+            setUser={setUser}
+            setEditProfile={setEditProfile}
+          />
+        ) : (
+          <div className="text-center md:text-left">
+            <p className="text-lg font-semibold">{user?.name || "N/A"}</p>
+            <p className="text-md">Email: {user?.email || "N/A"}</p>
+            <p className="text-md text-green-600 font-semibold">{user?.type}</p>
+            <button
+              onClick={() => setEditProfile(true)}
+              className="text-white mt-4 text-sm rounded-lg px-3 py-1 bg-blue-500 hover:bg-blue-700"
+            >
+              Edit Profile
+            </button>
+          </div>
+        )}
+      </div>
+    </section>
   );
 };
 
-export default ProfileSettings;
+export default UserProfile;

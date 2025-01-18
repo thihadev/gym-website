@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "../../axios";
 import LoadingSpinner from "../LoadingSpinner";
-import EditProfile from "../Profile/EditProfile";
+import UserProfile from "../Profile/UserProfile";
+import { UserContext } from "../../hook/UserContext";
 
 const Notification = () => {
   const [activeTab, setActiveTab] = useState("profile");
-  const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const { notifications, notificationCount, markNotificationAsRead } =
+    useContext(UserContext);
   const location = useLocation();
   const { scrollToSection } = location.state || {};
   const [user, setUser] = useState(null);
@@ -38,30 +39,10 @@ const Notification = () => {
 
     fetchUserData();
 
-    const fetchedNotifications = [
-      { id: 1, message: "You have a new follower", read: false },
-      { id: 2, message: "Your post received a comment", read: false },
-      { id: 3, message: "Your profile was viewed", read: true },
-      ...Array.from({ length: 20 }, (_, i) => ({
-        id: i + 4,
-        message: `Notification ${i + 4}`,
-        read: false,
-      })),
-    ];
-    setNotifications(fetchedNotifications);
-    setUnreadCount(fetchedNotifications.filter((n) => !n.read).length);
-
     if (scrollToSection) {
       setActiveTab(scrollToSection);
     }
   }, [scrollToSection]);
-
-  const markAsRead = (id) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
-    setUnreadCount((prev) => prev - 1);
-  };
 
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
@@ -76,21 +57,20 @@ const Notification = () => {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const response = await axios.post(
-        "/profile-update",
-        updatedFields,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.post("/profile-update", updatedFields, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       console.log("Profile updated successfully:", response.data);
       return true; // Return true to indicate success
     } catch (error) {
-      console.error("Error updating profile:", error.response?.data || error.message);
+      console.error(
+        "Error updating profile:",
+        error.response?.data || error.message
+      );
       return false; // Return false to indicate failure
     }
   };
@@ -136,23 +116,26 @@ const Notification = () => {
         <div className="flex justify-center space-x-8 mb-6">
           <div
             className={`text-lg font-semibold cursor-pointer hover:text-blue-500 ${
-              activeTab === "profile" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-600"
+              activeTab === "profile"
+                ? "text-blue-600 border-b-2 border-blue-600"
+                : "text-gray-600"
             }`}
             onClick={() => setActiveTab("profile")}
-            
           >
             Profile
           </div>
           <div
             className={`text-lg font-semibold cursor-pointer flex items-center space-x-2 hover:text-blue-500 ${
-              activeTab === "notifications" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-600"
+              activeTab === "notifications"
+                ? "text-blue-600 border-b-2 border-blue-600"
+                : "text-gray-600"
             }`}
             onClick={() => setActiveTab("notifications")}
           >
             <span>Notifications</span>
-            {unreadCount > 0 && (
+            {notificationCount > 0 && (
               <span className="bg-red-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center">
-                {unreadCount}
+                {notificationCount}
               </span>
             )}
           </div>
@@ -161,68 +144,55 @@ const Notification = () => {
         {/* Main Content */}
         <div>
           {activeTab === "profile" && (
-            <section>
-              <div
-                className="flex items-start gap-6 overflow-y-auto"
-                style={{ maxHeight: "450px" }} // Fixed height and scroll for profile section
-              >
-                <img
-                  src={user?.avatar || "/default-avatar.png"} // fallback to a default avatar
-                  alt="Avatar"
-                  className="w-32 h-32 rounded-full border-4 border-gray-200"
-                />
-                {editProfile ? (
-                  <EditProfile 
-                    user={user}
-                    handleProfileChange={handleProfileChange}
-                    saveProfile={saveProfile}
-                    closeProfile={closeProfile}
-                  />
-                ) : (
-                  <div className="flex-grow space-y-2">
-                    <p className="text-lg font-semibold text-gray-800">{user?.name}</p>
-                    <p className="text-sm text-gray-600">DOB: {user?.dob || "N/A"}</p>
-                    <p className="text-sm text-gray-600">Gender: {user?.gender || "N/A"}</p>
-                    <p className="text-sm text-gray-600">Email: {user?.email}</p>
-                    <button
-                      onClick={() => setEditProfile(true)}
-                      className="text-blue-600 hover:underline"
-                    >
-                      Edit Profile
-                    </button>
-                  </div>
-                )}
-              </div>
-            </section>
+            <UserProfile 
+              edit={editProfile}
+              // user={user}
+            />
           )}
 
           {activeTab === "notifications" && (
             <section>
-              <h2 className="text-xl font-bold mb-4 text-gray-700">Notifications</h2>
+              <h2 className="text-xl font-bold mb-4 text-gray-700">
+                Notifications
+              </h2>
               <div
-                className="space-y-2 overflow-y-auto"
-                style={{ maxHeight: "394px" }}
+                className="space-y-2 overflow-y-auto p-3"
+                style={{ maxHeight: "400px" }}
               >
                 {notifications.map((notification) => (
                   <div
                     key={notification.id}
-                    className={`p-2 rounded-lg shadow ${
-                      notification.read
+                    className={`p-3 rounded-lg shadow ${
+                      notification.is_read
                         ? "bg-gray-100"
                         : "bg-blue-100 border-l-4 border-blue-500"
                     }`}
                   >
-                    <p className="text-gray-800">{notification.message}</p>
-                    {!notification.read && (
+                    <p className="text-gray-800 text-sm font-semibold md:text-base">
+                      {notification.message}
+                    </p>
+
+                    <p className="text-gray-500 text-xs md:text-sm mt-1">
+                      {notification.date_time}
+                    </p>
+
+                    {!notification.is_read && (
                       <button
-                        onClick={() => markAsRead(notification.id)}
-                        className="text-sm text-blue-600 hover:underline mt-2"
+                        onClick={() => markNotificationAsRead(notification.id)}
+                        className="text-sm md:text-base text-blue-600 hover:underline mt-2"
                       >
                         Mark as read
                       </button>
                     )}
                   </div>
                 ))}
+
+                {/* Empty State */}
+                {notifications.length === 0 && (
+                  <div className="text-center text-gray-500 py-5">
+                    No notifications available.
+                  </div>
+                )}
               </div>
             </section>
           )}

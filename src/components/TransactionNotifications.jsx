@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { setPusherInstance, getPusherInstance, disconnectPusher } from "../../src/pusher";
 import ModalThankYou from "./ModalThankYou"; // Modal component
+import { UserContext } from "../hook/UserContext";
 
 const TransactionNotifications = ({ user }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+  const { fetchNotifications } = useContext(UserContext);
 
   useEffect(() => {
     if (!user) return;
@@ -17,7 +19,9 @@ const TransactionNotifications = ({ user }) => {
     channel.bind("TransactionUpdated", (data) => {
       setModalMessage(data.message);
       setModalVisible(true);
+      fetchNotifications();
     });
+
 
     // Cleanup: Unbind events and unsubscribe from channel on user change or component unmount
     return () => {
@@ -27,7 +31,7 @@ const TransactionNotifications = ({ user }) => {
       }
       disconnectPusher(); // Disconnect Pusher if needed
     };
-  }, [user]);
+  }, [user, fetchNotifications]);
 
   const closeModal = () => {
     setModalVisible(false);
