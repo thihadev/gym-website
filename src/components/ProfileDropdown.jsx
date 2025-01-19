@@ -1,20 +1,27 @@
-import React, { useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import DefaultAvatar from "../assets/default-avatar.png";
 import { useLanguage } from "../components/LanguageProvider";
 import { Link } from "react-router-dom";
 import transactions from "../data/transactions";
-import { UserContext } from "../hook/UserContext";
-
+import useNotification from "../hook/useNotification";
 
 const ProfileDropdown = ({ user, handleLogout }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { notificationCount } = useContext(UserContext);
+  const { notificationCount, fetchNotifications } = useNotification();
   const { language } = useLanguage();
   const list = transactions;
   const lang = list[language];
 
+  useEffect(() => {
+      fetchNotifications();
+    }, [fetchNotifications]);
+
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
+  };
+
+  const closeDropdown = () => {
+    setDropdownOpen(false);
   };
 
   return (
@@ -46,6 +53,7 @@ const ProfileDropdown = ({ user, handleLogout }) => {
                 <li>
                   <Link
                     to="/settings"
+                    onClick={closeDropdown}
                     state={{ scrollToSection: "profile" }}
                     className="w-full px-4 py-3 text-left text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-800 transition duration-200 flex items-center"
                   >
@@ -55,6 +63,7 @@ const ProfileDropdown = ({ user, handleLogout }) => {
                 <li>
                   <Link
                     to="/settings"
+                    onClick={closeDropdown}
                     state={{ scrollToSection: "notifications" }}
                     className="w-full px-4 py-3 text-left text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-800 transition duration-200 flex items-center"
                   >

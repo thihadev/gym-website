@@ -1,21 +1,26 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import UserProfile from "../Profile/UserProfile";
-import { UserContext } from "../../hook/UserContext";
 import Notification from "../Notification/Notification";
+import useNotification from "../../hook/useNotification";
 
 const Setting = () => {
   const [activeTab, setActiveTab] = useState("profile");
-  const { notificationCount } = useContext(UserContext);
+  const { 
+    notificationCount, 
+    notifications, 
+    fetchNotifications,
+    markNotificationAsRead,
+    markAllAsRead } = useNotification();
   const location = useLocation();
   const { scrollToSection } = location.state || {};
 
   useEffect(() => {
+    fetchNotifications()
     if (scrollToSection) {
       setActiveTab(scrollToSection);
     }
-  }, [scrollToSection]);
-
+  }, [scrollToSection, fetchNotifications]);
 
   return (
     <div className="flex justify-center items-center p-4 h-vh">
@@ -56,7 +61,13 @@ const Setting = () => {
           )}
 
           {activeTab === "notifications" && (
-            <Notification />
+            <Notification 
+            notifications={notifications}
+            notificationCount={notificationCount}
+            markNotificationAsRead={markNotificationAsRead}
+            markAllAsRead={markAllAsRead}
+              
+            />
           )}
         </div>
       </div>

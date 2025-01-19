@@ -9,7 +9,7 @@ import { FaLock, FaPlayCircle } from "react-icons/fa";
 import Modal from "../../components/Modal";
 import SignIn from "../../components/Auth/SignIn";
 import SignUp from "../../components/Auth/SignUp";
-import { UserContext } from "../../hook/UserContext";
+import { UserContext } from "../../context/UserContext.js";
 
 const CourseDetailPage = () => {
   const { user, fetchUserProfile } = useContext(UserContext);

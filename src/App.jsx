@@ -17,7 +17,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { LanguageProvider } from "./components/LanguageProvider";
 import TransactionNotifications from "./components/TransactionNotifications";
-import { UserProvider, UserContext } from "./hook/UserContext";
+import { UserProvider, UserContext } from "./context/UserContext";
 import Setting from "./components/Setting/Setting";
 
 
@@ -33,6 +33,7 @@ const AppContent = () => {
   const location = useLocation();
 
   useEffect(() => {
+    
     const scrollToSection = () => {
       let section = location.state?.scrollToSection;
 
@@ -112,13 +113,14 @@ const App = () => {
 <Router>
       <UserProvider>
         <LanguageProvider>
-        <UserContext.Consumer>
+        {/* <UserContext.Consumer>
             {({ user, loading }) =>
               !loading && user ? (
                 <TransactionNotifications user={user} />
               ) : null
             }
-          </UserContext.Consumer>
+          </UserContext.Consumer> */}
+            <TransactionNotifications/>
           <AppContent />
           <ToastContainer />
         </LanguageProvider>

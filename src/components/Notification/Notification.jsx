@@ -1,12 +1,25 @@
-import React, { useContext } from "react";
-import { UserContext } from "../../hook/UserContext";
+import React from "react";
 
-const Notification = () => {
-  const { notifications, markNotificationAsRead } = useContext(UserContext);
+const Notification = ({ 
+  notifications, 
+  notificationCount, 
+  markNotificationAsRead,
+  markAllAsRead 
+}) => {
 
   return (
     <section>
-      <h2 className="text-xl font-bold mb-4 text-gray-700">Notifications</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold text-gray-700">Notifications</h2>
+        {notificationCount > 0 && (
+          <button
+            onClick={markAllAsRead}
+            className="text-sm md:text-base text-blue-600 hover:underline"
+          >
+            Mark All as Read
+          </button>
+        )}
+      </div>
       <div
         className="space-y-2 overflow-y-auto p-3"
         style={{ maxHeight: "400px" }}

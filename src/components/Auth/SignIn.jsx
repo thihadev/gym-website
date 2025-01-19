@@ -3,7 +3,7 @@ import React, { useState, useContext } from "react";
 import "./SignIn.css";
 import axios from "../../axios";
 import { toast } from "react-toastify";
-import { UserContext } from "../../hook/UserContext";
+import { UserContext } from "../../context/UserContext";
 import { setPusherInstance } from "../../../src/pusher";
 
 const SignIn = ({ switchToSignUp, onSuccess }) => {
@@ -17,6 +17,8 @@ const SignIn = ({ switchToSignUp, onSuccess }) => {
     setError(""); // Clear previous errors
 
     try {
+      console.log(email);
+      console.log(password);
       const response = await axios.post("/login", { email, password });
     
       const { access_token, data } = response.data;
@@ -25,11 +27,10 @@ const SignIn = ({ switchToSignUp, onSuccess }) => {
 
       await fetchUserProfile();
 
-      setPusherInstance(token);
+      // setPusherInstance(token);
 
       onSuccess();
       toast.success(`Welcome, ${data.name}`);
-      // window.location.reload();
     } catch (error) {
       // If error.response exists, it means the server responded with an error
       if (error.response) {

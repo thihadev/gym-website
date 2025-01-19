@@ -10,7 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 import LanguageSelector from "../LanguageSelector";
 import transactions from "../../data/transactions";
 import { useLanguage } from "../LanguageProvider";
-import { UserContext } from "../../hook/UserContext";
+import { UserContext } from "../../context/UserContext";
 
 const HomeHeader = () => {
   const [menuOpened, setMenuOpened] = useState(false);

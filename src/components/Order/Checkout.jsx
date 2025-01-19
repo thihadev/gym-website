@@ -10,7 +10,7 @@ import SignUp from "../Auth/SignUp";
 import { toast } from 'react-toastify';
 // import transactions from '../data/transactions.js'
 import { useLanguage } from '../LanguageProvider'
-import { UserContext } from "../../hook/UserContext";
+import { UserContext } from "../../context/UserContext";
 
 const Checkout = () => {
   const navigate = useNavigate();
