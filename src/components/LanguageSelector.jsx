@@ -4,13 +4,11 @@ import { FaGlobe } from "react-icons/fa";
 
 const LanguageSelector = (checkMobile) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { language, switchLanguage } = useLanguage(); // Get current language and switch function
+  const { language, switchLanguage, fontSize } = useLanguage(); // Get current language and switch function
   const languages = [
     { code: "en", label: "English" },
     { code: "mm", label: "မြန်မာ" }, // Burmese
   ];
-
-  const fontSize = (language === "mm") ? "1rem" : "1rem";
 
   const handleLanguageChange = (code) => {
     switchLanguage(code); // Use the switchLanguage function from the context

@@ -9,10 +9,8 @@ import SignUp from "../Auth/SignUp";
 import ProfileDropdown from "../ProfileDropdown";
 import "react-toastify/dist/ReactToastify.css";
 import LanguageSelector from "../LanguageSelector";
-import transactions from "../../data/transactions";
 import { useLanguage } from "../../context/LanguageProvider";
 import { UserContext } from "../../context/UserContext.js";
-import LoadingSpinner from "../LoadingSpinner.jsx";
 
 const Header = () => {
   // const token = localStorage.getItem("accessToken");
@@ -21,11 +19,7 @@ const Header = () => {
   const [showModal, setShowModal] = useState(false);
   const [isSignUpPage, setIsSignUpPage] = useState(false);
   const { user, fetchUserProfile, loading, logout } = useContext(UserContext);
-  const { language } = useLanguage();
-  const list = transactions;
-  const lang = list[language];
-
-  const fontSize = language === "mm" ? "1rem" : "1rem";
+  const { fontSize, transaction } = useLanguage();
 
   useEffect(() => {
     fetchUserProfile();
@@ -48,7 +42,7 @@ const Header = () => {
   };
 
   if (loading) {
-    return <LoadingSpinner />;
+    return <div>...</div>;
   }
 
   return (
@@ -70,7 +64,7 @@ const Header = () => {
                     className="cursor-pointer hover:text-gray-400"
                     style={{ fontSize }}
                   >
-                    {lang.home}
+                    {transaction("home")}
                   </Link>
                 </li>
                 <li className="p-4">
@@ -80,7 +74,7 @@ const Header = () => {
                     className="cursor-pointer hover:text-gray-400"
                     style={{ fontSize }}
                   >
-                    {lang.programs}
+                    {transaction("programs")}
                   </Link>
                 </li>
                 <li className="p-4">
@@ -90,7 +84,7 @@ const Header = () => {
                     className="cursor-pointer hover:text-gray-400"
                     style={{ fontSize }}
                   >
-                    {lang.aboutUs}
+                    {transaction("aboutUs")}
                   </Link>
                 </li>
                 <li className="p-4">
@@ -100,7 +94,7 @@ const Header = () => {
                     className="cursor-pointer hover:text-gray-400"
                     style={{ fontSize }}
                   >
-                    {lang.reasons}
+                    {transaction("reasons")}
                   </Link>
                 </li>
                 <li className="p-4">
@@ -110,7 +104,7 @@ const Header = () => {
                     className="cursor-pointer hover:text-gray-400"
                     style={{ fontSize }}
                   >
-                    {lang.plans}
+                    {transaction("plans")}
                   </Link>
                 </li>
                 <li className="p-4">
@@ -126,7 +120,7 @@ const Header = () => {
                   onClick={openSignIn}
                   className="cursor-pointer font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
                 >
-                  {lang.login}
+                  {transaction("login")}
                 </button>
               )}
             </div>
@@ -157,7 +151,7 @@ const Header = () => {
                   to="hero"
                   className="cursor-pointer hover:text-gray-300"
                 >
-                  {lang.home}
+                  {transaction("home")}
                 </Link>
               </li>
               <li className="p-4">
@@ -166,7 +160,7 @@ const Header = () => {
                   to="/programs"
                   className="cursor-pointer hover:text-gray-300"
                 >
-                  {lang.programs}
+                  {transaction("programs")}
                 </Link>
               </li>
               <li className="p-4">
@@ -175,7 +169,7 @@ const Header = () => {
                   to="aboutus"
                   className="cursor-pointer hover:text-gray-300"
                 >
-                  {lang.aboutUs}
+                  {transaction("aboutUs")}
                 </Link>
               </li>
               <li className="p-4">
@@ -184,7 +178,7 @@ const Header = () => {
                   to="reasons"
                   className="cursor-pointer hover:text-gray-300"
                 >
-                  {lang.reasons}
+                  {transaction("reasons")}
                 </Link>
               </li>
               <li className="p-4">
@@ -193,7 +187,7 @@ const Header = () => {
                   to="plans"
                   className="cursor-pointer hover:text-gray-300"
                 >
-                  {lang.plans}
+                  {transaction("plans")}
                 </Link>
               </li>
 
@@ -207,7 +201,7 @@ const Header = () => {
                     }}
                     className="w-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
                   >
-                    {lang.login}
+                    {transaction("login")}
                   </button>
                 </li>
               )}
@@ -219,7 +213,7 @@ const Header = () => {
                     onClick={logout}
                     className="cursor-pointerw-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
                   >
-                    {lang.logout}
+                    {transaction("logout")}
                   </Link>
                 </li>
               )}

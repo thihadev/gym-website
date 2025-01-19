@@ -4,7 +4,6 @@ import "./SignIn.css";
 import axios from "../../axios";
 import { toast } from "react-toastify";
 import { UserContext } from "../../context/UserContext";
-import { setPusherInstance } from "../../../src/pusher";
 
 const SignIn = ({ switchToSignUp, onSuccess }) => {
   const { fetchUserProfile } = useContext(UserContext);
@@ -22,7 +21,7 @@ const SignIn = ({ switchToSignUp, onSuccess }) => {
       const response = await axios.post("/login", { email, password });
     
       const { access_token, data } = response.data;
-      const token = localStorage.setItem("accessToken", access_token);
+      localStorage.setItem("accessToken", access_token);
       localStorage.setItem("userId", data.id);
 
       await fetchUserProfile();

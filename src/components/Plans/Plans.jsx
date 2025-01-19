@@ -3,14 +3,11 @@ import { useState, useEffect } from "react";
 import axios from "../../axios.js";
 import { Link } from "react-router-dom";
 import { useLanguage } from "../../context/LanguageProvider";
-import transactions from "../../data/transactions";
 
 const Plans = () => {
   const [plans, setPlans] = useState([]);
   const [error, setError] = useState(false);
-  const { language } = useLanguage();
-  const list = transactions;
-  const lang = list[language];
+  const { language, transaction } = useLanguage();
 
   useEffect(() => {
     axios
@@ -69,7 +66,7 @@ const Plans = () => {
               </div>
 
               <Link to="checkout" state={{ plan: plan }} className="btn">
-                {lang.getnow}
+                {transaction("getnow")}
               </Link>
             </div>
           ))

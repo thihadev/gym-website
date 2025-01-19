@@ -3,7 +3,6 @@ import axios from "../../axios";
 import { Link, useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import LoadingSpinner from "../../components/LoadingSpinner.jsx";
-import transactions from '../../data/transactions.js'
 import { useLanguage } from '../../context/LanguageProvider'
 
 const CoursesPage = () => {
@@ -13,9 +12,7 @@ const CoursesPage = () => {
   const { category } = useParams();
   const location = useLocation();
   const { categoryName, categoryNameMM } = location.state || {};
-  const { language } = useLanguage();
-  const list = transactions;
-  const lang = list[language];
+  const { language, transaction } = useLanguage();
 
   useEffect(() => {
     setLoading(true); // Set loading to true before fetching data
@@ -59,7 +56,7 @@ const CoursesPage = () => {
       {/* Breadcrumb/Header */}
       <div className="text-white">
         <h3 className="text-center text-2xl md:text-3xl font-bold tracking-wide">
-          <Link to={"/"}>{lang.home}</Link>
+          <Link to={"/"}>{transaction("home")}</Link>
           <span className="text-gray-400"> /</span> {(language === 'en' ? categoryName : categoryNameMM ) || "Category"}
         </h3>
       </div>

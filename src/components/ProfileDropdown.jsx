@@ -2,15 +2,12 @@ import React, { useEffect, useState } from "react";
 import DefaultAvatar from "../assets/default-avatar.png";
 import { useLanguage } from "../context/LanguageProvider";
 import { Link } from "react-router-dom";
-import transactions from "../data/transactions";
 import useNotification from "../hook/useNotification";
 
 const ProfileDropdown = ({ user, handleLogout }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { notificationCount, fetchNotifications } = useNotification();
-  const { language } = useLanguage();
-  const list = transactions;
-  const lang = list[language];
+  const { language, transaction } = useLanguage();
 
   useEffect(() => {
       fetchNotifications();
@@ -57,7 +54,7 @@ const ProfileDropdown = ({ user, handleLogout }) => {
                     state={{ scrollToSection: "profile" }}
                     className="w-full px-4 py-3 text-left text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-800 transition duration-200 flex items-center"
                   >
-                    {lang.profile}
+                    {transaction("profile")}
                   </Link>
                 </li>
                 <li>
@@ -68,7 +65,7 @@ const ProfileDropdown = ({ user, handleLogout }) => {
                     className="w-full px-4 py-3 text-left text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-800 transition duration-200 flex items-center"
                   >
                     <div className="flex justify-between items-center w-full">
-                      <span>{lang.notifications}</span>
+                      <span>{transaction("notifications")}</span>
                       {notificationCount > 0 && (
                         <span className="w-5 h-5 bg-red-500 text-white text-sm rounded-full flex items-center justify-center">
                           {notificationCount}
@@ -84,7 +81,7 @@ const ProfileDropdown = ({ user, handleLogout }) => {
                     className="w-full px-4 py-3 text-left text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-800 transition duration-200 flex items-center"
                     onClick={handleLogout}
                   >
-                    {lang.logout}
+                    {transaction("logout")}
                   </Link>
                 </li>
               </ul>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, CSSProperties } from "react";
+import { useState, useEffect, useContext } from "react";
 import Logo from "../../assets/logo.png";
 import Bars from "../../assets/bars.png";
 import { Link } from "react-scroll";
@@ -8,7 +8,6 @@ import SignUp from "../Auth/SignUp";
 import ProfileDropdown from "../ProfileDropdown";
 import "react-toastify/dist/ReactToastify.css";
 import LanguageSelector from "../LanguageSelector";
-import transactions from "../../data/transactions";
 import { useLanguage } from "../../context/LanguageProvider";
 import { UserContext } from "../../context/UserContext";
 
@@ -17,12 +16,8 @@ const HomeHeader = () => {
   const [mobile, setMobile] = useState(window.innerWidth < 768);
   const [showModal, setShowModal] = useState(false);
   const [isSignUpPage, setIsSignUpPage] = useState(false);
-  const { language } = useLanguage();
-  const list = transactions;
-  const lang = list[language];
+  const { fontSize, transaction } = useLanguage();
   const { user, fetchUserProfile, logout, loading } = useContext(UserContext);
-
-  const fontSize = language === "mm" ? "1rem" : "1rem";
 
   useEffect(() => {
     // fetchUserProfile();
@@ -65,7 +60,7 @@ const HomeHeader = () => {
                 className="cursor-pointer hover:text-gray-400"
                 style={{ fontSize }}
               >
-                {lang.home}
+                {transaction('home')}
               </Link>
             </li>
             <li className="p-4">
@@ -75,7 +70,7 @@ const HomeHeader = () => {
                 className="cursor-pointer hover:text-gray-400"
                 style={{ fontSize }}
               >
-                {lang.programs}
+                {transaction('programs')}
               </Link>
             </li>
             <li className="p-4">
@@ -85,7 +80,7 @@ const HomeHeader = () => {
                 className="cursor-pointer hover:text-gray-400"
                 style={{ fontSize }}
               >
-                {lang.aboutUs}
+                 {transaction('aboutUs')}
               </Link>
             </li>
             <li className="p-4">
@@ -95,7 +90,7 @@ const HomeHeader = () => {
                 className="cursor-pointer hover:text-gray-400"
                 style={{ fontSize }}
               >
-                {lang.reasons}
+                 {transaction('reasons')}
               </Link>
             </li>
             <li className="p-4">
@@ -105,7 +100,7 @@ const HomeHeader = () => {
                 className="cursor-pointer hover:text-gray-400"
                 style={{ fontSize }}
               >
-                {lang.plans}
+                 {transaction('plans')}
               </Link>
             </li>
             <li className="p-4">
@@ -122,7 +117,7 @@ const HomeHeader = () => {
               style={{ fontSize }}
               className="cursor-pointer font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
             >
-              {lang.login}
+              {transaction('login')}
             </button>
           )}
         </div>
@@ -154,7 +149,7 @@ const HomeHeader = () => {
               smooth={true}
               className="cursor-pointer hover:text-gray-300"
             >
-              {lang.home}
+              {transaction('home')}
             </Link>
           </li>
           <li className="p-4">
@@ -164,7 +159,7 @@ const HomeHeader = () => {
               smooth={true}
               className="cursor-pointer hover:text-gray-300"
             >
-              {lang.programs}
+              {transaction("programs")}
             </Link>
           </li>
           <li className="p-4">
@@ -174,7 +169,7 @@ const HomeHeader = () => {
               smooth={true}
               className="cursor-pointer hover:text-gray-300"
             >
-              {lang.aboutUs}
+              {transaction("aboutUs")}
             </Link>
           </li>
           <li className="p-4">
@@ -184,7 +179,7 @@ const HomeHeader = () => {
               smooth={true}
               className="cursor-pointer hover:text-gray-300"
             >
-              {lang.reasons}
+              {transaction("reasons")}
             </Link>
           </li>
           <li className="p-4">
@@ -194,7 +189,7 @@ const HomeHeader = () => {
               smooth={true}
               className="cursor-pointer hover:text-gray-300"
             >
-              {lang.plans}
+              {transaction("plans")}
             </Link>
           </li>
 
@@ -208,7 +203,7 @@ const HomeHeader = () => {
                 }}
                 className="w-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
               >
-                {lang.login}
+                {transaction("login")}
               </button>
             </li>
           )}
@@ -222,7 +217,7 @@ const HomeHeader = () => {
                 style={{ fontSize }}
                 className="cursor-pointerw-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
               >
-                {lang.logout}
+                {transaction("logout")}
               </Link>
             </li>
           )}

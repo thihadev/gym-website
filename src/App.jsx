@@ -113,15 +113,15 @@ const App = () => {
 <Router>
       <UserProvider>
         <LanguageProvider>
-        <UserContext.Consumer>
+        {/* <UserContext.Consumer>
             {({ user, loading }) =>
               !loading && user ? (
                 <TransactionNotifications user={user} />
               ) : null
             }
-          </UserContext.Consumer>
+          </UserContext.Consumer> */}
           <AppContent />
-          {/* <TransactionNotifications/> */}
+          <TransactionNotifications/>
           <ToastContainer />
         </LanguageProvider>
       </UserProvider>
