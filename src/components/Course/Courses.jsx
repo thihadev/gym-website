@@ -4,7 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import LoadingSpinner from "../../components/LoadingSpinner.jsx";
 import transactions from '../../data/transactions.js'
-import { useLanguage } from '../../components/LanguageProvider'
+import { useLanguage } from '../../context/LanguageProvider'
 
 const CoursesPage = () => {
   const [courses, setCourses] = useState([]);

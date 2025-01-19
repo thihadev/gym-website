@@ -2,7 +2,7 @@ import "./Plans.css";
 import { useState, useEffect } from "react";
 import axios from "../../axios.js";
 import { Link } from "react-router-dom";
-import { useLanguage } from "../LanguageProvider";
+import { useLanguage } from "../../context/LanguageProvider";
 import transactions from "../../data/transactions";
 
 const Plans = () => {

@@ -4,10 +4,10 @@ import ModalThankYou from "./ModalThankYou";
 import { UserContext } from "../context/UserContext";
 import useNotification from "../hook/useNotification";
 
-const TransactionNotifications = () => {
+const TransactionNotifications = ({user}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
-  const { user } = useContext(UserContext);
+  // const { user } = useContext(UserContext);
   const { fetchNotifications } = useNotification();
 
   useEffect(() => {

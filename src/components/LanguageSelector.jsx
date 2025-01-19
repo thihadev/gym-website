@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLanguage } from "../components/LanguageProvider"; // Make sure the path is correct
+import { useLanguage } from "../context/LanguageProvider"; // Make sure the path is correct
 import { FaGlobe } from "react-icons/fa";
 
 const LanguageSelector = (checkMobile) => {

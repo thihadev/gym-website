@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DefaultAvatar from "../assets/default-avatar.png";
-import { useLanguage } from "../components/LanguageProvider";
+import { useLanguage } from "../context/LanguageProvider";
 import { Link } from "react-router-dom";
 import transactions from "../data/transactions";
 import useNotification from "../hook/useNotification";

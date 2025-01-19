@@ -8,7 +8,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import LoadingSpinner from "../LoadingSpinner.jsx";
-import { useLanguage } from "../LanguageProvider";
+import { useLanguage } from "../../context/LanguageProvider";
 
 const Programs = () => {
   const [categories, setCategories] = useState([]);

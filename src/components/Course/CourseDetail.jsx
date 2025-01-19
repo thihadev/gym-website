@@ -4,7 +4,7 @@ import axios from "../../axios";
 import { Link, useLocation } from "react-router-dom";
 import LoadingSpinner from "../LoadingSpinner";
 import transactions from "../../data/transactions.js";
-import { useLanguage } from "../../components/LanguageProvider";
+import { useLanguage } from "../../context/LanguageProvider";
 import { FaLock, FaPlayCircle } from "react-icons/fa";
 import Modal from "../../components/Modal";
 import SignIn from "../../components/Auth/SignIn";

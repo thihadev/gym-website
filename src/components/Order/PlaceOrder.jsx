@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "../../axios"; 
 import { toast } from 'react-toastify';
-import { useLanguage } from '../LanguageProvider'
+import { useLanguage } from '../../context/LanguageProvider'
 
 export default function ImageUploader() {
   const location = useLocation();

@@ -15,7 +15,7 @@ import Checkout from "./components/Order/Checkout";
 import PlaceOrder from "./components/Order/PlaceOrder";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { LanguageProvider } from "./components/LanguageProvider";
+import { LanguageProvider } from "./context/LanguageProvider";
 import TransactionNotifications from "./components/TransactionNotifications";
 import { UserProvider, UserContext } from "./context/UserContext";
 import Setting from "./components/Setting/Setting";
@@ -113,15 +113,15 @@ const App = () => {
 <Router>
       <UserProvider>
         <LanguageProvider>
-        {/* <UserContext.Consumer>
+        <UserContext.Consumer>
             {({ user, loading }) =>
               !loading && user ? (
                 <TransactionNotifications user={user} />
               ) : null
             }
-          </UserContext.Consumer> */}
-            <TransactionNotifications/>
+          </UserContext.Consumer>
           <AppContent />
+          {/* <TransactionNotifications/> */}
           <ToastContainer />
         </LanguageProvider>
       </UserProvider>

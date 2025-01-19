@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, CSSProperties } from "react";
 import Logo from "../../assets/logo.png";
 import Bars from "../../assets/bars.png";
 import { Link } from "react-scroll";
@@ -9,7 +9,7 @@ import ProfileDropdown from "../ProfileDropdown";
 import "react-toastify/dist/ReactToastify.css";
 import LanguageSelector from "../LanguageSelector";
 import transactions from "../../data/transactions";
-import { useLanguage } from "../LanguageProvider";
+import { useLanguage } from "../../context/LanguageProvider";
 import { UserContext } from "../../context/UserContext";
 
 const HomeHeader = () => {
@@ -20,12 +20,12 @@ const HomeHeader = () => {
   const { language } = useLanguage();
   const list = transactions;
   const lang = list[language];
-  const { user, fetchUserProfile, logout } = useContext(UserContext);
+  const { user, fetchUserProfile, logout, loading } = useContext(UserContext);
 
   const fontSize = language === "mm" ? "1rem" : "1rem";
 
   useEffect(() => {
-    fetchUserProfile();
+    // fetchUserProfile();
 
     const handleResize = () => setMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
@@ -42,6 +42,11 @@ const HomeHeader = () => {
     fetchUserProfile(); 
     setShowModal(false);
   };
+
+
+  if (loading) {
+    return <div>...</div>;
+  }
 
   return (
     <div className="flex justify-between items-center p-4 text-white relative">

@@ -9,7 +9,7 @@ import SignIn from "../Auth/SignIn";
 import SignUp from "../Auth/SignUp";
 import { toast } from 'react-toastify';
 // import transactions from '../data/transactions.js'
-import { useLanguage } from '../LanguageProvider'
+import { useLanguage } from '../../context/LanguageProvider'
 import { UserContext } from "../../context/UserContext";
 
 const Checkout = () => {

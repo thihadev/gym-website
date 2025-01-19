@@ -10,7 +10,7 @@ import ProfileDropdown from "../ProfileDropdown";
 import "react-toastify/dist/ReactToastify.css";
 import LanguageSelector from "../LanguageSelector";
 import transactions from "../../data/transactions";
-import { useLanguage } from "../LanguageProvider";
+import { useLanguage } from "../../context/LanguageProvider";
 import { UserContext } from "../../context/UserContext.js";
 import LoadingSpinner from "../LoadingSpinner.jsx";
 
