@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import DefaultAvatar from "../assets/default-avatar.png";
-import { useLanguage } from "../context/LanguageProvider";
+import DefaultAvatar from "../../assets/default-avatar.png";
+import { useLanguage } from "../../context/LanguageProvider";
 import { Link } from "react-router-dom";
-import useNotification from "../hook/useNotification";
+import useNotification from "../../hook/useNotification";
 
 const ProfileDropdown = ({ user, handleLogout }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);

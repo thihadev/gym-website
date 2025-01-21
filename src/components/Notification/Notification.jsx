@@ -22,7 +22,7 @@ const Notification = ({
       </div>
       <div
         className="space-y-2 overflow-y-auto p-3"
-        style={{ maxHeight: "400px" }}
+        style={{ maxHeight: "380px" }}
       >
         {notifications.map((notification) => (
           <div

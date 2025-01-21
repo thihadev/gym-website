@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "../../axios";
+import { toast } from "react-toastify";
 
 const EditProfile = ({ user, setUser, setEditProfile }) => {
   const handleProfileChange = (e) => {
@@ -38,9 +39,11 @@ const EditProfile = ({ user, setUser, setEditProfile }) => {
     const success = await updateUserProfile(user);
 
     if (success) {
-      console.log("Profile saved locally and on the server.");
+      toast.success("Updated your profile.");
+      // console.log("Profile saved locally and on the server.");
     } else {
-      console.error("Failed to save profile to the server.");
+      toast.errot("Failed to save profile")
+      // console.error("Failed to save profile to the server.");
     }
   };
 

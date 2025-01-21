@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import Modal from "../Modal";
 import SignIn from "../Auth/SignIn";
 import SignUp from "../Auth/SignUp";
-import ProfileDropdown from "../ProfileDropdown";
+import ProfileDropdown from "../Profile/ProfileDropdown";
 import "react-toastify/dist/ReactToastify.css";
 import LanguageSelector from "../LanguageSelector";
 import { useLanguage } from "../../context/LanguageProvider";
