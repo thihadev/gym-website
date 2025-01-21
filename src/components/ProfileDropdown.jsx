@@ -7,7 +7,7 @@ import useNotification from "../hook/useNotification";
 const ProfileDropdown = ({ user, handleLogout }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { notificationCount, fetchNotifications } = useNotification();
-  const { language, transaction } = useLanguage();
+  const { transaction } = useLanguage();
 
   useEffect(() => {
       fetchNotifications();
