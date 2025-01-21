@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from "react";
-import YouTube from "react-youtube";
 import axios from "../../axios";
 import { Link, useLocation } from "react-router-dom";
 import LoadingSpinner from "../LoadingSpinner";
@@ -10,6 +9,7 @@ import Modal from "../../components/Modal";
 import SignIn from "../../components/Auth/SignIn";
 import SignUp from "../../components/Auth/SignUp";
 import { UserContext } from "../../context/UserContext.js";
+import ReactPlayer from "react-player";
 
 const CourseDetailPage = () => {
   const { user, fetchUserProfile } = useContext(UserContext);
@@ -51,7 +51,8 @@ const CourseDetailPage = () => {
         const firstUnlockedVideo = course.videos.find(
           (video) => !video.is_locked
         );
-        setCurrentVideo(firstUnlockedVideo ? firstUnlockedVideo.videoId : null);
+        console.log(firstUnlockedVideo.video_link);
+        setCurrentVideo(firstUnlockedVideo ? firstUnlockedVideo.video_link : null);
       })
       .catch((err) => {
         console.error("Failed to fetch course data:", err);
@@ -71,20 +72,13 @@ const CourseDetailPage = () => {
       return;
     }
 
-    setCurrentVideo(video.videoId);
+    console.log(video.video_link);
+    setCurrentVideo(video.video_link);
   };
 
   const handleAuthSuccess = () => {
     fetchUserProfile();
     setShowLoginModal(false);
-  };
-
-  const opts = {
-    height: "450",
-    width: "100%",
-    playerVars: {
-      autoplay: 0,
-    },
   };
 
   if (loading) return <LoadingSpinner />;
@@ -115,7 +109,13 @@ const CourseDetailPage = () => {
         <div className="flex-1 space-y-10">
           <div className="bg-gray-200 rounded-lg overflow-hidden shadow-lg">
             {currentVideo && user ? (
-              <YouTube videoId={currentVideo} opts={opts} />
+              <ReactPlayer 
+                url={currentVideo} 
+                controls={true}
+                width="100%" 
+                height="400px" 
+               />
+              // <YouTube videoId={currentVideo} opts={opts} />
             ) : (
               <div className="text-center text-gray-600 py-20">
                 {user ? lang.videoLockedMessage || "This video is locked." : lang.loginRequiredMessage || "Please log in to watch the video."}
@@ -146,7 +146,7 @@ const CourseDetailPage = () => {
               <li
                 key={video.videoId || `locked-${index}`}
                 className={`p-3 border border-slate-700 rounded-md cursor-pointer transition duration-300 flex items-center ${
-                  video.videoId === currentVideo
+                  video.video_link === currentVideo
                     ? "bg-[#293249] text-white border-blue-500"
                     : video.is_locked
                     ? "text-white cursor-not-allowed"
