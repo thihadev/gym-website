@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Hero from "./components/Hero/Hero";
 import Programs from "./components/Programs/Programs";
@@ -19,6 +19,7 @@ import { LanguageProvider } from "./context/LanguageProvider";
 import TransactionNotifications from "./components/TransactionNotifications";
 import { UserProvider, UserContext } from "./context/UserContext";
 import Setting from "./components/Setting/Setting";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 
 // Component for conditional rendering of the header
@@ -31,6 +32,7 @@ const ConditionalHeader = () => {
 
 const AppContent = () => {
   const location = useLocation();
+  const user = useContext(UserContext)
 
   useEffect(() => {
     
@@ -98,7 +100,15 @@ const AppContent = () => {
           <Route path="/course/:slug" element={<CourseDetailPage />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order" element={<PlaceOrder />} />
-          <Route path="/settings" element={<Setting />} />
+
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute user={user}>
+                <Setting />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </div>
       <Footer />
@@ -110,7 +120,7 @@ const AppContent = () => {
 // Main App Component with Router
 const App = () => {
   return (
-<Router>
+    <Router>
       <UserProvider>
         <LanguageProvider>
         {/* <UserContext.Consumer>

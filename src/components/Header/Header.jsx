@@ -190,6 +190,16 @@ const Header = () => {
                   {transaction("plans")}
                 </Link>
               </li>
+              <li className="p-4">
+                <Link
+                  onClick={() => setMenuOpened(false)}
+                  to="/settings"
+                  state={{ scrollToSection: "profile" }}
+                  className="cursor-pointer hover:text-gray-300"
+                >
+                  {transaction("profile")}
+                </Link>
+              </li>
 
               {/* Mobile Login Button */}
               {!user && (
@@ -220,7 +230,7 @@ const Header = () => {
 
               <button
                 onClick={() => setMenuOpened(false)}
-                className="absolute top-4 right-4 text-gray-300 text-xl"
+                className="absolute top-4 right-4 text-gray-300 text-3xl"
                 aria-label="Close menu"
               >
                 &times;

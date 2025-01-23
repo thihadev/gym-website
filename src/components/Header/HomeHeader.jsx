@@ -10,6 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 import LanguageSelector from "../LanguageSelector";
 import { useLanguage } from "../../context/LanguageProvider";
 import { UserContext } from "../../context/UserContext";
+import { Link as RouterLink } from 'react-router-dom';
 
 const HomeHeader = () => {
   const [menuOpened, setMenuOpened] = useState(false);
@@ -191,6 +192,16 @@ const HomeHeader = () => {
             >
               {transaction("plans")}
             </Link>
+          </li>
+          <li className="p-4">
+            <RouterLink
+              onClick={() => setMenuOpened(false)}
+              to="settings"
+              state={{ scrollToSection: "profile" }}
+              className="cursor-pointer hover:text-gray-300"
+            >
+              {transaction("profile")}
+            </RouterLink>
           </li>
 
           {/* Mobile Login Button */}

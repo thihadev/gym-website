@@ -2,7 +2,7 @@ import React from "react";
 import axios from "../../axios";
 import { toast } from "react-toastify";
 
-const EditProfile = ({ user, setUser, setEditProfile }) => {
+const EditProfile = ({ user, setUser}) => {
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
     setUser((prevUser) => ({
@@ -32,9 +32,9 @@ const EditProfile = ({ user, setUser, setEditProfile }) => {
       return false;
     }
   };
+  
 
   const saveProfile = async () => {
-    setEditProfile(false);
 
     const success = await updateUserProfile(user);
 
@@ -46,8 +46,6 @@ const EditProfile = ({ user, setUser, setEditProfile }) => {
       // console.error("Failed to save profile to the server.");
     }
   };
-
-  const closeProfile = () => setEditProfile(false);
 
   return (
     <div className="w-full max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
@@ -124,12 +122,12 @@ const EditProfile = ({ user, setUser, setEditProfile }) => {
         >
           Update
         </button>
-        <button
+        {/* <button
           onClick={closeProfile}
           className="px-4 py-2 text-sm bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition duration-200"
         >
           Cancel
-        </button>
+        </button> */}
       </div>
     </div>
   );
