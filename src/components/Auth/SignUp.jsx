@@ -10,8 +10,9 @@ const SignUp = ({ switchToSignIn, onSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [gender, setGender] = useState("");
-  const [errors, setErrors] = useState({}); // Track errors for each field
-  const [error, setError] = useState(""); // Single error for global messages
+  const [errors, setErrors] = useState({});
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // Handle Sign Up
   const handleSignUp = async (e) => {
@@ -19,6 +20,7 @@ const SignUp = ({ switchToSignIn, onSuccess }) => {
     setErrors({}); // Clear previous errors
 
     try {
+      setLoading(true);
       const response = await axios.post("/register", { 
         email, 
         password,
@@ -32,6 +34,8 @@ const SignUp = ({ switchToSignIn, onSuccess }) => {
       const token = localStorage.setItem("accessToken", access_token);
       setPusherInstance(token);
 
+      setLoading(false);
+
       onSuccess();
       toast.success(`Welcome, ${response.data.data.name}`);
     } catch (error) {
@@ -41,16 +45,20 @@ const SignUp = ({ switchToSignIn, onSuccess }) => {
         if (data && data.message) {
           console.error("Login Failed", data);
           setError(data.message);
+          setLoading(false);
         } else {
           console.error("Unexpected error response", error);
           setError("Something went wrong. Please try again.");
+          setLoading(false);
         }
       }
       else if (error.request) {
         setError("Network error: Unable to connect to the server. Please try again.");
+        setLoading(false);
       }
       else {
         setError("An unexpected error occurred. Please try again.");
+        setLoading(false);
       }
     }
   };
@@ -130,7 +138,16 @@ const SignUp = ({ switchToSignIn, onSuccess }) => {
         </select>
         {/* Show error for Gender */}
 
-        <button type="submit">Sign Up</button>
+        {!loading ? (
+          <button type="submit">Sign Up</button>
+        ) : (
+          <button
+            className="bg-gray-400 hover:bg-gray-500 active:bg-gray-600 disabled:bg-gray-300"
+            disabled
+          >
+            Processing...
+          </button>
+        )}
       </form>
 
       <p>

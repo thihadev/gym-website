@@ -9,22 +9,23 @@ const SignIn = ({ switchToSignUp, onSuccess }) => {
   const { fetchUserProfile } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(""); // Single error for global messages
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSignIn = async (e) => {
     e.preventDefault();
     setError(""); // Clear previous errors
 
     try {
-      console.log(email);
-      console.log(password);
+      setLoading(true);
       const response = await axios.post("/login", { email, password });
-    
+
       const { access_token, data } = response.data;
       localStorage.setItem("accessToken", access_token);
       localStorage.setItem("userId", data.id);
 
       await fetchUserProfile();
+      setLoading(false);
 
       // setPusherInstance(token);
 
@@ -37,27 +38,30 @@ const SignIn = ({ switchToSignUp, onSuccess }) => {
         if (data && data.message) {
           console.error("Login Failed", data);
           setError(data.message);
+          setLoading(false);
         } else {
+          setLoading(false);
           setError("Something went wrong. Please try again.");
         }
       }
       // If no response was received, error.request exists
       else if (error.request) {
-        setError("Network error: Unable to connect to the server. Please try again.");
-      }
-
-      else {
+        setError(
+          "Network error: Unable to connect to the server. Please try again."
+        );
+      } else {
         setError("An unexpected error occurred. Please try again.");
       }
     }
-    
   };
 
-  
   if (error) {
     return (
       <div className="error-message flex flex-col justify-center items-center text-center">
-        <h2 className="text-xl text-red-600 font-semibold"> Something went Wrong! </h2>
+        <h2 className="text-xl text-red-600 font-semibold">
+          {" "}
+          Something went Wrong!{" "}
+        </h2>
         <p className="text-gray-600 text-md">{error}</p>
       </div>
     );
@@ -81,7 +85,17 @@ const SignIn = ({ switchToSignUp, onSuccess }) => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button type="submit">Sign In</button>
+
+        {!loading ? (
+          <button type="submit">Sign In</button>
+        ) : (
+          <button
+            className="bg-gray-400 hover:bg-gray-500 active:bg-gray-600 disabled:bg-gray-300"
+            disabled
+          >
+            Processing...
+          </button>
+        )}
       </form>
       <p>
         Don't have an account? <button onClick={switchToSignUp}>Sign Up</button>
