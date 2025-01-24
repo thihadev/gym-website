@@ -12,6 +12,7 @@ const Setting = () => {
     fetchNotifications,
     markNotificationAsRead,
     markAllAsRead,
+    loading
   } = useNotification();
   const location = useLocation();
   const { scrollToSection } = location.state || {};
@@ -80,6 +81,7 @@ const Setting = () => {
               notificationCount={notificationCount}
               markNotificationAsRead={markNotificationAsRead}
               markAllAsRead={markAllAsRead}
+              loading={loading}
             />
           )}
         </div>

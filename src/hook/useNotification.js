@@ -4,6 +4,7 @@ import axios from "../axios";
 const useNotification = () => {
   const [notifications, setNotifications] = useState([]);
   const [notificationCount, setNotificationCount] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   // Fetch notifications from the API
   const fetchNotifications = useCallback(async () => {
@@ -14,6 +15,7 @@ const useNotification = () => {
       return;
     }
 
+    setLoading(true);
     try {
       const response = await axios.get("/notifications", {
         headers: {
@@ -31,6 +33,8 @@ const useNotification = () => {
       }
     } catch (error) {
       console.error("Error fetching notifications:", error);
+    } finally {
+      setLoading(false); // End loading
     }
   }, []);
 
@@ -114,6 +118,7 @@ const useNotification = () => {
     fetchNotifications,
     markNotificationAsRead,
     markAllAsRead,
+    loading,
   };
 };
 

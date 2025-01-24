@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import QR from "../../assets/kpay-logo.png";
 import QR2 from "../../assets/wave.png";
+import QR3 from "../../assets/aya.png";
 import { useLocation } from "react-router-dom";
 import axios from "../../axios";
 import { useNavigate } from "react-router-dom";
@@ -31,6 +32,7 @@ const Checkout = () => {
   const paymentMethods = [
     { id: "Kpay", name: "Kpay", icon: QR },
     { id: "WavePay", name: "WavePay", icon: QR2 },
+    { id: "AyaPay", name: "AyaPay", icon: QR3 },
   ];
 
   useEffect(() => {

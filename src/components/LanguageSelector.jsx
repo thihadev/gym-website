@@ -1,36 +1,42 @@
-import React, { useState } from "react";
-import { useLanguage } from "../context/LanguageProvider"; // Make sure the path is correct
+import React, { useState, useEffect, useRef } from "react";
+import { useLanguage } from "../context/LanguageProvider"; // Update path if needed
 import { FaGlobe } from "react-icons/fa";
 
-const LanguageSelector = (checkMobile) => {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { language, switchLanguage, fontSize } = useLanguage(); // Get current language and switch function
+const LanguageSelector = ({ isMobile = false, isOpen, onToggle }) => {
+  const dropdownRef = useRef(null);
+  const { language, switchLanguage, fontSize } = useLanguage();
   const languages = [
     { code: "en", label: "English" },
     { code: "mm", label: "မြန်မာ" }, // Burmese
   ];
 
   const handleLanguageChange = (code) => {
-    switchLanguage(code); // Use the switchLanguage function from the context
-    setDropdownOpen(false); // Close the dropdown after selection
+    switchLanguage(code); // Change language
+    onToggle(false); // Close dropdown
   };
 
+  const handleOutsideClick = (e) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      onToggle(false); // Close dropdown when clicking outside
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
+
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       <button
         className="flex items-center gap-2 cursor-pointer hover:text-gray-400"
         style={{ fontSize }}
-        onClick={() => setDropdownOpen(!dropdownOpen)}
+        onClick={() => onToggle(!isOpen)} // Toggle dropdown state
       >
-        {
-          checkMobile.isMobile ?
-          (<FaGlobe size={22}/>)
-          :
-        (<span className="font-semibold">{language === 'en' ? "Language" : "ဘာသာစကား"}</span>)
-        }
+        {isMobile ? <FaGlobe size={22} /> : <span className="font-semibold">{language === "en" ? "Language" : "ဘာသာစကား"}</span>}
       </button>
-      {dropdownOpen && (
-        <ul className="absolute right-0 mt-2 w-32 border rounded shadow-lg">
+      {isOpen && (
+        <ul className="absolute right-0 mt-2 w-32 border bg-[#041228] rounded shadow-lg z-20">
           {languages.map((lang) => (
             <li
               key={lang.code}

@@ -1,6 +1,5 @@
-import { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Logo from "../../assets/logo.png";
-import Bars from "../../assets/bars.png";
 import { Link } from "react-scroll";
 import Modal from "../Modal";
 import SignIn from "../Auth/SignIn";
@@ -10,7 +9,8 @@ import "react-toastify/dist/ReactToastify.css";
 import LanguageSelector from "../LanguageSelector";
 import { useLanguage } from "../../context/LanguageProvider";
 import { UserContext } from "../../context/UserContext";
-import { Link as RouterLink } from 'react-router-dom';
+import MobileNav from "./MobileNav";
+import Bars from "../../assets/bars.png";
 
 const HomeHeader = () => {
   const [menuOpened, setMenuOpened] = useState(false);
@@ -19,26 +19,23 @@ const HomeHeader = () => {
   const [isSignUpPage, setIsSignUpPage] = useState(false);
   const { fontSize, transaction } = useLanguage();
   const { user, fetchUserProfile, logout, loading } = useContext(UserContext);
+  const [languageSelectorOpened, setLanguageSelectorOpened] = useState(false);
 
   useEffect(() => {
-    // fetchUserProfile();
-
     const handleResize = () => setMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [fetchUserProfile]);
+  }, []);
 
-  // Open Sign-In modal
   const openSignIn = () => {
-    setIsSignUpPage(false); // Open Sign-in page
+    setIsSignUpPage(false);
     setShowModal(true);
   };
 
   const handleAuthSuccess = () => {
-    fetchUserProfile(); 
+    fetchUserProfile();
     setShowModal(false);
   };
-
 
   if (loading) {
     return <div>...</div>;
@@ -52,7 +49,6 @@ const HomeHeader = () => {
       {/* Desktop Navigation and Profile */}
       {!mobile && (
         <div className="flex items-center gap-4">
-          {/* Navigation Links */}
           <ul className="flex gap-4 items-center font-semibold">
             <li className="p-4">
               <Link
@@ -61,7 +57,7 @@ const HomeHeader = () => {
                 className="cursor-pointer hover:text-gray-400"
                 style={{ fontSize }}
               >
-                {transaction('home')}
+                {transaction("home")}
               </Link>
             </li>
             <li className="p-4">
@@ -71,7 +67,7 @@ const HomeHeader = () => {
                 className="cursor-pointer hover:text-gray-400"
                 style={{ fontSize }}
               >
-                {transaction('programs')}
+                {transaction("programs")}
               </Link>
             </li>
             <li className="p-4">
@@ -81,7 +77,7 @@ const HomeHeader = () => {
                 className="cursor-pointer hover:text-gray-400"
                 style={{ fontSize }}
               >
-                 {transaction('aboutUs')}
+                {transaction("aboutUs")}
               </Link>
             </li>
             <li className="p-4">
@@ -91,7 +87,7 @@ const HomeHeader = () => {
                 className="cursor-pointer hover:text-gray-400"
                 style={{ fontSize }}
               >
-                 {transaction('reasons')}
+                {transaction("reasons")}
               </Link>
             </li>
             <li className="p-4">
@@ -101,15 +97,21 @@ const HomeHeader = () => {
                 className="cursor-pointer hover:text-gray-400"
                 style={{ fontSize }}
               >
-                 {transaction('plans')}
+                {transaction("plans")}
               </Link>
             </li>
             <li className="p-4">
-              <LanguageSelector isMobile={false}/>
+              <LanguageSelector
+                isMobile={false}
+                isOpen={languageSelectorOpened} // Control state from the parent
+                onToggle={(isOpen) => {
+                  setLanguageSelectorOpened(isOpen); // Update state
+                  if (isOpen) setMenuOpened(false); // Close menu if language selector opens
+                }}
+              />
             </li>
           </ul>
 
-          {/* Profile or Login */}
           {user ? (
             <ProfileDropdown user={user} handleLogout={logout} />
           ) : (
@@ -118,121 +120,49 @@ const HomeHeader = () => {
               style={{ fontSize }}
               className="cursor-pointer font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
             >
-              {transaction('login')}
+              {transaction("login")}
             </button>
           )}
         </div>
       )}
 
       {/* Mobile Hamburger Menu and Language Selector */}
-      {mobile && (
-        <div className="flex items-center gap-4 md:hidden">
-          {/* Language Selector */}
-          <LanguageSelector isMobile={true}/>
+      <div className="flex items-center gap-4 md:hidden">
+        {/* Language Selector */}
+        <LanguageSelector
+          isMobile={true}
+          isOpen={languageSelectorOpened} // Control state from the parent
+          onToggle={(isOpen) => {
+            setLanguageSelectorOpened(isOpen); // Update state
+            if (isOpen) setMenuOpened(false); // Close menu if language selector opens
+          }}
+        />
 
-          {/* Hamburger Menu */}
-          <div
-            className="flex items-center justify-center p-2 rounded cursor-pointer"
-            onClick={() => setMenuOpened(!menuOpened)}
-          >
-            <img src={Bars} alt="menu icon" className="w-6 h-6" />
-          </div>
+        {/* Hamburger Menu */}
+        <div
+          className="flex items-center justify-center p-2 rounded cursor-pointer"
+          onClick={() => {
+            setMenuOpened((prev) => {
+              const newState = !prev;
+              setLanguageSelectorOpened(false);
+              return newState;
+            });
+          }}
+        >
+          <img src={Bars} alt="menu icon" className="w-6 h-6" />
         </div>
-      )}
+      </div>
 
-      {/* Mobile Dropdown Menu */}
-      {menuOpened && mobile && (
-        <ul className="absolute top-16 left-0 w-full bg-gray-700 text-white flex flex-col items-center py-4 gap-4 z-50">
-          <li className="p-4">
-            <Link
-              onClick={() => setMenuOpened(false)}
-              to="hero"
-              smooth={true}
-              className="cursor-pointer hover:text-gray-300"
-            >
-              {transaction('home')}
-            </Link>
-          </li>
-          <li className="p-4">
-            <Link
-              onClick={() => setMenuOpened(false)}
-              to="programs"
-              smooth={true}
-              className="cursor-pointer hover:text-gray-300"
-            >
-              {transaction("programs")}
-            </Link>
-          </li>
-          <li className="p-4">
-            <Link
-              onClick={() => setMenuOpened(false)}
-              to="aboutus"
-              smooth={true}
-              className="cursor-pointer hover:text-gray-300"
-            >
-              {transaction("aboutUs")}
-            </Link>
-          </li>
-          <li className="p-4">
-            <Link
-              onClick={() => setMenuOpened(false)}
-              to="reasons"
-              smooth={true}
-              className="cursor-pointer hover:text-gray-300"
-            >
-              {transaction("reasons")}
-            </Link>
-          </li>
-          <li className="p-4">
-            <Link
-              onClick={() => setMenuOpened(false)}
-              to="plans"
-              smooth={true}
-              className="cursor-pointer hover:text-gray-300"
-            >
-              {transaction("plans")}
-            </Link>
-          </li>
-          <li className="p-4">
-            <RouterLink
-              onClick={() => setMenuOpened(false)}
-              to="settings"
-              state={{ scrollToSection: "profile" }}
-              className="cursor-pointer hover:text-gray-300"
-            >
-              {transaction("profile")}
-            </RouterLink>
-          </li>
-
-          {/* Mobile Login Button */}
-          {!user && (
-            <li className="p-4">
-              <button
-                onClick={() => {
-                  setMenuOpened(false);
-                  openSignIn();
-                }}
-                className="w-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
-              >
-                {transaction("login")}
-              </button>
-            </li>
-          )}
-
-          {/* Mobile Profile Dropdown (Optional) */}
-          {user && (
-            <li className="p-4">
-              <Link
-                onClick={logout}
-                smooth={true}
-                style={{ fontSize }}
-                className="cursor-pointerw-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
-              >
-                {transaction("logout")}
-              </Link>
-            </li>
-          )}
-        </ul>
+      {/* Mobile Navigation */}
+      {mobile && (
+        <MobileNav
+          transaction={transaction}
+          menuOpened={menuOpened}
+          setMenuOpened={setMenuOpened}
+          user={user}
+          logout={logout}
+          openSignIn={openSignIn}
+        />
       )}
 
       {showModal && (
