@@ -11,6 +11,7 @@ import { useLanguage } from "../../context/LanguageProvider";
 import { UserContext } from "../../context/UserContext";
 import MobileNav from "./MobileNav";
 import Bars from "../../assets/bars.png";
+import DefaultAvatar from "../../assets/default-avatar.png";
 
 const HomeHeader = () => {
   const [menuOpened, setMenuOpened] = useState(false);
@@ -37,9 +38,9 @@ const HomeHeader = () => {
     setShowModal(false);
   };
 
-  if (loading) {
-    return <div>...</div>;
-  }
+  // if (loading) {
+  //   return <div>...</div>;
+  // }
 
   return (
     <div className="flex justify-between items-center p-4 text-white relative">
@@ -112,7 +113,17 @@ const HomeHeader = () => {
             </li>
           </ul>
 
-          {user ? (
+          {loading ? (
+            <div className="relative">
+              <div className="flex items-center focus:outline-none">
+                <img
+                  src={DefaultAvatar}
+                  alt="User Avatar"
+                  className="w-14 h-14 rounded-full border-1"
+                />
+              </div>
+            </div>
+          ) : user ? (
             <ProfileDropdown user={user} handleLogout={logout} />
           ) : (
             <button

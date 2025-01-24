@@ -64,23 +64,6 @@ const NavigationMenu = ({
           </button>
         </>
       )}
-
-      {/* Profile Button or Login */}
-      {!user && (
-        <li className="p-4">
-          <button
-            onClick={() => {
-              if (isMobile) onClose();
-              openSignIn();
-            }}
-            className={`w-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200 ${
-              isMobile ? "" : "cursor-pointer"
-            }`}
-          >
-            {transaction("login")}
-          </button>
-        </li>
-      )}
       </>
   );
 };

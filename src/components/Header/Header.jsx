@@ -9,6 +9,7 @@ import { useLanguage } from "../../context/LanguageProvider";
 import { UserContext } from "../../context/UserContext";
 import LanguageSelector from "../LanguageSelector";
 import ProfileDropdown from "../Profile/ProfileDropdown";
+import DefaultAvatar from "../../assets/default-avatar.png";
 
 const Header = () => {
   const [menuOpened, setMenuOpened] = useState(false);
@@ -44,8 +45,6 @@ const Header = () => {
     setShowModal(false);
   };
 
-  if (loading) return <div>...</div>;
-
   return (
     <>
       <div className="flex justify-between relative bg-none w-full">
@@ -58,27 +57,49 @@ const Header = () => {
               <ul className="flex gap-4 items-center font-semibold">
                 {/* Desktop Navigation */}
                 {!mobile && (
-                  <NavigationMenu
-                    links={navLinks}
-                    transaction={transaction}
-                    fontSize={fontSize}
-                    user={user}
-                    openSignIn={openSignIn}
-                    logout={logout}
-                  />
-                )}
-
-                {!mobile && (
-                  <li className="p-4">
-                    <LanguageSelector
-                      isMobile={false}
-                      isOpen={languageSelectorOpened}
-                      onToggle={(isOpen) => {
-                        setLanguageSelectorOpened(isOpen);
-                        if (isOpen) setMenuOpened(false); // Close menu if language selector opens
-                      }}
+                  <>
+                    <NavigationMenu
+                      links={navLinks}
+                      transaction={transaction}
+                      fontSize={fontSize}
+                      user={user}
+                      openSignIn={openSignIn}
+                      logout={logout}
                     />
-                  </li>
+
+                    <li className="p-4">
+                      <LanguageSelector
+                        isMobile={false}
+                        isOpen={languageSelectorOpened}
+                        onToggle={(isOpen) => {
+                          setLanguageSelectorOpened(isOpen);
+                          if (isOpen) setMenuOpened(false);
+                        }}
+                      />
+                    </li>
+
+                    {loading ? (
+                      <div className="relative">
+                        <div className="flex items-center focus:outline-none">
+                          <img
+                            src={DefaultAvatar}
+                            alt="User Avatar"
+                            className="w-14 h-14 rounded-full border-1"
+                          />
+                        </div>
+                      </div>
+                    ) : user ? (
+                      <ProfileDropdown user={user} handleLogout={logout} />
+                    ) : (
+                      <button
+                        onClick={openSignIn}
+                        style={{ fontSize }}
+                        className="cursor-pointer font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
+                      >
+                        {transaction("login")}
+                      </button>
+                    )}
+                  </>
                 )}
               </ul>
 
@@ -96,10 +117,6 @@ const Header = () => {
                     onClose={() => setMenuOpened(false)}
                   />
                 </ul>
-              )}
-
-              {!mobile && user && (
-                <ProfileDropdown user={user} handleLogout={logout} />
               )}
 
               {mobile && (
