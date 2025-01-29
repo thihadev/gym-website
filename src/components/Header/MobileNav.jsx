@@ -3,7 +3,7 @@ import { Link } from "react-scroll";
 import { Link as RouterLink } from "react-router-dom";
 
 const MobileNav = ({
-  transaction,
+  translation,
   menuOpened,
   setMenuOpened,
   user,
@@ -19,50 +19,50 @@ const MobileNav = ({
             <Link
               onClick={() => setMenuOpened(false)}
               to="hero"
-              smooth={true}
+              smooth="true"
               className="cursor-pointer hover:text-gray-300"
             >
-              {transaction("home")}
+              {translation("home")}
             </Link>
           </li>
           <li className="p-4">
             <Link
               onClick={() => setMenuOpened(false)}
               to="programs"
-              smooth={true}
+              smooth="true"
               className="cursor-pointer hover:text-gray-300"
             >
-              {transaction("programs")}
+              {translation("programs")}
             </Link>
           </li>
           <li className="p-4">
             <Link
               onClick={() => setMenuOpened(false)}
               to="aboutus"
-              smooth={true}
+              smooth="true"
               className="cursor-pointer hover:text-gray-300"
             >
-              {transaction("aboutUs")}
+              {translation("aboutUs")}
             </Link>
           </li>
           <li className="p-4">
             <Link
               onClick={() => setMenuOpened(false)}
               to="reasons"
-              smooth={true}
+              smooth="true"
               className="cursor-pointer hover:text-gray-300"
             >
-              {transaction("reasons")}
+              {translation("reasons")}
             </Link>
           </li>
           <li className="p-4">
             <Link
               onClick={() => setMenuOpened(false)}
               to="plans"
-              smooth={true}
+              smooth="true"
               className="cursor-pointer hover:text-gray-300"
             >
-              {transaction("plans")}
+              {translation("plans")}
             </Link>
           </li>
 
@@ -74,7 +74,7 @@ const MobileNav = ({
                 state={{ scrollToSection: "profile" }}
                 className="cursor-pointer hover:text-gray-300"
               >
-                {transaction("profile")}
+                {translation("profile")}
               </RouterLink>
             </li>
           )}
@@ -89,7 +89,7 @@ const MobileNav = ({
                 }}
                 className="w-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
               >
-                {transaction("login")}
+                {translation("login")}
               </button>
             </li>
           )}
@@ -98,13 +98,12 @@ const MobileNav = ({
           {user && (
             <>
               <li className="p-4">
-                <Link
+                <button
                   onClick={logout}
-                  smooth={true}
                   className="cursor-pointer w-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
                 >
-                  {transaction("logout")}
-                </Link>
+                  {translation("logout")}
+                </button>
               </li>
               <button
                 onClick={() => setMenuOpened(false)}

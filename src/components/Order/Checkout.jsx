@@ -8,9 +8,9 @@ import { useNavigate } from "react-router-dom";
 import Modal from "../Modal";
 import SignIn from "../Auth/SignIn";
 import SignUp from "../Auth/SignUp";
-import { toast } from 'react-toastify';
-// import transactions from '../data/transactions.js'
-import { useLanguage } from '../../context/LanguageProvider'
+import { toast } from "react-toastify";
+// import translations from '../data/translations.js'
+import { useLanguage } from "../../context/LanguageProvider";
 import { UserContext } from "../../context/UserContext";
 
 const Checkout = () => {
@@ -25,8 +25,8 @@ const Checkout = () => {
   const [showQRCode, setShowQRCode] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [isSignUpPage, setIsSignUpPage] = useState(false);
-  const { language } = useLanguage();
-  // const list = transactions;
+  const { language, translation } = useLanguage();
+  // const list = translations;
   // const lang = list[language];
 
   const paymentMethods = [
@@ -73,7 +73,7 @@ const Checkout = () => {
     }
 
     const orderDetails = {
-      orderId : selectedPlan.id,
+      orderId: selectedPlan.id,
       planName: selectedPlan.title_en,
       amount: selectedPlan.price_en,
       paymentMethod: selectedPaymentMethod,
@@ -89,7 +89,7 @@ const Checkout = () => {
       fetchUserProfile();
     }
     setShowModal(false);
-};
+  };
 
   const getQRCode = () => {
     const selectedMethod = paymentMethods.find(
@@ -101,22 +101,32 @@ const Checkout = () => {
   return (
     <div className="container mx-auto p-6 flex justify-center">
       <div className="max-w-lg w-full bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-2xl font-bold text-center mb-6">Subscribe to a Plan</h1>
+        <h1 className="text-2xl font-bold text-center mb-6">
+          {translation("order")}
+        </h1>
 
         {/* Subscription Plans */}
         <div className="mb-4">
-          <h2 className="text-xl font-semibold mb-2">Choose a Plan</h2>
+          <h2 className="text-xl font-semibold mb-2">
+            {translation("choose")}
+          </h2>
           <div className="flex flex-col gap-2">
             {plans.map((plan) => (
               <label
                 key={plan.id}
                 className={`p-3 border rounded-lg flex justify-between items-center cursor-pointer ${
-                  selectedPlan?.id === plan.id ? "border-blue-500 bg-blue-100" : "border-gray-300"
+                  selectedPlan?.id === plan.id
+                    ? "border-blue-500 bg-blue-100"
+                    : "border-gray-300"
                 }`}
                 onClick={() => handlePlanSelect(plan)}
               >
-                <span className="font-semibold">{plan[`title_${language}`]}</span>
-                <span className="font-semibold">{plan[`price_${language}`]} / Month</span>
+                <span className="font-semibold">
+                  {plan[`title_${language}`]}
+                </span>
+                <span className="font-semibold">
+                  {plan[`price_${language}`]} / Month
+                </span>
               </label>
             ))}
           </div>
@@ -124,13 +134,17 @@ const Checkout = () => {
 
         {/* Payment Methods */}
         <div className="mb-4">
-          <h2 className="text-xl font-semibold mb-2">Select a Payment Method</h2>
+          <h2 className="text-xl font-semibold mb-2">
+            {translation("payment_method")}
+          </h2>
           <div className="flex flex-col gap-2">
             {paymentMethods.map((method) => (
               <label
                 key={method.id}
                 className={`p-3 border rounded-lg flex items-center gap-4 cursor-pointer ${
-                  selectedPaymentMethod === method.id ? "border-blue-500 bg-blue-100" : "border-gray-300"
+                  selectedPaymentMethod === method.id
+                    ? "border-blue-500 bg-blue-100"
+                    : "border-gray-300"
                 }`}
                 onClick={() => handlePaymentSelect(method.id)}
               >
@@ -144,7 +158,9 @@ const Checkout = () => {
         {/* Dynamic QR Code Display */}
         {showQRCode && selectedPlan && selectedPaymentMethod && (
           <div className="mb-4 p-4 bg-gray-100 rounded-lg text-center">
-            <h2 className="text-lg font-semibold mb-2">Scan to Pay</h2>
+            <h2 className="text-lg font-semibold mb-2">
+              {translation("scan")}
+            </h2>
             <img
               src={getQRCode()}
               alt={`${selectedPaymentMethod} QR Code`}
@@ -156,13 +172,21 @@ const Checkout = () => {
           </div>
         )}
 
-        {/* Place Order Button */}
-        <button
-          onClick={placeOrder}
-          className="w-full bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600"
-        >
-          Checkout
-        </button>
+        {/* Place Order and Cancel Buttons */}
+        <div className="flex gap-4">
+          <button
+            onClick={placeOrder}
+            className="w-full bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600"
+          >
+            {translation("checkout")}
+          </button>
+          <button
+            onClick={() => navigate(-1)} // Navigates back to the previous page
+            className="w-full bg-red-500 text-white font-semibold py-2 rounded-lg hover:bg-red-700"
+          >
+            {translation("cancel")}
+          </button>
+        </div>
       </div>
 
       {/* Modal for Login */}

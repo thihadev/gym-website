@@ -17,7 +17,7 @@ const Header = () => {
   const [showModal, setShowModal] = useState(false);
   const [isSignUpPage, setIsSignUpPage] = useState(false);
   const { user, fetchUserProfile, loading, logout } = useContext(UserContext);
-  const { fontSize, transaction } = useLanguage();
+  const { fontSize, translation } = useLanguage();
   const [languageSelectorOpened, setLanguageSelectorOpened] = useState(false);
 
   const navLinks = [
@@ -60,7 +60,7 @@ const Header = () => {
                   <>
                     <NavigationMenu
                       links={navLinks}
-                      transaction={transaction}
+                      translation={translation}
                       fontSize={fontSize}
                       user={user}
                       openSignIn={openSignIn}
@@ -96,7 +96,7 @@ const Header = () => {
                         style={{ fontSize }}
                         className="cursor-pointer font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
                       >
-                        {transaction("login")}
+                        {translation("login")}
                       </button>
                     )}
                   </>
@@ -108,7 +108,7 @@ const Header = () => {
                 <ul className="absolute top-16 left-0 w-full bg-gray-700 text-white flex flex-col items-center py-4 gap-4 z-50">
                   <NavigationMenu
                     links={navLinks}
-                    transaction={transaction}
+                    translation={translation}
                     fontSize={fontSize}
                     user={user}
                     openSignIn={openSignIn}
@@ -126,7 +126,7 @@ const Header = () => {
                         }}
                         className="w-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
                       >
-                        {transaction("login")}
+                        {translation("login")}
                       </button>
                     </li>
                   )}
@@ -138,10 +138,10 @@ const Header = () => {
                   {/* Language Selector */}
                   <LanguageSelector
                     isMobile={true}
-                    isOpen={languageSelectorOpened} // Control state from the parent
+                    isOpen={languageSelectorOpened}
                     onToggle={(isOpen) => {
-                      setLanguageSelectorOpened(isOpen); // Update state
-                      if (isOpen) setMenuOpened(false); // Close menu if language selector opens
+                      setLanguageSelectorOpened(isOpen); 
+                      if (isOpen) setMenuOpened(false); 
                     }}
                   />
 

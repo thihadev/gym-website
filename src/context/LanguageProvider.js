@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import transactions from "../data/transactions";
+import translations from "../data/translations";
 
 const LanguageContext = createContext();
 
@@ -9,7 +9,7 @@ export const LanguageProvider = ({ children }) => {
     return localStorage.getItem("language") || "en";
   });
 
-  const transaction = (key) => transactions[language]?.[key] || key;
+  const translation = (key) => translations[language]?.[key] || key;
 
   // Function to switch the language
   const switchLanguage = (lang) => {
@@ -29,7 +29,7 @@ export const LanguageProvider = ({ children }) => {
   // }, [language]);
 
   return (
-    <LanguageContext.Provider value={{ language, switchLanguage, fontSize, transaction }}>
+    <LanguageContext.Provider value={{ language, switchLanguage, fontSize, translation }}>
       {children}
     </LanguageContext.Provider>
   );

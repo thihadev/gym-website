@@ -18,7 +18,7 @@ const HomeHeader = () => {
   const [mobile, setMobile] = useState(window.innerWidth < 768);
   const [showModal, setShowModal] = useState(false);
   const [isSignUpPage, setIsSignUpPage] = useState(false);
-  const { fontSize, transaction } = useLanguage();
+  const { fontSize, translation } = useLanguage();
   const { user, fetchUserProfile, logout, loading } = useContext(UserContext);
   const [languageSelectorOpened, setLanguageSelectorOpened] = useState(false);
 
@@ -58,7 +58,7 @@ const HomeHeader = () => {
                 className="cursor-pointer hover:text-gray-400"
                 style={{ fontSize }}
               >
-                {transaction("home")}
+                {translation("home")}
               </Link>
             </li>
             <li className="p-4">
@@ -68,7 +68,7 @@ const HomeHeader = () => {
                 className="cursor-pointer hover:text-gray-400"
                 style={{ fontSize }}
               >
-                {transaction("programs")}
+                {translation("programs")}
               </Link>
             </li>
             <li className="p-4">
@@ -78,7 +78,7 @@ const HomeHeader = () => {
                 className="cursor-pointer hover:text-gray-400"
                 style={{ fontSize }}
               >
-                {transaction("aboutUs")}
+                {translation("aboutUs")}
               </Link>
             </li>
             <li className="p-4">
@@ -88,7 +88,7 @@ const HomeHeader = () => {
                 className="cursor-pointer hover:text-gray-400"
                 style={{ fontSize }}
               >
-                {transaction("reasons")}
+                {translation("reasons")}
               </Link>
             </li>
             <li className="p-4">
@@ -98,17 +98,15 @@ const HomeHeader = () => {
                 className="cursor-pointer hover:text-gray-400"
                 style={{ fontSize }}
               >
-                {transaction("plans")}
+                {translation("plans")}
               </Link>
             </li>
+
             <li className="p-4">
               <LanguageSelector
                 isMobile={false}
-                isOpen={languageSelectorOpened} // Control state from the parent
-                onToggle={(isOpen) => {
-                  setLanguageSelectorOpened(isOpen); // Update state
-                  if (isOpen) setMenuOpened(false); // Close menu if language selector opens
-                }}
+                isOpen={languageSelectorOpened}
+                onToggle={(isOpen) => setLanguageSelectorOpened(isOpen)}
               />
             </li>
           </ul>
@@ -131,49 +129,51 @@ const HomeHeader = () => {
               style={{ fontSize }}
               className="cursor-pointer font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
             >
-              {transaction("login")}
+              {translation("login")}
             </button>
           )}
         </div>
       )}
 
-      {/* Mobile Hamburger Menu and Language Selector */}
-      <div className="flex items-center gap-4 md:hidden">
-        {/* Language Selector */}
-        <LanguageSelector
-          isMobile={true}
-          isOpen={languageSelectorOpened} // Control state from the parent
-          onToggle={(isOpen) => {
-            setLanguageSelectorOpened(isOpen); // Update state
-            if (isOpen) setMenuOpened(false); // Close menu if language selector opens
-          }}
-        />
-
-        {/* Hamburger Menu */}
-        <div
-          className="flex items-center justify-center p-2 rounded cursor-pointer"
-          onClick={() => {
-            setMenuOpened((prev) => {
-              const newState = !prev;
-              setLanguageSelectorOpened(false);
-              return newState;
-            });
-          }}
-        >
-          <img src={Bars} alt="menu icon" className="w-6 h-6" />
-        </div>
-      </div>
-
       {/* Mobile Navigation */}
       {mobile && (
-        <MobileNav
-          transaction={transaction}
-          menuOpened={menuOpened}
-          setMenuOpened={setMenuOpened}
-          user={user}
-          logout={logout}
-          openSignIn={openSignIn}
-        />
+        <>
+          {/* Mobile Hamburger Menu and Language Selector */}
+          <div className="flex items-center gap-4 md:hidden">
+            {/* Language Selector */}
+            <LanguageSelector
+              isMobile={true}
+              isOpen={languageSelectorOpened} // Control state from the parent
+              onToggle={(isOpen) => {
+                setLanguageSelectorOpened(isOpen); // Update state
+                if (isOpen) setMenuOpened(false); // Close menu if language selector opens
+              }}
+            />
+
+            {/* Hamburger Menu */}
+            <div
+              className="flex items-center justify-center p-2 rounded cursor-pointer"
+              onClick={() => {
+                setMenuOpened((prev) => {
+                  const newState = !prev;
+                  setLanguageSelectorOpened(false);
+                  return newState;
+                });
+              }}
+            >
+              <img src={Bars} alt="menu icon" className="w-6 h-6" />
+            </div>
+          </div>
+
+          <MobileNav
+            translation={translation}
+            menuOpened={menuOpened}
+            setMenuOpened={setMenuOpened}
+            user={user}
+            logout={logout}
+            openSignIn={openSignIn}
+          />
+        </>
       )}
 
       {showModal && (

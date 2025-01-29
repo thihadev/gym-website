@@ -7,7 +7,7 @@ import useNotification from "../../hook/useNotification";
 const ProfileDropdown = ({ user, handleLogout }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { notificationCount, fetchNotifications } = useNotification();
-  const { transaction } = useLanguage();
+  const { translation } = useLanguage();
 
   useEffect(() => {
       fetchNotifications();
@@ -54,7 +54,7 @@ const ProfileDropdown = ({ user, handleLogout }) => {
                     state={{ scrollToSection: "profile" }}
                     className="w-full px-4 py-3 text-left text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-800 transition duration-200 flex items-center"
                   >
-                    {transaction("profile")}
+                    {translation("profile")}
                   </Link>
                 </li>
                 <li>
@@ -65,7 +65,7 @@ const ProfileDropdown = ({ user, handleLogout }) => {
                     className="w-full px-4 py-3 text-left text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-800 transition duration-200 flex items-center"
                   >
                     <div className="flex justify-between items-center w-full">
-                      <span>{transaction("notifications")}</span>
+                      <span>{translation("notifications")}</span>
                       {notificationCount > 0 && (
                         <span className="w-5 h-5 bg-red-500 text-white text-sm rounded-full flex items-center justify-center">
                           {notificationCount}
@@ -81,7 +81,7 @@ const ProfileDropdown = ({ user, handleLogout }) => {
                     className="w-full px-4 py-3 text-left text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-800 transition duration-200 flex items-center"
                     onClick={handleLogout}
                   >
-                    {transaction("logout")}
+                    {translation("logout")}
                   </Link>
                 </li>
               </ul>

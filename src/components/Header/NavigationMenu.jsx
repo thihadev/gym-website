@@ -1,10 +1,8 @@
 import { Link } from "react-router-dom";
-import LanguageSelector from "../LanguageSelector";
-import ProfileDropdown from "../Profile/ProfileDropdown";
 
 const NavigationMenu = ({
   links,
-  transaction,
+  translation,
   fontSize,
   isMobile = false,
   onClose = () => {},
@@ -23,7 +21,7 @@ const NavigationMenu = ({
             style={{ fontSize }}
             onClick={isMobile ? onClose : undefined}
           >
-            {transaction(labelKey)}
+            {translation(labelKey)}
           </Link>
         </li>
       ))}
@@ -37,7 +35,7 @@ const NavigationMenu = ({
               state={{ scrollToSection: "profile" }}
               className="cursor-pointer hover:text-gray-300"
             >
-              {transaction("profile")}
+              {translation("profile")}
             </Link>
           </li>
 
@@ -51,7 +49,7 @@ const NavigationMenu = ({
                 isMobile ? "" : "cursor-pointer"
               }`}
             >
-              {transaction("logout")}
+              {translation("logout")}
             </button>
           </li>
 

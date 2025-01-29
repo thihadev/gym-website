@@ -7,7 +7,7 @@ import { useLanguage } from "../../context/LanguageProvider";
 const Plans = () => {
   const [plans, setPlans] = useState([]);
   const [error, setError] = useState(false);
-  const { language, transaction } = useLanguage();
+  const { language, translation } = useLanguage();
 
   useEffect(() => {
     axios
@@ -66,7 +66,7 @@ const Plans = () => {
               </div>
 
               <Link to="checkout" state={{ plan: plan }} className="btn">
-                {transaction("getnow")}
+                {translation("getnow")}
               </Link>
             </div>
           ))

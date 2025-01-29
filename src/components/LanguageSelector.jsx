@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import { useLanguage } from "../context/LanguageProvider"; // Update path if needed
 import { FaGlobe } from "react-icons/fa";
 
@@ -11,20 +11,31 @@ const LanguageSelector = ({ isMobile = false, isOpen, onToggle }) => {
   ];
 
   const handleLanguageChange = (code) => {
-    switchLanguage(code); // Change language
-    onToggle(false); // Close dropdown
+    switchLanguage(code);
+    onToggle(false);
   };
 
-  const handleOutsideClick = (e) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-      onToggle(false); // Close dropdown when clicking outside
-    }
-  };
+  const handleOutsideClick = useCallback(
+    (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        onToggle(false);
+      }
+    },
+    [onToggle]
+  );
 
   useEffect(() => {
     document.addEventListener("mousedown", handleOutsideClick);
     return () => document.removeEventListener("mousedown", handleOutsideClick);
-  }, []);
+  }, [handleOutsideClick]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (isOpen && e.key === "Escape") onToggle(false);
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onToggle]);
 
   return (
     <div className="relative" ref={dropdownRef}>

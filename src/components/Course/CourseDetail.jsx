@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "../../axios";
 import { Link, useLocation } from "react-router-dom";
 import LoadingSpinner from "../LoadingSpinner";
-import transactions from "../../data/transactions.js";
+import translations from "../../data/translations.js";
 import { useLanguage } from "../../context/LanguageProvider";
 import { FaLock, FaPlayCircle } from "react-icons/fa";
 import Modal from "../../components/Modal";
@@ -23,7 +23,7 @@ const CourseDetailPage = () => {
   const [error, setError] = useState(false);
   const [isSignUpPage, setIsSignUpPage] = useState(false);
   const { language } = useLanguage();
-  const list = transactions;
+  const list = translations;
   const lang = list[language];
 
   useEffect(() => {
@@ -51,7 +51,6 @@ const CourseDetailPage = () => {
         const firstUnlockedVideo = course.videos.find(
           (video) => !video.is_locked
         );
-        console.log(firstUnlockedVideo.video_link);
         setCurrentVideo(firstUnlockedVideo ? firstUnlockedVideo.video_link : null);
       })
       .catch((err) => {
@@ -142,7 +141,7 @@ const CourseDetailPage = () => {
         <div className="w-full lg:w-1/4 sticky top-0 self-start overflow-y-auto h-screen bg-[#0e1217] p-4 rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold mb-4">{lang.videoList}</h2>
           <ul className="space-y-1">
-            {courseData.videos.map((video, index) => (
+            {courseData.videos.length > 0 ? (courseData.videos.map((video, index) => (
               <li
                 key={video.videoId || `locked-${index}`}
                 className={`p-3 border border-slate-700 rounded-md cursor-pointer transition duration-300 flex items-center ${
@@ -163,7 +162,11 @@ const CourseDetailPage = () => {
                   <FaPlayCircle className="ml-2 text-gray-400" />
                 )}
               </li>
-            ))}
+            ))) : ((<div className="error-message flex flex-col justify-center items-center h-screen text-center">
+              <h2 className="text-xl text-yellow-600 font-semibold">
+                There is no data.
+              </h2>
+            </div>))}
           </ul>
         </div>
       </div>

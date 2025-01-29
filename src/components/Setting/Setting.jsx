@@ -3,9 +3,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import UserProfile from "../Profile/UserProfile";
 import Notification from "../Notification/Notification";
 import useNotification from "../../hook/useNotification";
+import { useLanguage } from "../../context/LanguageProvider";
 
 const Setting = () => {
   const [activeTab, setActiveTab] = useState("profile");
+  const { translation } = useLanguage();
   const {
     notificationCount,
     notifications,
@@ -53,7 +55,7 @@ const Setting = () => {
             }`}
             onClick={() => setActiveTab("profile")}
           >
-            Profile
+            {translation("profile")}
           </div>
           <div
             className={`text-lg font-semibold cursor-pointer flex items-center space-x-2 hover:text-blue-500 ${
@@ -63,7 +65,7 @@ const Setting = () => {
             }`}
             onClick={() => setActiveTab("notifications")}
           >
-            <span>Notifications</span>
+            <span>{translation("notifications")}</span>
             {notificationCount > 0 && (
               <span className="bg-red-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center">
                 {notificationCount}

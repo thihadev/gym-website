@@ -12,7 +12,7 @@ const CoursesPage = () => {
   const { category } = useParams();
   const location = useLocation();
   const { categoryName, categoryNameMM } = location.state || {};
-  const { language, transaction } = useLanguage();
+  const { language, translation } = useLanguage();
 
   useEffect(() => {
     setLoading(true); // Set loading to true before fetching data
@@ -56,7 +56,7 @@ const CoursesPage = () => {
       {/* Breadcrumb/Header */}
       <div className="text-white">
         <h3 className="text-center text-2xl md:text-3xl font-bold tracking-wide">
-          <Link to={"/"}>{transaction("home")}</Link>
+          <Link to={"/"}>{translation("home")}</Link>
           <span className="text-gray-400"> /</span> {(language === 'en' ? categoryName : categoryNameMM ) || "Category"}
         </h3>
       </div>
