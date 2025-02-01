@@ -24,6 +24,15 @@ const translations = {
       process: "Processing...",
       upload: "Upload Your Payslip",
       cancel: "Cancel",
+      hero_fig_1 : "EXPERT COACHES",
+      hero_fig_2 : "members",
+      hero_fig_3 : "workouts",
+      hero_body : "In here we will help you to shape and build your ideal body and live up your life to fullest",
+      why_one : "OVER 140+ EXPERT COACHES",
+      why_two : "TRAIN SMARTER AND FASTER THAN BEFORE",
+      why_three : "1 FREE PROGRAM FOR NEW MEMBER",
+      why_four : "RELIABLE PAARTNERS",
+      our_partner : "OUR PARTNERS"
     },
     mm: {
       home: "ပင်မစာမျက်နှာ",
@@ -50,6 +59,15 @@ const translations = {
       process: "လုပ်ဆောင်နေသည်...",
       upload: "သင့်ဘောင်ချာကို တင်ပါ",
       cancel: "ပယ်ဖျက်မည်",
+      hero_fig_1 : "ကျွမ်းကျင်သော နည်းပြများ",
+      hero_fig_2 : "အသင်းဝင်များ",
+      hero_fig_3 : "လေ့ကျင့်ခန်းများ",
+      hero_body : "ဒီမှာတော့ မင်းရဲ့ စိတ်ကြိုက်ကိုယ်ခန္ဓာကို ပုံဖော်ပြီး တည်ဆောက်ဖို့နဲ့ ဘဝကို အပြည့်အဝ ရှင်သန်နိုင်အောင် မင်းကို ကူညီပေးမယ်။",
+      why_one : "ကျွမ်းကျင်သော နည်းပြပေါင်း ၁၄၀ ကျော်",
+      why_two : "ယခင်ထက် ပိုမိုထိရောက်စွာ လေ့ကျင့်နိုင်",
+      why_three : "Member အသစ်များအတွက် အခမဲ့အစီအစဉ်(၁)ခု",
+      why_four : "ယုံကြည်စိတ်ချရသော လုပ်ဖော်ကိုင်ဖက်များ",
+      our_partner : "လုပ်ဖော်ကိုင်ဖက်များ"
       
     },
   };

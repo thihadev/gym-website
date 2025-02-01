@@ -1,9 +1,11 @@
-
 import HomeHeader from "../Header/HomeHeader";
 import './Hero.css';
 import NumberCounter from 'number-counter'
+import { useLanguage } from "../../context/LanguageProvider";
 
 const Hero = () => {
+const { translation } = useLanguage();
+
     return (
         <div className="hero">
             <div className="blur hero-blur"></div>
@@ -24,30 +26,30 @@ const Hero = () => {
                     </div>
                     <div>
                         <span>
-                            In here we will help you to shape and build your ideal body and live up your life to fullest
+                            {translation('hero_body')}
                         </span>
                     </div>
                 </div>
                 
                 {/* figures */}
-                <div className="figures">
+                <div className="figures text-center">
                     <div>
                         <span>
-                            <NumberCounter end={140} start={100} delay='4' preFix='+' />
+                            <NumberCounter end={140} start={100} delay='4' preFix='' />
                         </span>
-                        <span> expert coaches </span>
+                        <span> {translation("hero_fig_1")} </span>
                     </div>
                     <div>
                         <span>
-                            <NumberCounter end={978} start={800} delay='4' preFix='+' />
+                            <NumberCounter end={978} start={800} delay='4' preFix='' />
                         </span>
-                        <span>members joined</span>
+                        <span>{translation("hero_fig_2")}</span>
                     </div>
                     <div>
                         <span>
-                            <NumberCounter end={50} start={0} delay='4' preFix='+' />
+                            <NumberCounter end={50} start={0} delay='4' preFix='' />
                         </span>
-                        <span>fitness programs</span>
+                        <span>{translation("hero_fig_3")}</span>
                     </div>
                 </div>
                 {/* hero buttons */}
