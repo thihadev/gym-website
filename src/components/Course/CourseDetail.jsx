@@ -192,20 +192,20 @@ const CourseDetailPage = () => {
       {showPurchaseModal && (
         <Modal onClose={() => setShowPurchaseModal(false)}>
           <div className="text-center">
-            <h2 className="text-xl font-semibold">{lang.purchaseRequired || "Purchase Required"}</h2>
-            <p className="my-4">
+            <h2 className="text-xl text-black font-semibold">{lang.purchaseRequired || "Purchase Required"}</h2>
+            <p className="my-4 text-black">
               {lang.purchaseMessage || "This video is premium. Do you want to purchase?"}
             </p>
             <div className="flex justify-center space-x-4">
               <Link
                 to="/"
                 state={{ scrollToSection: "plans" }}
-                className="cursor-pointer font-bold text-white bg-gray-900 border rounded-full px-4 py-2 hover:bg-gray-700"
+                className="cursor-pointer font-bold text-white bg-gray-700 border rounded-full px-4 py-2 hover:bg-gray-900"
               >
                 Yes
               </Link>
               <button
-                className="cursor-pointer font-bold text-white bg-gray-900 border rounded-full px-4 py-2 hover:bg-gray-700"
+                className="cursor-pointer font-bold text-white bg-red-500 border rounded-full px-4 py-2 hover:bg-red-700"
                 onClick={() => setShowPurchaseModal(false)}
               >
                 No
