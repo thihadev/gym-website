@@ -7,6 +7,9 @@ const createPusherInstance = (token) => {
     encrypted: true,
     forceTLS: true,
     debug: true,
+    disableStats: true,
+    pongTimeout: 6000,
+    retryTimeout: 10000,
     authEndpoint: process.env.REACT_APP_PUSHER_URL,
     auth: {
       headers: {
