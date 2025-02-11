@@ -83,6 +83,7 @@ const CoursesPage = () => {
                 <Link 
                 to={`/course/${course.slug}`}
                 state={{ courseId: course.id }}
+                onClick={() => localStorage.setItem('courseId', course.id)}
                 >
                   <div className="w-full h-52">
                     <img

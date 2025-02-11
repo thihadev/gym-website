@@ -15,6 +15,7 @@ const CourseDetailPage = () => {
   const { user, fetchUserProfile } = useContext(UserContext);
   const location = useLocation();
   const { courseId } = location.state || {};
+  const storedCourseId = localStorage.getItem('courseId'); 
   const [courseData, setCourseData] = useState(null);
   const [currentVideo, setCurrentVideo] = useState(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -26,15 +27,17 @@ const CourseDetailPage = () => {
   const list = translations;
   const lang = list[language];
 
+  console.log(courseId);
+  console.log(storedCourseId);
+
   useEffect(() => {
-    if (!courseId) return;
     const token = localStorage.getItem("accessToken");
 
     if (token) {
       fetchUserProfile();
     }
 
-    const url = token ? `/course/${courseId}/private` : `/course/${courseId}`;
+    const url = token ? `/course/${courseId || storedCourseId}/private` : `/course/${courseId || storedCourseId}`;
 
     axios
       .get(url, {
@@ -58,7 +61,7 @@ const CourseDetailPage = () => {
         setError(true);
       })
       .finally(() => setLoading(false));
-  }, [fetchUserProfile, courseId]);
+  }, [fetchUserProfile, courseId, storedCourseId]);
 
   const handleVideoClick = (video) => {
     if (!user) {
@@ -106,17 +109,18 @@ const CourseDetailPage = () => {
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Left Section */}
         <div className="flex-1 space-y-10">
-          <div className="bg-gray-200 rounded-lg overflow-hidden shadow-lg">
+          <div className="bg-black rounded-lg overflow-hidden shadow-lg">
             {currentVideo && user ? (
               <ReactPlayer 
+                className="top-0"
                 url={currentVideo} 
                 controls={true}
-                width="100%" 
-                height="400px" 
+                width="100%"
+                height="600px"
                />
               // <YouTube videoId={currentVideo} opts={opts} />
             ) : (
-              <div className="text-center text-gray-600 py-20">
+              <div className="text-center bg-gray-900 text-gray-500 py-20">
                 {user ? lang.videoLockedMessage || "This video is locked." : lang.loginRequiredMessage || "Please log in to watch the video."}
               </div>
             )}
