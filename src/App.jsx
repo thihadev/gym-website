@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useContext, useEffect, lazy, Suspense } from "react";
+import React, { useEffect, lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Hero from "./components/Hero/Hero";
 import Programs from "./components/Programs/Programs";
@@ -13,7 +13,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { LanguageProvider } from "./context/LanguageProvider";
 import TransactionNotifications from "./components/TransactionNotifications";
-import { UserProvider, UserContext } from "./context/UserContext";
+import { UserProvider } from "./context/UserContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoadingSpinner from "./components/LoadingSpinner";
 
@@ -35,7 +35,6 @@ const ConditionalHeader = () => {
 
 const AppContent = () => {
   const location = useLocation();
-  const user = useContext(UserContext)
 
   useEffect(() => {
     
