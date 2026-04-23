@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import axios from "../../axios";
 import { toast } from "react-toastify";
 
-const EditProfile = ({ user, setUser}) => {
+const EditProfile = ({ user, setUser }) => {
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
     setUser((prevUser) => ({
@@ -13,22 +13,11 @@ const EditProfile = ({ user, setUser}) => {
 
   const updateUserProfile = async (updatedFields) => {
     try {
-      const token = localStorage.getItem("accessToken");
-
-      const response = await axios.post("/profile-update", updatedFields, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
+      const response = await axios.post("/profile-update", updatedFields);
       setUser(response.data.data);
       return true;
     } catch (error) {
-      console.error(
-        "Error updating profile:",
-        error.response?.data || error.message
-      );
+      console.error("Error updating profile:", error.response?.data || error.message);
       return false;
     }
   };
@@ -42,7 +31,7 @@ const EditProfile = ({ user, setUser}) => {
       toast.success("Updated your profile.");
       // console.log("Profile saved locally and on the server.");
     } else {
-      toast.errot("Failed to save profile")
+      toast.error("Failed to save profile");
       // console.error("Failed to save profile to the server.");
     }
   };

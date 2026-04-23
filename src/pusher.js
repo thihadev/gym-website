@@ -2,7 +2,7 @@ import Pusher from "pusher-js";
 
 // Function to initialize Pusher with dynamic token
 const createPusherInstance = (token) => {
-  return new Pusher("b02a822843465dc0345f", {
+  return new Pusher(process.env.REACT_APP_PUSHER_KEY, {
     cluster: "ap1",
     encrypted: true,
     forceTLS: true,

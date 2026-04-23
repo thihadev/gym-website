@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import "./SignUp.css";
 import axios from "../../axios";
 import { toast } from "react-toastify";
-import { setPusherInstance } from "../../../src/pusher";
+import { UserContext } from "../../context/UserContext";
 const SignUp = ({ switchToSignIn, onSuccess }) => {
-  
+  const { fetchUserProfile } = useContext(UserContext);
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -28,16 +28,12 @@ const SignUp = ({ switchToSignIn, onSuccess }) => {
         last_name,
         gender,
       });
-      const { access_token } = response.data;
-      
-      // Save the token in localStorage
-      const token = localStorage.setItem("accessToken", access_token);
-      setPusherInstance(token);
-
+      const { access_token, data } = response.data;
+      localStorage.setItem("accessToken", access_token);
+      await fetchUserProfile();
       setLoading(false);
-
       onSuccess();
-      toast.success(`Welcome, ${response.data.data.name}`);
+      toast.success(`Welcome, ${data.name}`);
     } catch (error) {
       // If error.response exists, it means the server responded with an error
       if (error.response) {

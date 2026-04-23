@@ -1,15 +1,13 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { setPusherInstance, getPusherInstance, disconnectPusher } from "../../src/pusher";
 import ModalThankYou from "./ModalThankYou";
 import { UserContext } from "../context/UserContext";
 import useNotification from "../hook/useNotification";
 
-const TransactionNotifications = () => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
-  const { user } = useContext(UserContext);
-  const { fetchNotifications } = useNotification();
-
+const usePusherNotifications = (user, fetchNotifications) => {
+      const [modalVisible, setModalVisible] = useState(false);
+      const [modalMessage, setModalMessage] = useState("");
+      
   useEffect(() => {
     if (!user) return;
 
@@ -48,6 +46,15 @@ const TransactionNotifications = () => {
       }
     };
   }, [user, fetchNotifications]);
+};
+
+const TransactionNotifications = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const { user } = useContext(UserContext);
+  const { fetchNotifications } = useNotification();
+
+  usePusherNotifications(user, fetchNotifications);
 
   const closeModal = () => {
     setModalVisible(false);

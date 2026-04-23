@@ -9,59 +9,35 @@ export const UserProvider = ({ children }) => {
 
   const fetchUserProfile = useCallback(async () => {
     const token = localStorage.getItem("accessToken");
-
-    if (token) {
-      try {
-        const response = await axios.get("profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setUser(response.data.data);
-      } catch (error) {
-        console.error("Error fetching profile", error);
-        setUser(null);
-      }
+    if (!token) {
+      setLoading(false);
+      return;
     }
-    setLoading(false);
+    try {
+      const response = await axios.get("profile");
+      setUser(response.data.data);
+    } catch (error) {
+      console.error("Error fetching profile", error);
+      localStorage.removeItem("accessToken");
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   const logout = useCallback(() => {
-    const token = localStorage.getItem("accessToken");
-    axios
-      .post(
-        "logout",
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-      .then(() => {
-        localStorage.removeItem("accessToken");
-        // disconnectPusher();
-        setUser(null);
-      })
-      .catch((error) => {
-        console.error("Logout failed:", error);
-      });
+    axios.post("logout", {}).then(() => {
+      localStorage.removeItem("accessToken");
+      setUser(null);
+    }).catch(console.error);
   }, []);
 
   useEffect(() => {
     fetchUserProfile();
-  }, []);
+  }, [fetchUserProfile]);
 
   return (
-    <UserContext.Provider
-      value={{
-        user,
-        loading,
-        setUser,
-        fetchUserProfile,
-        logout,
-      }}
-    >
+    <UserContext.Provider value={{ user, loading, setUser, fetchUserProfile, logout }}>
       {children}
     </UserContext.Provider>
   );

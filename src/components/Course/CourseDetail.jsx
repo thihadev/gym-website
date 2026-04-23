@@ -116,7 +116,7 @@ const CourseDetailPage = () => {
                 url={currentVideo} 
                 controls={true}
                 width="100%"
-                height="600px"
+                height="500px"
                />
               // <YouTube videoId={currentVideo} opts={opts} />
             ) : (

@@ -22,13 +22,8 @@ const SignIn = ({ switchToSignUp, onSuccess }) => {
 
       const { access_token, data } = response.data;
       localStorage.setItem("accessToken", access_token);
-      localStorage.setItem("userId", data.id);
-
       await fetchUserProfile();
       setLoading(false);
-
-      // setPusherInstance(token);
-
       onSuccess();
       toast.success(`Welcome, ${data.name}`);
     } catch (error) {

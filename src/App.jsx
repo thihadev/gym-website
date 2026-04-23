@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Hero from "./components/Hero/Hero";
 import Programs from "./components/Programs/Programs";
@@ -7,19 +7,22 @@ import Reasons from "./components/Reasons/Reasons";
 import Plans from "./components/Plans/Plans";
 import Testimonials from "./components/Testimonials/Testimonials";
 import Footer from "./components/Footer/Footer";
-import CoursesPage from "./components/Course/Courses";
 import Header from "./components/Header/Header";
-import CourseDetailPage from "./components/Course/CourseDetail";
 import { scroller } from "react-scroll";
-import Checkout from "./components/Order/Checkout";
-import PlaceOrder from "./components/Order/PlaceOrder";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { LanguageProvider } from "./context/LanguageProvider";
 import TransactionNotifications from "./components/TransactionNotifications";
 import { UserProvider, UserContext } from "./context/UserContext";
-import Setting from "./components/Setting/Setting";
 import ProtectedRoute from "./components/ProtectedRoute";
+import LoadingSpinner from "./components/LoadingSpinner";
+
+// Lazy load heavy/less-visited pages
+const CoursesPage = lazy(() => import("./components/Course/Courses"));
+const CourseDetailPage = lazy(() => import("./components/Course/CourseDetail"));
+const Checkout = lazy(() => import("./components/Order/Checkout"));
+const PlaceOrder = lazy(() => import("./components/Order/PlaceOrder"));
+const Setting = lazy(() => import("./components/Setting/Setting"));
 
 
 // Component for conditional rendering of the header
@@ -78,35 +81,26 @@ const AppContent = () => {
             path="/"
             element={
               <>
-                <div id="hero">
-                  <Hero />
-                </div>
-                <div id="programs">
-                  <Programs />
-                </div>
-                <div id="aboutus">
-                  <Testimonials />
-                </div>
-                <div id="reasons">
-                  <Reasons />
-                </div>
-                <div id="plans">
-                  <Plans />
-                </div>
+                <div id="hero"><Hero /></div>
+                <div id="programs"><Programs /></div>
+                <div id="aboutus"><Testimonials /></div>
+                <div id="reasons"><Reasons /></div>
+                <div id="plans"><Plans /></div>
               </>
             }
           />
-          <Route path="/courses/:category" element={<CoursesPage />} />
-          <Route path="/course/:slug" element={<CourseDetailPage />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/order" element={<PlaceOrder />} />
-
+          <Route path="/courses/:category" element={<Suspense fallback={<LoadingSpinner />}><CoursesPage /></Suspense>} />
+          <Route path="/course/:slug" element={<Suspense fallback={<LoadingSpinner />}><CourseDetailPage /></Suspense>} />
+          <Route path="/checkout" element={<Suspense fallback={<LoadingSpinner />}><Checkout /></Suspense>} />
+          <Route path="/order" element={<Suspense fallback={<LoadingSpinner />}><PlaceOrder /></Suspense>} />
           <Route
             path="/settings"
             element={
-              <ProtectedRoute user={user}>
-                <Setting />
-              </ProtectedRoute>
+              <Suspense fallback={<LoadingSpinner />}>
+                <ProtectedRoute>
+                  <Setting />
+                </ProtectedRoute>
+              </Suspense>
             }
           />
         </Routes>
