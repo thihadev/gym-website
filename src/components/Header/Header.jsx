@@ -51,7 +51,7 @@ const Header = () => {
         <div className="left-h p-8 pt-6 flex-[3] flex flex-col gap-8">
           <div className="flex justify-between items-center p-4 text-white relative">
             {/* Logo */}
-            <img src={Logo} alt="logo img" className="w-40" />
+            <img src={Logo} alt="logo img" className="w-48" />
 
             <div className="flex items-center gap-4">
               <ul className="flex gap-4 items-center font-semibold">
