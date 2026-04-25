@@ -21,7 +21,7 @@ const Footer = () => {
         {/* Logo */}
         <div className="mt-4 lg:mt-0">
           <Link to="/">
-            <img src={Logo} alt="logo" className="w-32" />
+            <img src={Logo} alt="logo" className="w-48" />
           </Link>
         </div>
       </div>

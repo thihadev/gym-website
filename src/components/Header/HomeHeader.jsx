@@ -45,7 +45,7 @@ const HomeHeader = () => {
   return (
     <div className="flex justify-between items-center p-4 text-white relative">
       {/* Logo */}
-      <img src={Logo} alt="logo img" className="w-32" />
+      <img src={Logo} alt="logo img" className="w-48" />
 
       {/* Desktop Navigation and Profile */}
       {!mobile && (
