@@ -1,18 +1,15 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { setPusherInstance, getPusherInstance, disconnectPusher } from "../../src/pusher";
-import ModalThankYou from "./ModalThankYou";
-import { UserContext } from "../context/UserContext";
-import useNotification from "../hook/useNotification";
 
 const usePusherNotifications = (user, fetchNotifications) => {
-      const [modalVisible, setModalVisible] = useState(false);
-      const [modalMessage, setModalMessage] = useState("");
-      
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+
   useEffect(() => {
     if (!user) return;
 
     const token = localStorage.getItem("accessToken");
-    if (!getPusherInstance()) {
+    if (!getPusherInstance() && token) {
       setPusherInstance(token);
     }
 
@@ -20,24 +17,30 @@ const usePusherNotifications = (user, fetchNotifications) => {
     if (!pusher) return;
 
     const channelName = `private-subscription.${user.id}`;
-    if (!pusher.channel(channelName)) {
-      const channel = pusher.subscribe(channelName);
-
-      channel.bind("pusher:subscription_error", (error) => {
-        console.error("Pusher subscription error:", error);
-      });
-
-      channel.bind("TransactionUpdated", (data) => {
-        setModalMessage(data.message);
-        setModalVisible(true);
-        fetchNotifications();
-      });
+    let channel = pusher.channel(channelName);
+    
+    if (!channel) {
+      channel = pusher.subscribe(channelName);
     }
 
+    const handleSubscriptionError = (error) => {
+      console.error("Pusher subscription error:", error);
+    };
+
+    const handleTransactionUpdated = (data) => {
+      setModalMessage(data.message || "Transaction Updated Successfully!");
+      setModalVisible(true);
+      fetchNotifications();
+    };
+
+    channel.bind("pusher:subscription_error", handleSubscriptionError);
+    channel.bind("TransactionUpdated", handleTransactionUpdated);
+
     return () => {
-      pusher.unbind_all();
-      const channel = pusher.channel(channelName);
       if (channel) {
+        // ပြဿနာဖြေရှင်းချက်- pusher.unbind_all() အစား သက်ဆိုင်ရာပွဲစဉ်ကိုပဲ တိကျစွာဖြုတ်ခြင်း (🟡 Medium)
+        channel.unbind("pusher:subscription_error", handleSubscriptionError);
+        channel.unbind("TransactionUpdated", handleTransactionUpdated);
         pusher.unsubscribe(channelName);
       }
 
@@ -46,25 +49,10 @@ const usePusherNotifications = (user, fetchNotifications) => {
       }
     };
   }, [user, fetchNotifications]);
+
+  const closeModal = () => setModalVisible(false);
+
+  return { modalVisible, modalMessage, closeModal };
 };
 
-const TransactionNotifications = () => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
-  const { user } = useContext(UserContext);
-  const { fetchNotifications } = useNotification();
-
-  usePusherNotifications(user, fetchNotifications);
-
-  const closeModal = () => {
-    setModalVisible(false);
-  };
-
-  return (
-    <>
-      {modalVisible && <ModalThankYou message={modalMessage} onClose={closeModal} />}
-    </>
-  );
-};
-
-export default TransactionNotifications;
+export default usePusherNotifications;

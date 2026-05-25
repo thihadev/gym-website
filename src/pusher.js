@@ -1,40 +1,36 @@
 import Pusher from "pusher-js";
 
-// Function to initialize Pusher with dynamic token
-const createPusherInstance = (token) => {
-  return new Pusher(process.env.REACT_APP_PUSHER_KEY, {
-    cluster: "ap1",
+let pusherInstance = null;
+
+export const setPusherInstance = (token) => {
+  if (pusherInstance) return pusherInstance;
+
+  if (!token) {
+    console.warn("Pusher initialization skipped: No access token provided.");
+    return null;
+  }
+
+  // Production မှာ တကယ့် pusher key နဲ့ cluster ထည့်ပေးရပါမယ်
+  pusherInstance = new Pusher(process.env.REACT_APP_PUSHER_KEY, {
+    cluster: 'ap1', // အဆင်ပြေမယ့် Cluster ပြောင်းပါ
     encrypted: true,
-    forceTLS: true,
-    debug: true,
-    disableStats: true,
-    pongTimeout: 6000,
-    retryTimeout: 10000,
-    authEndpoint: process.env.REACT_APP_PUSHER_URL,
+    authEndpoint: `${process.env.REACT_APP_PUSHER_URL}`, // အဆင်ပြေမယ့် API Endpoint ပြောင်းပါ
     auth: {
       headers: {
         Authorization: `Bearer ${token}`,
+        Accept: "application/json",
       },
     },
   });
+
+  return pusherInstance;
 };
 
-let pusher = null;
+export const getPusherInstance = () => pusherInstance;
 
-const getPusherInstance = () => pusher;
-
-// Function to create a new Pusher instance with the current token
-const setPusherInstance = (token) => {
-  if (pusher) {
-    pusher.disconnect();
-  }
-  pusher = createPusherInstance(token);
-};
-
-const disconnectPusher = () => {
-  if (pusher) {
-    pusher.disconnect();
+export const disconnectPusher = () => {
+  if (pusherInstance) {
+    pusherInstance.disconnect();
+    pusherInstance = null; // ပြဿနာဖြေရှင်းချက်- null ပြန်လုပ်ပေးခြင်း
   }
 };
-
-export { setPusherInstance, getPusherInstance, disconnectPusher };

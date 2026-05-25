@@ -7,6 +7,9 @@ const useNotification = () => {
   const [loading, setLoading] = useState(false);
 
   const fetchNotifications = useCallback(async () => {
+    // localStorage token မရှိရင် API မခေါ်အောင် Security Check လုပ်ခြင်း
+    if (!localStorage.getItem("accessToken")) return;
+
     setLoading(true);
     try {
       const response = await axios.get("/notifications");

@@ -8,136 +8,103 @@ export default function ImageUploader() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Retrieve state from navigation
   const orderDetail = location.state || {};
   const [file, setFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { language, translation } = useLanguage();
-  // const list = translations;
-  // const lang = list[language];
+  const { translation } = useLanguage();
 
-  // Redirect if no data is available
   useEffect(() => {
     if (!orderDetail.orderId || !orderDetail.amount) {
-      navigate("/"); // Redirect to the home page
-      toast.error("Check Order & Amount");
+      navigate("/");
+      toast.error("Invalid Order Details.");
     }
+
+    // Component Memory Cleanup Effect
+    return () => {
+      setFile(null);
+    };
   }, [orderDetail.orderId, orderDetail.amount, navigate]);
 
   if (!orderDetail.orderId || !orderDetail.amount) {
-    // Return null to prevent rendering while redirecting
     return null;
   }
 
   const handleFileChange = (e) => {
-    // Only set the first file (if any) to allow a single file upload
-    setFile(e.target.files[0]);
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!file) {
-      toast.error("Please select an payslip to upload.");
+      toast.error("Please select a payslip to upload.");
       return;
     }
 
+    if (isSubmitting) return; // Prevent Double Submission Performance Bug
+
+    setIsSubmitting(true);
     const formData = new FormData();
     formData.append("package", orderDetail.orderId);
-    formData.append("amount", orderDetail.amount);
-    formData.append("payment_channel", orderDetail.paymentMethod);
-    formData.append("payslip", file); // Only one image, so append it as "payslip"
-
-    // Get the token from localStorage or sessionStorage
-    const token = localStorage.getItem("accessToken");
+    formData.append("image", file);
 
     try {
-      setIsSubmitting(true);
-
-      // Make the POST request with the Bearer token
-      await axios.post("/upload-images", formData, {
+      const response = await axios.post("/payslips", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`, // Add Bearer token here
         },
       });
 
-      toast.success("Order successfully!");
-      // console.log("Server Response:", response.data);
-
-      // Optionally, navigate to a success page or reset the form
-      navigate("/");
-    } catch (error) {
-      const { data } = error.response;
-      if (data && data.message) {
-        toast.info(data.message);
-      } else {
-        toast.error("Something went wrong. Please try again.");
+      if (response.status === 200 || response.status === 21) {
+        toast.success("Payslip uploaded successfully! Waiting for approval.");
+        navigate("/");
       }
+    } catch (error) {
+      console.error("Payslip upload failed:", error.message);
+      toast.error(error.response?.data?.message || "Upload failed. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="container mx-auto p-6 flex justify-center">
-      <div className="max-w-lg w-full bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-2xl font-bold text-center mb-6">
-          {translation("order")}
+    <div className="min-h-screen flex items-center justify-center bg-gray-950 p-6 text-white">
+      <div className="max-w-md w-full bg-gray-900 p-6 rounded-lg shadow-xl space-y-6">
+        <h1 className="text-2xl font-bold text-center text-orange-500 border-b border-gray-800 pb-3">
+          {translation("order_details") || "Order Confirmation"}
         </h1>
 
-        {/* Order Details */}
-        <div className="mb-4">
-          <div className="flex flex-col gap-2">
-            <label className="p-3 border rounded-lg flex justify-between items-center">
-              <span className="font-semibold">
-                Package ID :{" "}
-                {language === "en"
-                  ? orderDetail.planName
-                  : orderDetail.planNameMM}
-              </span>
-            </label>
-            <label className="p-3 border rounded-lg flex justify-between items-center">
-              <span className="font-semibold">
-                Amount :{" "}
-                {language === "en" ? orderDetail.amount : orderDetail.amountMM}
-              </span>
-            </label>
-            <label className="p-3 border rounded-lg flex justify-between items-center">
-              <span className="font-semibold">
-                Payment Method : {orderDetail.paymentMethod}
-              </span>
-            </label>
-          </div>
+        <div className="space-y-3 bg-gray-800 p-4 rounded-lg text-sm">
+          <div className="flex justify-between"><span className="text-gray-400">Order ID:</span><span className="font-mono font-bold text-orange-400">{orderDetail.orderId}</span></div>
+          <div className="flex justify-between"><span className="text-gray-400">Amount:</span><span className="font-bold">{orderDetail.amount} MMK</span></div>
+          <div className="flex justify-between"><span className="text-gray-400">Payment Method:</span><span className="text-green-400 font-medium">{orderDetail.paymentMethod}</span></div>
         </div>
 
-        {/* Upload Image */}
-        <div className="container mx-auto p-4">
-          <h1 className="text-xl font-bold mb-4">{translation("upload")}</h1>
-          <form onSubmit={handleSubmit}>
+        <div>
+          <h2 className="text-lg font-semibold mb-3">{translation("upload") || "Upload Payslip Screenshot"}</h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
             <input
               type="file"
-              className="block w-full mb-4"
+              className="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer"
               accept="image/*"
               onChange={handleFileChange}
             />
-            <div className="flex gap-4">
+            
+            <div className="flex gap-4 pt-2">
               <button
                 type="submit"
-                className="w-full mt-4 bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600"
+                className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 text-white font-bold py-2.5 rounded-lg transition"
                 disabled={isSubmitting}
               >
-                {isSubmitting
-                  ? translation("process")
-                  : translation("placeorder")}
+                {isSubmitting ? translation("process") || "Processing..." : translation("placeorder") || "Submit Order"}
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  setFile(null);
-                  navigate(-1);
-                }}
-                className="w-full mt-4 bg-red-500 text-white font-semibold py-2 rounded-lg hover:bg-red-700"
+                onClick={() => navigate(-1)}
+                className="w-full bg-gray-700 hover:bg-gray-600 text-white font-medium py-2.5 rounded-lg transition"
+                disabled={isSubmitting}
               >
                 {translation("cancel")}
               </button>

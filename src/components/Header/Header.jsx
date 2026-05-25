@@ -13,10 +13,15 @@ import DefaultAvatar from "../../assets/default-avatar.png";
 
 const Header = () => {
   const [menuOpened, setMenuOpened] = useState(false);
-  const [mobile, setMobile] = useState(window.innerWidth < 768);
+  
+  // ပြဿနာဖြေရှင်းချက်- SSR-Safe window check (🟢 Low)
+  const [mobile, setMobile] = useState(() => 
+    typeof window !== "undefined" ? window.innerWidth < 768 : false
+  );
+  
   const [showModal, setShowModal] = useState(false);
   const [isSignUpPage, setIsSignUpPage] = useState(false);
-  const { user, fetchUserProfile, loading, logout } = useContext(UserContext);
+  const { user, loading, logout } = useContext(UserContext); // fetchUserProfile ကို ဖြုတ်လိုက်သည် (🟢 Low)
   const { fontSize, translation } = useLanguage();
   const [languageSelectorOpened, setLanguageSelectorOpened] = useState(false);
 
@@ -29,11 +34,11 @@ const Header = () => {
   ];
 
   useEffect(() => {
-    fetchUserProfile();
+    // ဤနေရာတွင် fetchUserProfile() ထပ်မံခေါ်ယူခြင်းမပြုတော့ပါ (UserContext မှ တာဝန်ယူထားသည်)
     const handleResize = () => setMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [fetchUserProfile]);
+  }, []);
 
   const openSignIn = () => {
     setIsSignUpPage(false);
@@ -41,71 +46,18 @@ const Header = () => {
   };
 
   const handleAuthSuccess = () => {
-    fetchUserProfile();
     setShowModal(false);
   };
 
   return (
-    <>
-      <div className="flex justify-between relative bg-none w-full">
-        <div className="left-h p-8 pt-6 flex-[3] flex flex-col gap-8">
-          <div className="flex justify-between items-center p-4 text-white relative">
-            {/* Logo */}
-            <img src={Logo} alt="logo img" className="w-48" />
-
-            <div className="flex items-center gap-4">
-              <ul className="flex gap-4 items-center font-semibold">
-                {/* Desktop Navigation */}
-                {!mobile && (
-                  <>
-                    <NavigationMenu
-                      links={navLinks}
-                      translation={translation}
-                      fontSize={fontSize}
-                      user={user}
-                      openSignIn={openSignIn}
-                      logout={logout}
-                    />
-
-                    <li className="p-4">
-                      <LanguageSelector
-                        isMobile={false}
-                        isOpen={languageSelectorOpened}
-                        onToggle={(isOpen) => {
-                          setLanguageSelectorOpened(isOpen);
-                          if (isOpen) setMenuOpened(false);
-                        }}
-                      />
-                    </li>
-
-                    {loading ? (
-                      <div className="relative">
-                        <div className="flex items-center focus:outline-none">
-                          <img
-                            src={DefaultAvatar}
-                            alt="User Avatar"
-                            className="w-14 h-14 rounded-full border-1"
-                          />
-                        </div>
-                      </div>
-                    ) : user ? (
-                      <ProfileDropdown user={user} handleLogout={logout} />
-                    ) : (
-                      <button
-                        onClick={openSignIn}
-                        style={{ fontSize }}
-                        className="cursor-pointer font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
-                      >
-                        {translation("login")}
-                      </button>
-                    )}
-                  </>
-                )}
-              </ul>
-
-              {/* Mobile Navigation */}
-              {menuOpened && mobile && (
-                <ul className="absolute top-16 left-0 w-full bg-gray-700 text-white flex flex-col items-center py-4 gap-4 z-50">
+    <div className="flex justify-between relative bg-none w-full">
+      <div className="left-h p-8 pt-6 flex-[3] flex flex-col gap-8">
+        <div className="flex justify-between items-center p-4 text-white relative">
+          <img src={Logo} alt="logo img" className="w-48" />
+          <div className="flex items-center gap-4">
+            <ul className="flex gap-4 items-center font-semibold">
+              {!mobile && (
+                <>
                   <NavigationMenu
                     links={navLinks}
                     translation={translation}
@@ -113,75 +65,83 @@ const Header = () => {
                     user={user}
                     openSignIn={openSignIn}
                     logout={logout}
-                    isMobile
-                    onClose={() => setMenuOpened(false)}
                   />
-
-                  {!user && (
-                    <li className="p-4">
-                      <button
-                        onClick={() => {
-                          setMenuOpened(false);
-                          openSignIn();
-                        }}
-                        className="w-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
-                      >
-                        {translation("login")}
-                      </button>
-                    </li>
-                  )}
-                </ul>
-              )}
-
-              {mobile && (
-                <div className="flex items-center gap-4 md:hidden">
-                  {/* Language Selector */}
-                  <LanguageSelector
-                    isMobile={true}
-                    isOpen={languageSelectorOpened}
-                    onToggle={(isOpen) => {
-                      setLanguageSelectorOpened(isOpen); 
-                      if (isOpen) setMenuOpened(false); 
-                    }}
-                  />
-
-                  {/* Hamburger Menu */}
-                  <div
-                    className="flex items-center justify-center p-2 rounded cursor-pointer"
-                    onClick={() => {
-                      setMenuOpened((prev) => {
-                        const newState = !prev;
-                        setLanguageSelectorOpened(false); // Always close language dropdown
-                        return newState; // Toggle menu state
-                      });
-                    }}
-                  >
-                    <img src={Bars} alt="menu icon" className="w-6 h-6" />
-                  </div>
-                </div>
-              )}
-
-              {/* Modal */}
-              {showModal && (
-                <Modal onClose={() => setShowModal(false)}>
-                  {isSignUpPage ? (
-                    <SignUp
-                      switchToSignIn={() => setIsSignUpPage(false)}
-                      onSuccess={handleAuthSuccess}
+                  <li className="p-4">
+                    <LanguageSelector
+                      isMobile={false}
+                      isOpen={languageSelectorOpened}
+                      onToggle={(isOpen) => {
+                        setLanguageSelectorOpened(isOpen);
+                        if (isOpen) setMenuOpened(false);
+                      }}
                     />
+                  </li>
+                  {loading ? (
+                    <div className="relative">
+                      <img src={DefaultAvatar} alt="User Avatar" className="w-14 h-14 rounded-full border-1" />
+                    </div>
+                  ) : user ? (
+                    <ProfileDropdown user={user} handleLogout={logout} />
                   ) : (
-                    <SignIn
-                      switchToSignUp={() => setIsSignUpPage(true)}
-                      onSuccess={handleAuthSuccess}
-                    />
+                    <button onClick={openSignIn} style={{ fontSize }} className="cursor-pointer font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200">
+                      {translation("login")}
+                    </button>
                   )}
-                </Modal>
+                </>
               )}
-            </div>
+            </ul>
+
+            {menuOpened && mobile && (
+              <ul className="absolute top-16 left-0 w-full bg-gray-700 text-white flex flex-col items-center py-4 gap-4 z-50">
+                <NavigationMenu
+                  links={navLinks}
+                  translation={translation}
+                  fontSize={fontSize}
+                  user={user}
+                  openSignIn={openSignIn}
+                  logout={logout}
+                  isMobile
+                  onClose={() => setMenuOpened(false)}
+                />
+                {!user && (
+                  <li className="p-4 w-full px-8">
+                    <button onClick={() => { setMenuOpened(false); openSignIn(); }} className="w-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200">
+                      {translation("login")}
+                    </button>
+                  </li>
+                )}
+              </ul>
+            )}
+
+            {mobile && (
+              <div className="flex items-center gap-4 md:hidden">
+                <LanguageSelector
+                  isMobile={true}
+                  isOpen={languageSelectorOpened}
+                  onToggle={(isOpen) => {
+                    setLanguageSelectorOpened(isOpen);
+                    if (isOpen) setMenuOpened(false);
+                  }}
+                />
+                <div className="flex items-center justify-center p-2 rounded cursor-pointer" onClick={() => setMenuOpened((prev) => { const newState = !prev; setLanguageSelectorOpened(false); return newState; })}>
+                  <img src={Bars} alt="menu icon" className="w-6 h-6" />
+                </div>
+              </div>
+            )}
+
+            {showModal && (
+              <Modal onClose={() => setShowModal(false)}>
+                {isSignUpPage ? (
+                  <SignUp switchToSignIn={() => setIsSignUpPage(false)} onSuccess={handleAuthSuccess} />
+                ) : (
+                  <SignIn switchToSignUp={() => setIsSignUpPage(true)} onSuccess={handleAuthSuccess} />
+                )}
+              </Modal>
+            )}
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

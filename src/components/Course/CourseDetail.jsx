@@ -12,7 +12,8 @@ import { UserContext } from "../../context/UserContext.js";
 import ReactPlayer from "react-player";
 
 const CourseDetailPage = () => {
-  const { user, fetchUserProfile } = useContext(UserContext);
+  // fetchUserProfile ကို မလိုအပ်ဘဲ dependency loop မဖြစ်စေရန် Context ထံမှ တိုက်ရိုက်မခေါ်တော့ပါ
+  const { user } = useContext(UserContext);
   const location = useLocation();
   const { courseId } = location.state || {};
   const storedCourseId = localStorage.getItem('courseId'); 
@@ -27,17 +28,22 @@ const CourseDetailPage = () => {
   const list = translations;
   const lang = list[language];
 
-  console.log(courseId);
-  console.log(storedCourseId);
-
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
+    const activeCourseId = courseId || storedCourseId;
 
-    if (token) {
-      fetchUserProfile();
+    if (!activeCourseId) {
+      setError(true);
+      setLoading(false);
+      return;
     }
 
-    const url = token ? `/course/${courseId || storedCourseId}/private` : `/course/${courseId || storedCourseId}`;
+    if (courseId) {
+      localStorage.setItem('courseId', courseId);
+    }
+
+    // သင့်ရဲ့ မူရင်း Private / Public URL Routing Logic အမှန်ကို ပြန်လည်ထိန်းသိမ်းထားပါသည်
+    const url = token ? `/course/${activeCourseId}/private` : `/course/${activeCourseId}`;
 
     axios
       .get(url, {
@@ -51,7 +57,8 @@ const CourseDetailPage = () => {
         const course = response.data.data;
         setCourseData(course);
 
-        const firstUnlockedVideo = course.videos.find(
+        // ပထမဆုံး လော့ခ်မကျနေတဲ့ ဗီဒီယိုလင့်ခ်ကို ရှာဖွေပြီး Default ဖွင့်ပေးရန်
+        const firstUnlockedVideo = course.videos?.find(
           (video) => !video.is_locked
         );
         setCurrentVideo(firstUnlockedVideo ? firstUnlockedVideo.video_link : null);
@@ -59,9 +66,13 @@ const CourseDetailPage = () => {
       .catch((err) => {
         console.error("Failed to fetch course data:", err);
         setError(true);
+        // Security Check: အကယ်၍ Token သက်တမ်းကုန်ဆုံးမှုကြောင့် Error တက်ပါက Token ရှင်းပစ်ရန်
+        if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+          localStorage.removeItem("accessToken");
+        }
       })
       .finally(() => setLoading(false));
-  }, [fetchUserProfile, courseId, storedCourseId]);
+  }, [courseId, storedCourseId]); // fetchUserProfile ကို Dependency ထဲမှ ဖယ်ထုတ်ထား၍ Loop မပတ်တော့ပါ
 
   const handleVideoClick = (video) => {
     if (!user) {
@@ -74,18 +85,19 @@ const CourseDetailPage = () => {
       return;
     }
 
-    console.log(video.video_link);
     setCurrentVideo(video.video_link);
   };
 
   const handleAuthSuccess = () => {
-    fetchUserProfile();
+    // UserContext ရဲ့ global profile loader က အလုပ်လုပ်ပေးမည်ဖြစ်၍ ဒီမှာ ထပ်ခေါ်စရာမလိုပါ
     setShowLoginModal(false);
+    // Login အောင်မြင်ပြီးနောက် Private Data အသစ်ပြန်ဆွဲနိုင်ရန် Page ကို တစ်ချက် reload လုပ်ပေးနိုင်သည်
+    window.location.reload(); 
   };
 
   if (loading) return <LoadingSpinner />;
 
-  if (error) {
+  if (error || !courseData) {
     return (
       <div className="error-message flex flex-col justify-center items-center h-screen text-center">
         <h2 className="text-xl text-red-600 font-semibold">
@@ -99,78 +111,87 @@ const CourseDetailPage = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 text-white">
+    <div className="container mx-auto px-4 py-6 text-white">
       <div className="mb-6">
-        <h1 className="text-3xl md:text-4xl font-bold">
-          {courseData[`title_${language}`]}
+        <h1 className="text-3xl md:text-4xl font-bold text-orange-500">
+          {courseData[`title_${language}`] || courseData.title_en}
         </h1>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* Left Section */}
+        {/* Left Section - Video & Descriptions */}
         <div className="flex-1 space-y-10">
-          <div className="bg-black rounded-lg overflow-hidden shadow-lg">
+          <div className="bg-black rounded-lg overflow-hidden shadow-lg aspect-video max-h-[500px]">
             {currentVideo && user ? (
               <ReactPlayer 
-                className="top-0"
                 url={currentVideo} 
                 controls={true}
                 width="100%"
-                height="500px"
+                height="100%"
+                config={{ file: { attributes: { controlsList: 'nodownload' } } }} // Security: Prevent easy video download
                />
-              // <YouTube videoId={currentVideo} opts={opts} />
             ) : (
-              <div className="text-center bg-gray-900 text-gray-500 py-20">
-                {user ? lang.videoLockedMessage || "This video is locked." : lang.loginRequiredMessage || "Please log in to watch the video."}
+              <div className="w-full h-full flex flex-col items-center justify-center bg-gray-900 text-gray-500 py-24 px-4 text-center">
+                <FaLock className="text-4xl mb-4 text-gray-600" />
+                <p className="text-lg">
+                  {user ? lang.videoLockedMessage || "This video is locked. Purchase a plan to unlock." : lang.loginRequiredMessage || "Please log in to watch the video."}
+                </p>
               </div>
             )}
           </div>
 
-          <div>
-            <h2 className="text-2xl font-semibold mb-4">{lang.overview}</h2>
-            <p className="text-white leading-relaxed">
-              {courseData[`description_${language}`]}
+          <div className="bg-gray-900 p-6 rounded-lg shadow">
+            <h2 className="text-2xl font-semibold mb-4 text-orange-500">{lang.overview || "Overview"}</h2>
+            <p className="text-gray-300 leading-relaxed">
+              {courseData[`description_${language}`] || courseData.description_en}
             </p>
           </div>
 
-          <div>
-            <h2 className="text-2xl font-semibold mb-4">{lang.requirements}</h2>
-            <ul className="space-y-2">
-              {courseData[`requirement_${language}`]}
-            </ul>
+          <div className="bg-gray-900 p-6 rounded-lg shadow">
+            <h2 className="text-2xl font-semibold mb-4 text-orange-500">{lang.requirements || "Requirements"}</h2>
+            <div className="text-gray-300 leading-relaxed space-y-2">
+              {courseData[`requirement_${language}`] || courseData.requirement_en || "No specific requirements."}
+            </div>
           </div>
         </div>
 
-        {/* Right Section */}
-        <div className="w-full lg:w-1/4 sticky top-0 self-start overflow-y-auto h-screen bg-[#0e1217] p-4 rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold mb-4">{lang.videoList}</h2>
-          <ul className="space-y-1">
-            {courseData.videos.length > 0 ? (courseData.videos.map((video, index) => (
-              <li
-                key={video.videoId || `locked-${index}`}
-                className={`p-3 border border-slate-700 rounded-md cursor-pointer transition duration-300 flex items-center ${
-                  video.video_link === currentVideo
-                    ? "bg-[#293249] text-white border-blue-500"
-                    : video.is_locked
-                    ? "text-white cursor-not-allowed"
-                    : "hover:bg-[#293249] hover:text-white"
-                }`}
-                onClick={() => handleVideoClick(video)}
-              >
-                <span className="text-sm font-medium flex-1">
-                  {video.video_title}
-                </span>
-                {video.is_locked ? (
-                  <FaLock className="ml-2 text-red-500" />
-                ) : (
-                  <FaPlayCircle className="ml-2 text-gray-400" />
-                )}
-              </li>
-            ))) : ((<div className="error-message flex flex-col justify-center items-center h-screen text-center">
-              <h2 className="text-xl text-yellow-600 font-semibold">
-                There is no data.
-              </h2>
-            </div>))}
+        {/* Right Section - Playlist Sidebar */}
+        <div className="w-full lg:w-1/4 sticky top-0 self-start overflow-y-auto max-h-[calc(100vh-4rem)] bg-[#0e1217] p-4 rounded-lg shadow-lg border border-gray-800">
+          <h2 className="text-xl font-semibold mb-4 pb-2 border-b border-gray-800">{lang.videoList || "Video List"}</h2>
+          <ul className="space-y-2">
+            {courseData.videos && courseData.videos.length > 0 ? (
+              courseData.videos.map((video, index) => (
+                <li
+                  key={video.id || video.videoId || index}
+                  className={`p-3 border border-slate-800 rounded-md cursor-pointer transition duration-300 flex items-center justify-between ${
+                    video.video_link === currentVideo
+                      ? "bg-orange-600 text-white border-orange-500 font-medium"
+                      : video.is_locked
+                      ? "bg-gray-900/50 text-gray-500 hover:bg-gray-800"
+                      : "bg-gray-900 hover:bg-[#293249] text-gray-300"
+                  }`}
+                  onClick={() => handleVideoClick(video)}
+                >
+                  <div className="flex items-center space-x-3 truncate flex-1">
+                    <span className="text-xs text-gray-500 font-mono">{String(index + 1).padStart(2, '0')}</span>
+                    <span className="text-sm truncate">
+                      {video.video_title}
+                    </span>
+                  </div>
+                  <div>
+                    {video.is_locked ? (
+                      <FaLock className="ml-2 text-red-500 text-xs" />
+                    ) : (
+                      <FaPlayCircle className="ml-2 text-green-400 text-sm" />
+                    )}
+                  </div>
+                </li>
+              ))
+            ) : (
+              <div className="text-center p-6 text-gray-500">
+                <h2 className="text-sm font-semibold">{lang.noData || "There is no video data."}</h2>
+              </div>
+            )}
           </ul>
         </div>
       </div>
@@ -195,21 +216,21 @@ const CourseDetailPage = () => {
       {/* Purchase Modal */}
       {showPurchaseModal && (
         <Modal onClose={() => setShowPurchaseModal(false)}>
-          <div className="text-center">
+          <div className="text-center p-4">
             <h2 className="text-xl text-black font-semibold">{lang.purchaseRequired || "Purchase Required"}</h2>
-            <p className="my-4 text-black">
-              {lang.purchaseMessage || "This video is premium. Do you want to purchase?"}
+            <p className="my-4 text-gray-700">
+              {lang.purchaseMessage || "This video is premium. Do you want to purchase a plan?"}
             </p>
-            <div className="flex justify-center space-x-4">
+            <div className="flex justify-center space-x-4 mt-6">
               <Link
                 to="/"
                 state={{ scrollToSection: "plans" }}
-                className="cursor-pointer font-bold text-white bg-gray-700 border rounded-full px-4 py-2 hover:bg-gray-900"
+                className="cursor-pointer font-bold text-white bg-orange-500 rounded-full px-6 py-2 hover:bg-orange-600 transition"
               >
                 Yes
               </Link>
               <button
-                className="cursor-pointer font-bold text-white bg-red-500 border rounded-full px-4 py-2 hover:bg-red-700"
+                className="cursor-pointer font-bold text-gray-700 bg-gray-200 rounded-full px-6 py-2 hover:bg-gray-300 transition"
                 onClick={() => setShowPurchaseModal(false)}
               >
                 No
