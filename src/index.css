@@ -2,17 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-      sans-serif;
+@layer base {
+
+  body {
+    font-family: "Pyidaungsu", "Myanmar3", "Inter", "Poppins", system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  
-  code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-      monospace;
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    line-height: 1.2;
+    color: #f1f5f9;
   }
-  
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm 
+           bg-gradient-to-br from-accent-light to-accent text-bg-base 
+           transition-all duration-200 no-underline;
+  }
+  .btn:hover {
+    @apply -translate-y-0.5 shadow-glow;
+  }
+  .btn:active {
+    @apply translate-y-0;
+  }
+  .btn-outline {
+    @apply btn bg-none border border-white/20 text-white from-transparent to-transparent;
+  }
+  .btn-outline:hover {
+    @apply border-lime-400/50 text-lime-400 bg-lime-400/5;
+  }
+}

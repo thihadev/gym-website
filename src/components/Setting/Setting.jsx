@@ -8,74 +8,60 @@ import { useLanguage } from "../../context/LanguageProvider";
 const Setting = () => {
   const [activeTab, setActiveTab] = useState("profile");
   const { translation } = useLanguage();
-  const {
-    notificationCount,
-    notifications,
-    fetchNotifications,
-    markNotificationAsRead,
-    markAllAsRead,
-    loading
-  } = useNotification();
+  const { notificationCount, notifications, fetchNotifications, markNotificationAsRead, markAllAsRead, loading } = useNotification();
   const location = useLocation();
-  const { scrollToSection } = location.state || {};
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchNotifications();
+    if (location.state?.scrollToSection) setActiveTab(location.state.scrollToSection);
+  }, [location.state?.scrollToSection, fetchNotifications]);
 
-    if (scrollToSection) {
-      setActiveTab(scrollToSection);
-    }
-  }, [scrollToSection, fetchNotifications]);
+  const tabs = [
+    { key: "profile", label: translation("profile") },
+    { key: "notifications", label: translation("notifications"), badge: notificationCount },
+  ];
 
   return (
-    <div
-      className="flex justify-center items-center p-4 h-vh"
-      id="notifications"
-    >
-      <div className="w-full sm:w-3/4 lg:w-2/3 xl:w-1/2 bg-white shadow-lg rounded-lg p-6 relative">
-        {/* Close Button */}
-        <button
-          className="absolute top-4 right-4 text-gray-600 hover:text-red-500 text-3xl font-bold"
-          onClick={() => {
-            navigate("/"); // Redirect to the home page
-          }}
-          aria-label="Close"
-        >
-          &times;
-        </button>
+    <div className="min-h-screen flex items-start justify-center p-4 pt-8">
+      <div className="w-full max-w-2xl bg-[#111827] border border-white/8 rounded-2xl shadow-2xl overflow-hidden">
 
-        {/* Tabs */}
-        <div className="flex justify-center space-x-8 mb-6">
-          <div
-            className={`text-lg font-semibold cursor-pointer hover:text-blue-500 ${
-              activeTab === "profile"
-                ? "text-blue-600 border-b-2 border-blue-600"
-                : "text-gray-600"
-            }`}
-            onClick={() => setActiveTab("profile")}
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
+          <h1 className="text-lg font-bold text-white">Settings</h1>
+          <button
+            onClick={() => navigate("/")}
+            className="w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition text-xl leading-none"
+            aria-label="Close"
           >
-            {translation("profile")}
-          </div>
-          <div
-            className={`text-lg font-semibold cursor-pointer flex items-center space-x-2 hover:text-blue-500 ${
-              activeTab === "notifications"
-                ? "text-blue-600 border-b-2 border-blue-600"
-                : "text-gray-600"
-            }`}
-            onClick={() => setActiveTab("notifications")}
-          >
-            <span>{translation("notifications")}</span>
-            {notificationCount > 0 && (
-              <span className="bg-red-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center">
-                {notificationCount}
-              </span>
-            )}
-          </div>
+            &times;
+          </button>
         </div>
 
-        {/* Main Content */}
-        <div>
+        {/* Tabs */}
+        <div className="flex border-b border-white/8">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`flex items-center gap-2 px-6 py-3.5 text-base font-semibold transition border-b-2 ${
+                activeTab === tab.key
+                  ? "border-lime-400 text-lime-400"
+                  : "border-transparent text-slate-400 hover:text-white"
+              }`}
+            >
+              {tab.label}
+              {tab.badge > 0 && (
+                <span className="w-5 h-5 bg-red-500 text-white text-base rounded-full flex items-center justify-center font-bold">
+                  {tab.badge}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Content */}
+        <div className="p-6">
           {activeTab === "profile" && <UserProfile />}
           {activeTab === "notifications" && (
             <Notification

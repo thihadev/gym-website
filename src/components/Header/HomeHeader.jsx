@@ -1,104 +1,116 @@
 import React, { useState, useEffect, useContext } from "react";
 import Logo from "../../assets/logo.png";
 import { Link } from "react-scroll";
+import { Link as RouterLink } from "react-router-dom";
 import Modal from "../Modal";
 import SignIn from "../Auth/SignIn";
 import SignUp from "../Auth/SignUp";
 import ProfileDropdown from "../Profile/ProfileDropdown";
-import "react-toastify/dist/ReactToastify.css";
 import LanguageSelector from "../LanguageSelector";
 import { useLanguage } from "../../context/LanguageProvider";
 import { UserContext } from "../../context/UserContext";
 import MobileNav from "./MobileNav";
-import Bars from "../../assets/bars.png";
 import DefaultAvatar from "../../assets/default-avatar.png";
+
+const NAV_SECTIONS = ["home", "programs", "aboutus", "reasons", "plans"];
 
 const HomeHeader = () => {
   const [menuOpened, setMenuOpened] = useState(false);
-  
-  // ပြဿနာဖြေရှင်းချက်- SSR-Safe window check (🟢 Low)
-  const [mobile, setMobile] = useState(() => 
+  const [mobile, setMobile] = useState(() =>
     typeof window !== "undefined" ? window.innerWidth < 768 : false
   );
-  
   const [showModal, setShowModal] = useState(false);
   const [isSignUpPage, setIsSignUpPage] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
   const { fontSize, translation } = useLanguage();
-  const { user, logout, loading } = useContext(UserContext); // fetchUserProfile ကို ဖြုတ်လိုက်သည်
-  const [languageSelectorOpened, setLanguageSelectorOpened] = useState(false);
+  const { user, logout, loading } = useContext(UserContext);
 
   useEffect(() => {
-    const handleResize = () => setMobile(window.innerWidth < 768);
-    window.addEventListener("resize", handleResize);
-    
-    // ပြဿနာဖြေရှင်းချက်- Event listener ဖြုတ်ရန် မေ့ကျန်ခဲ့မှုကို ဖြည့်စွက်ခြင်း (🟢 Low)
-    return () => window.removeEventListener("resize", handleResize);
+    const onResize = () => setMobile(window.innerWidth < 768);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  const openSignIn = () => {
-    setIsSignUpPage(false);
-    setShowModal(true);
-  };
-
-  const handleAuthSuccess = () => {
-    setShowModal(false);
-  };
+  const openSignIn = () => { setIsSignUpPage(false); setShowModal(true); };
 
   return (
-    <div className="flex justify-between items-center p-4 text-white relative">
-      <img src={Logo} alt="logo img" className="w-48" />
+    <header className="w-full relative z-40">
+      <div className="max-w-[1200px] mx-auto px-4 md:px-8 py-3 flex items-center justify-between">
+        <RouterLink to="/">
+          <img src={Logo} alt="logo" className="w-36 md:w-40" />
+        </RouterLink>
 
-      {!mobile && (
-        <div className="flex items-center gap-4">
-          <ul className="flex gap-4 items-center font-semibold">
-            {["hero", "programs", "aboutus", "reasons", "plans"].map((sec) => (
-              <li className="p-4" key={sec}>
-                <Link to={sec} smooth={true} className="cursor-pointer hover:text-gray-400" style={{ fontSize }}>
-                  {translation(sec === "aboutus" ? "aboutUs" : sec)}
-                </Link>
-              </li>
-            ))}
-            <li className="p-4">
-              <LanguageSelector isMobile={false} isOpen={languageSelectorOpened} onToggle={(isOpen) => setLanguageSelectorOpened(isOpen)} />
-            </li>
-          </ul>
-
-          {loading ? (
-            <div className="relative">
-              <img src={DefaultAvatar} alt="User Avatar" className="w-14 h-14 rounded-full border-1" />
+        <div className="flex items-center gap-3">
+          {/* Desktop */}
+          {!mobile && (
+            <div className="flex items-center gap-4">
+              <ul className="flex items-center gap-1 font-semibold">
+                {NAV_SECTIONS.map((sec) => (
+                  <li key={sec}>
+                    <Link
+                      to={sec}
+                      smooth={true}
+                      offset={-70}
+                      className="cursor-pointer px-3 py-2 rounded-lg text-slate-300 hover:text-lime-400 hover:bg-white/5 transition text-base"
+                      style={{ fontSize }}
+                    >
+                      {translation(sec === "aboutus" ? "aboutUs" : sec)}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <LanguageSelector isMobile={false} isOpen={langOpen} onToggle={setLangOpen} />
+              {loading ? (
+                <img src={DefaultAvatar} alt="avatar" className="w-9 h-9 rounded-full opacity-50 border border-white/10" />
+              ) : user ? (
+                <ProfileDropdown user={user} handleLogout={logout} />
+              ) : (
+                <button onClick={openSignIn} className="btn text-sm px-4 py-2">
+                  {translation("login")}
+                </button>
+              )}
             </div>
-          ) : user ? (
-            <ProfileDropdown user={user} handleLogout={logout} />
-          ) : (
-            <button onClick={openSignIn} style={{ fontSize }} className="cursor-pointer font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200">
-              {translation("login")}
-            </button>
+          )}
+
+          {/* Mobile */}
+          {mobile && (
+            <div className="flex items-center gap-2">
+              <LanguageSelector isMobile={true} isOpen={langOpen} onToggle={(v) => { setLangOpen(v); if (v) setMenuOpened(false); }} />
+              <button
+                onClick={() => { setMenuOpened((p) => !p); setLangOpen(false); }}
+                className="flex flex-col gap-1.5 p-2 rounded-lg hover:bg-white/10 transition"
+                aria-label="Toggle menu"
+              >
+                <span className={`block w-6 h-0.5 bg-white transition-all ${menuOpened ? "rotate-45 translate-y-2" : ""}`} />
+                <span className={`block w-6 h-0.5 bg-white transition-all ${menuOpened ? "opacity-0" : ""}`} />
+                <span className={`block w-6 h-0.5 bg-white transition-all ${menuOpened ? "-rotate-45 -translate-y-2" : ""}`} />
+              </button>
+            </div>
+          )}
+
+          {mobile && (
+            <MobileNav
+              translation={translation}
+              menuOpened={menuOpened}
+              setMenuOpened={setMenuOpened}
+              user={user}
+              logout={logout}
+              openSignIn={openSignIn}
+            />
           )}
         </div>
-      )}
-
-      {mobile && (
-        <>
-          <div className="flex items-center gap-4 md:hidden">
-            <LanguageSelector isMobile={true} isOpen={languageSelectorOpened} onToggle={(isOpen) => { setLanguageSelectorOpened(isOpen); if (isOpen) setMenuOpened(false); }} />
-            <div className="flex items-center justify-center p-2 rounded cursor-pointer" onClick={() => setMenuOpened((prev) => { const newState = !prev; setLanguageSelectorOpened(false); return newState; })}>
-              <img src={Bars} alt="menu icon" className="w-6 h-6" />
-            </div>
-          </div>
-          <MobileNav translation={translation} menuOpened={menuOpened} setMenuOpened={setMenuOpened} user={user} logout={logout} openSignIn={openSignIn} />
-        </>
-      )}
+      </div>
 
       {showModal && (
         <Modal onClose={() => setShowModal(false)}>
           {isSignUpPage ? (
-            <SignUp switchToSignIn={() => setIsSignUpPage(false)} onSuccess={handleAuthSuccess} />
+            <SignUp switchToSignIn={() => setIsSignUpPage(false)} onSuccess={() => setShowModal(false)} />
           ) : (
-            <SignIn switchToSignUp={() => setIsSignUpPage(true)} onSuccess={handleAuthSuccess} />
+            <SignIn switchToSignUp={() => setIsSignUpPage(true)} onSuccess={() => setShowModal(false)} />
           )}
         </Modal>
       )}
-    </div>
+    </header>
   );
 };
 

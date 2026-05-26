@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import Logo from "../../assets/logo.png";
-import Bars from "../../assets/bars.png";
+
 import Modal from "../Modal";
 import SignIn from "../Auth/SignIn";
 import SignUp from "../Auth/SignUp";
@@ -10,18 +10,16 @@ import { UserContext } from "../../context/UserContext";
 import LanguageSelector from "../LanguageSelector";
 import ProfileDropdown from "../Profile/ProfileDropdown";
 import DefaultAvatar from "../../assets/default-avatar.png";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [menuOpened, setMenuOpened] = useState(false);
-  
-  // ပြဿနာဖြေရှင်းချက်- SSR-Safe window check (🟢 Low)
-  const [mobile, setMobile] = useState(() => 
+  const [mobile, setMobile] = useState(() =>
     typeof window !== "undefined" ? window.innerWidth < 768 : false
   );
-  
   const [showModal, setShowModal] = useState(false);
   const [isSignUpPage, setIsSignUpPage] = useState(false);
-  const { user, loading, logout } = useContext(UserContext); // fetchUserProfile ကို ဖြုတ်လိုက်သည် (🟢 Low)
+  const { user, loading, logout } = useContext(UserContext);
   const { fontSize, translation } = useLanguage();
   const [languageSelectorOpened, setLanguageSelectorOpened] = useState(false);
 
@@ -34,65 +32,25 @@ const Header = () => {
   ];
 
   useEffect(() => {
-    // ဤနေရာတွင် fetchUserProfile() ထပ်မံခေါ်ယူခြင်းမပြုတော့ပါ (UserContext မှ တာဝန်ယူထားသည်)
     const handleResize = () => setMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const openSignIn = () => {
-    setIsSignUpPage(false);
-    setShowModal(true);
-  };
-
-  const handleAuthSuccess = () => {
-    setShowModal(false);
-  };
+  const openSignIn = () => { setIsSignUpPage(false); setShowModal(true); };
 
   return (
-    <div className="flex justify-between relative bg-none w-full">
-      <div className="left-h p-8 pt-6 flex-[3] flex flex-col gap-8">
-        <div className="flex justify-between items-center p-4 text-white relative">
-          <img src={Logo} alt="logo img" className="w-48" />
-          <div className="flex items-center gap-4">
-            <ul className="flex gap-4 items-center font-semibold">
-              {!mobile && (
-                <>
-                  <NavigationMenu
-                    links={navLinks}
-                    translation={translation}
-                    fontSize={fontSize}
-                    user={user}
-                    openSignIn={openSignIn}
-                    logout={logout}
-                  />
-                  <li className="p-4">
-                    <LanguageSelector
-                      isMobile={false}
-                      isOpen={languageSelectorOpened}
-                      onToggle={(isOpen) => {
-                        setLanguageSelectorOpened(isOpen);
-                        if (isOpen) setMenuOpened(false);
-                      }}
-                    />
-                  </li>
-                  {loading ? (
-                    <div className="relative">
-                      <img src={DefaultAvatar} alt="User Avatar" className="w-14 h-14 rounded-full border-1" />
-                    </div>
-                  ) : user ? (
-                    <ProfileDropdown user={user} handleLogout={logout} />
-                  ) : (
-                    <button onClick={openSignIn} style={{ fontSize }} className="cursor-pointer font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200">
-                      {translation("login")}
-                    </button>
-                  )}
-                </>
-              )}
-            </ul>
+    <header className="w-full bg-bg-base/80 backdrop-blur-md border-b border-white/5 sticky top-0 z-50">
+      <div className="max-w-[1200px] mx-auto px-4 md:px-8 py-3 flex items-center justify-between">
+        <Link to="/">
+          <img src={Logo} alt="logo" className="w-36 md:w-40" />
+        </Link>
 
-            {menuOpened && mobile && (
-              <ul className="absolute top-16 left-0 w-full bg-gray-700 text-white flex flex-col items-center py-4 gap-4 z-50">
+        <div className="flex items-center gap-3">
+          {/* Desktop Nav */}
+          {!mobile && (
+            <div className="flex items-center gap-4">
+              <ul className="flex items-center gap-1 font-semibold">
                 <NavigationMenu
                   links={navLinks}
                   translation={translation}
@@ -100,48 +58,82 @@ const Header = () => {
                   user={user}
                   openSignIn={openSignIn}
                   logout={logout}
-                  isMobile
-                  onClose={() => setMenuOpened(false)}
                 />
-                {!user && (
-                  <li className="p-4 w-full px-8">
-                    <button onClick={() => { setMenuOpened(false); openSignIn(); }} className="w-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200">
-                      {translation("login")}
-                    </button>
-                  </li>
-                )}
               </ul>
-            )}
+              <LanguageSelector
+                isMobile={false}
+                isOpen={languageSelectorOpened}
+                onToggle={(isOpen) => { setLanguageSelectorOpened(isOpen); if (isOpen) setMenuOpened(false); }}
+              />
+              {loading ? (
+                <img src={DefaultAvatar} alt="avatar" className="w-9 h-9 rounded-full opacity-50 border border-white/10" />
+              ) : user ? (
+                <ProfileDropdown user={user} handleLogout={logout} />
+              ) : (
+                <button onClick={openSignIn} className="btn text-sm px-4 py-2">
+                  {translation("login")}
+                </button>
+              )}
+            </div>
+          )}
 
-            {mobile && (
-              <div className="flex items-center gap-4 md:hidden">
-                <LanguageSelector
-                  isMobile={true}
-                  isOpen={languageSelectorOpened}
-                  onToggle={(isOpen) => {
-                    setLanguageSelectorOpened(isOpen);
-                    if (isOpen) setMenuOpened(false);
-                  }}
-                />
-                <div className="flex items-center justify-center p-2 rounded cursor-pointer" onClick={() => setMenuOpened((prev) => { const newState = !prev; setLanguageSelectorOpened(false); return newState; })}>
-                  <img src={Bars} alt="menu icon" className="w-6 h-6" />
-                </div>
-              </div>
-            )}
-
-            {showModal && (
-              <Modal onClose={() => setShowModal(false)}>
-                {isSignUpPage ? (
-                  <SignUp switchToSignIn={() => setIsSignUpPage(false)} onSuccess={handleAuthSuccess} />
-                ) : (
-                  <SignIn switchToSignUp={() => setIsSignUpPage(true)} onSuccess={handleAuthSuccess} />
-                )}
-              </Modal>
-            )}
-          </div>
+          {/* Mobile controls */}
+          {mobile && (
+            <div className="flex items-center gap-2">
+              <LanguageSelector
+                isMobile={true}
+                isOpen={languageSelectorOpened}
+                onToggle={(isOpen) => { setLanguageSelectorOpened(isOpen); if (isOpen) setMenuOpened(false); }}
+              />
+              <button
+                onClick={() => { setMenuOpened((p) => !p); setLanguageSelectorOpened(false); }}
+                className="flex flex-col gap-1.5 p-2 rounded-lg hover:bg-white/5 transition"
+                aria-label="Toggle menu"
+              >
+                <span className={`block w-6 h-0.5 bg-white transition-all ${menuOpened ? "rotate-45 translate-y-2" : ""}`} />
+                <span className={`block w-6 h-0.5 bg-white transition-all ${menuOpened ? "opacity-0" : ""}`} />
+                <span className={`block w-6 h-0.5 bg-white transition-all ${menuOpened ? "-rotate-45 -translate-y-2" : ""}`} />
+              </button>
+            </div>
+          )}
         </div>
       </div>
-    </div>
+
+      {/* Mobile Menu */}
+      {mobile && menuOpened && (
+        <div className="absolute top-full left-0 w-full bg-[#0f172a] border-t border-white/10 z-50 shadow-2xl animate-fade-in">
+          <ul className="flex flex-col py-4">
+            <NavigationMenu
+              links={navLinks}
+              translation={translation}
+              fontSize={fontSize}
+              user={user}
+              openSignIn={openSignIn}
+              logout={logout}
+              isMobile
+              onClose={() => setMenuOpened(false)}
+            />
+            {!user && (
+              <li className="px-6 pt-3 pb-2 border-t border-white/10 mt-2">
+                <button onClick={() => { setMenuOpened(false); openSignIn(); }} className="btn w-full text-center">
+                  {translation("login")}
+                </button>
+              </li>
+            )}
+          </ul>
+        </div>
+      )}
+
+      {showModal && (
+        <Modal onClose={() => setShowModal(false)}>
+          {isSignUpPage ? (
+            <SignUp switchToSignIn={() => setIsSignUpPage(false)} onSuccess={() => setShowModal(false)} />
+          ) : (
+            <SignIn switchToSignUp={() => setIsSignUpPage(true)} onSuccess={() => setShowModal(false)} />
+          )}
+        </Modal>
+      )}
+    </header>
   );
 };
 

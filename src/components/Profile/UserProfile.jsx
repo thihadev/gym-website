@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import EditProfile from "./EditProfile";
 import axios from "../../axios";
+import DefaultAvatar from "../../assets/default-avatar.png";
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);
@@ -8,88 +9,50 @@ const UserProfile = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      setLoading(true); // Start loading
-      const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken");
+    if (!token) { setError("Please log in to view your profile."); setLoading(false); return; }
 
-      if (!token) {
-        setError("Access token not found. Please log in.");
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const response = await axios.get("profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.status === 200) {
-          setUser(response.data.data);
-          setError(null); // Clear any previous errors
-        } else {
-          throw new Error("Failed to fetch user data.");
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        setError("Failed to fetch user data. Please try again later.");
-        setUser(null);
-      } finally {
-        setLoading(false); // Stop loading
-      }
-    };
-
-    fetchUserData();
+    axios.get("profile", { headers: { Authorization: `Bearer ${token}` } })
+      .then((r) => { setUser(r.data.data); })
+      .catch(() => setError("Failed to load profile. Please try again."))
+      .finally(() => setLoading(false));
   }, []);
 
-  if (error) {
-    return (
-      <div className="text-red-600 text-center font-medium p-6">{error}</div>
-    );
-  }
+  if (loading) return (
+    <div className="flex justify-center items-center py-16">
+      <div className="w-8 h-8 border-2 border-lime-400 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
 
-  if (!loading && !user) {
-    return (
-      <div className="text-gray-500 text-center font-medium p-6">
-        No user data available.
-      </div>
-    );
-  }
+  if (error) return (
+    <div className="text-center py-10">
+      <p className="text-red-400 text-base">{error}</p>
+    </div>
+  );
 
   return (
-    <>
-    <section
-      className="p-6 flex flex-col md:flex-row items-center md:items-start gap-6 overflow-y-auto relative"
-      style={{ maxHeight: "380px" }}
-      >
-      {/* Left Section - User Details */}
-      <div className="flex flex-col items-center md:items-start w-full md:w-auto">
-      {loading && (
-        <div className="absolute inset-0 flex justify-center items-center bg-white">
-          <div className="text-blue-600 font-medium text-lg">Loading...</div>
-        </div>
-      )}
+    <div className="flex flex-col md:flex-row gap-6">
+      {/* Avatar + info */}
+      <div className="flex flex-col items-center gap-3 md:w-40 shrink-0">
         <img
-          src={user?.avatar || "/default-avatar.png"}
-          alt="User Avatar"
-          className="w-32 h-32 rounded-full border-4 border-gray-200"
+          src={user?.avatar || DefaultAvatar}
+          alt="avatar"
+          className="w-24 h-24 rounded-full border-2 border-lime-400/50 object-cover"
         />
-        <div className="mt-4 text-center">
-          <p className="text-lg font-semibold">{user?.name || "N/A"}</p>
-          <p className="text-md">{user?.email || "N/A"}</p>
-          <p className="text-md text-green-600 font-semibold">
-            {user?.type || "User"}
-          </p>
+        <div className="text-center">
+          <p className="text-base font-semibold text-white">{user?.name || "—"}</p>
+          <p className="text-base text-slate-300 mt-0.5">{user?.email}</p>
+          <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-lime-400/15 text-lime-400 text-base font-medium">
+            {user?.type || "Member"}
+          </span>
         </div>
       </div>
 
-      {/* Right Section - Edit Profile */}
-      <div className="flex-grow flex w-full">
+      {/* Edit form */}
+      <div className="flex-1 min-w-0">
         <EditProfile user={user} setUser={setUser} />
       </div>
-    </section>
-    </>
+    </div>
   );
 };
 

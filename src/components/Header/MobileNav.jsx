@@ -2,121 +2,60 @@ import React from "react";
 import { Link } from "react-scroll";
 import { Link as RouterLink } from "react-router-dom";
 
-const MobileNav = ({
-  translation,
-  menuOpened,
-  setMenuOpened,
-  user,
-  logout,
-  openSignIn,
-}) => {
+const NAV_LINKS = ["hero", "programs", "aboutus", "reasons", "plans"];
+
+const MobileNav = ({ translation, menuOpened, setMenuOpened, user, logout, openSignIn }) => {
+  if (!menuOpened) return null;
+
   return (
-    <>
-      {/* Mobile Dropdown Menu */}
-      {menuOpened && (
-        <ul className="absolute top-16 left-0 w-full bg-gray-700 text-white flex flex-col items-center py-4 gap-4 z-50">
-          <li className="p-4">
+    <div className="absolute top-full left-0 w-full bg-[#0f172a] border-t border-white/10 z-50 shadow-2xl animate-fade-in">
+      <ul className="flex flex-col py-4">
+        {NAV_LINKS.map((sec) => (
+          <li key={sec}>
             <Link
+              to={sec}
+              smooth={true}
+              offset={-70}
               onClick={() => setMenuOpened(false)}
-              to="hero"
-              smooth="true"
-              className="cursor-pointer hover:text-gray-300"
+              className="block px-6 py-3 text-slate-300 hover:text-lime-400 hover:bg-white/5 cursor-pointer transition text-base font-medium"
             >
-              {translation("home")}
+              {translation(sec === "aboutus" ? "aboutUs" : sec)}
             </Link>
           </li>
-          <li className="p-4">
-            <Link
-              onClick={() => setMenuOpened(false)}
-              to="programs"
-              smooth="true"
-              className="cursor-pointer hover:text-gray-300"
-            >
-              {translation("programs")}
-            </Link>
-          </li>
-          <li className="p-4">
-            <Link
-              onClick={() => setMenuOpened(false)}
-              to="aboutus"
-              smooth="true"
-              className="cursor-pointer hover:text-gray-300"
-            >
-              {translation("aboutUs")}
-            </Link>
-          </li>
-          <li className="p-4">
-            <Link
-              onClick={() => setMenuOpened(false)}
-              to="reasons"
-              smooth="true"
-              className="cursor-pointer hover:text-gray-300"
-            >
-              {translation("reasons")}
-            </Link>
-          </li>
-          <li className="p-4">
-            <Link
-              onClick={() => setMenuOpened(false)}
-              to="plans"
-              smooth="true"
-              className="cursor-pointer hover:text-gray-300"
-            >
-              {translation("plans")}
-            </Link>
-          </li>
+        ))}
 
-          {user && (
-            <li className="p-4">
-              <RouterLink
-                onClick={() => setMenuOpened(false)}
-                to="settings"
-                state={{ scrollToSection: "profile" }}
-                className="cursor-pointer hover:text-gray-300"
-              >
-                {translation("profile")}
-              </RouterLink>
-            </li>
-          )}
+        {user && (
+          <li>
+            <RouterLink
+              to="/settings"
+              state={{ scrollToSection: "profile" }}
+              onClick={() => setMenuOpened(false)}
+              className="block px-6 py-3 text-slate-300 hover:text-lime-400 hover:bg-white/5 transition text-base font-medium"
+            >
+              {translation("profile")}
+            </RouterLink>
+          </li>
+        )}
 
-          {/* Mobile Login Button */}
-          {!user && (
-            <li className="p-4">
-              <button
-                onClick={() => {
-                  setMenuOpened(false);
-                  openSignIn();
-                }}
-                className="w-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
-              >
-                {translation("login")}
-              </button>
-            </li>
+        <li className="px-6 pt-3 pb-2 border-t border-white/10 mt-2">
+          {user ? (
+            <button
+              onClick={() => { logout(); setMenuOpened(false); }}
+              className="w-full py-2.5 rounded-full border border-red-500/50 text-red-400 font-bold text-base hover:bg-red-500/10 transition"
+            >
+              {translation("logout")}
+            </button>
+          ) : (
+            <button
+              onClick={() => { setMenuOpened(false); openSignIn(); }}
+              className="w-full py-2.5 rounded-full bg-lime-400 text-black font-bold text-base hover:bg-lime-300 transition"
+            >
+              {translation("login")}
+            </button>
           )}
-
-          {/* Mobile Profile Dropdown */}
-          {user && (
-            <>
-              <li className="p-4">
-                <button
-                  onClick={logout}
-                  className="cursor-pointer w-full text-center font-bold text-gray-800 bg-white border rounded-full px-4 py-2 hover:bg-gray-200"
-                >
-                  {translation("logout")}
-                </button>
-              </li>
-              <button
-                onClick={() => setMenuOpened(false)}
-                className="absolute top-4 right-4 text-gray-300 text-3xl"
-                aria-label="Close menu"
-              >
-                &times;
-              </button>
-            </>
-          )}
-        </ul>
-      )}
-    </>
+        </li>
+      </ul>
+    </div>
   );
 };
 

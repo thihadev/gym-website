@@ -11,229 +11,220 @@ import SignUp from "../../components/Auth/SignUp";
 import { UserContext } from "../../context/UserContext.js";
 import ReactPlayer from "react-player";
 
+const getAccessToken = () => localStorage.getItem("accessToken");
+
 const CourseDetailPage = () => {
-  // fetchUserProfile ကို မလိုအပ်ဘဲ dependency loop မဖြစ်စေရန် Context ထံမှ တိုက်ရိုက်မခေါ်တော့ပါ
   const { user } = useContext(UserContext);
-  const location = useLocation();
-  const { courseId } = location.state || {};
-  const storedCourseId = localStorage.getItem('courseId'); 
+  const { courseId } = useLocation().state || {};
   const [courseData, setCourseData] = useState(null);
   const [currentVideo, setCurrentVideo] = useState(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // စစချင်းမှာ True ပေးထားသည်
   const [error, setError] = useState(false);
   const [isSignUpPage, setIsSignUpPage] = useState(false);
   const { language } = useLanguage();
-  const list = translations;
-  const lang = list[language];
+  const lang = translations[language];
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    const activeCourseId = courseId || storedCourseId;
-
-    if (!activeCourseId) {
-      setError(true);
-      setLoading(false);
-      return;
+    const activeCourseId = courseId || localStorage.getItem("courseId");
+    if (!activeCourseId) { 
+      setError(true); 
+      setLoading(false); 
+      return; 
     }
+    if (courseId) localStorage.setItem("courseId", courseId);
 
-    if (courseId) {
-      localStorage.setItem('courseId', courseId);
-    }
-
-    // သင့်ရဲ့ မူရင်း Private / Public URL Routing Logic အမှန်ကို ပြန်လည်ထိန်းသိမ်းထားပါသည်
+    const token = getAccessToken();
     const url = token ? `/course/${activeCourseId}/private` : `/course/${activeCourseId}`;
+    const controller = new AbortController();
 
-    axios
-      .get(url, {
-        headers: token
-          ? {
-              Authorization: `Bearer ${token}`,
-            }
-          : undefined,
-      })
-      .then((response) => {
-        const course = response.data.data;
+    // API မခေါ်ခင် Loading ကို true လုပ်ပြီး Error ကို clear လုပ်မည်
+    setLoading(true);
+    setError(false);
+
+    axios.get(url, { signal: controller.signal })
+      .then((r) => {
+        const course = r.data.data;
         setCourseData(course);
-
-        // ပထမဆုံး လော့ခ်မကျနေတဲ့ ဗီဒီယိုလင့်ခ်ကို ရှာဖွေပြီး Default ဖွင့်ပေးရန်
-        const firstUnlockedVideo = course.videos?.find(
-          (video) => !video.is_locked
-        );
-        setCurrentVideo(firstUnlockedVideo ? firstUnlockedVideo.video_link : null);
+        const first = course.videos?.find((v) => !v.is_locked);
+        setCurrentVideo(first?.video_link || null);
       })
       .catch((err) => {
-        console.error("Failed to fetch course data:", err);
-        setError(true);
-        // Security Check: အကယ်၍ Token သက်တမ်းကုန်ဆုံးမှုကြောင့် Error တက်ပါက Token ရှင်းပစ်ရန်
-        if (err.response && (err.response.status === 401 || err.response.status === 403)) {
-          localStorage.removeItem("accessToken");
+        if (err.code !== "ERR_CANCELED") {
+          setError(true);
         }
       })
-      .finally(() => setLoading(false));
-  }, [courseId, storedCourseId]); // fetchUserProfile ကို Dependency ထဲမှ ဖယ်ထုတ်ထား၍ Loop မပတ်တော့ပါ
+      .finally(() => {
+        setLoading(false); // API Response ရမှသာ Loading ကို ပိတ်မည်
+      });
+
+    return () => controller.abort();
+  }, [courseId]);
 
   const handleVideoClick = (video) => {
-    if (!user) {
-      setShowLoginModal(true);
-      return;
-    }
-
-    if (video.is_locked) {
-      setShowPurchaseModal(true);
-      return;
-    }
-
+    if (!user)          { setShowLoginModal(true);    return; }
+    if (video.is_locked){ setShowPurchaseModal(true); return; }
     setCurrentVideo(video.video_link);
   };
 
-  const handleAuthSuccess = () => {
-    // UserContext ရဲ့ global profile loader က အလုပ်လုပ်ပေးမည်ဖြစ်၍ ဒီမှာ ထပ်ခေါ်စရာမလိုပါ
-    setShowLoginModal(false);
-    // Login အောင်မြင်ပြီးနောက် Private Data အသစ်ပြန်ဆွဲနိုင်ရန် Page ကို တစ်ချက် reload လုပ်ပေးနိုင်သည်
-    window.location.reload(); 
-  };
+  // 💡 ပြင်ဆင်ချက်- loading ဖြစ်နေလျှင် သို့မဟုတ် courseData မရှိသေးလျှင် loading spinner ကို အရင်ပြထားမည်
+  if (loading || (!courseData && !error)) {
+    return <LoadingSpinner />;
+  }
 
-  if (loading) return <LoadingSpinner />;
-
+  // Loading ပြီးသွားလို့ တကယ်ကြီး Error တက်မှသာ Error Screen ကို ပြမည်
   if (error || !courseData) {
     return (
-      <div className="error-message flex flex-col justify-center items-center h-screen text-center">
-        <h2 className="text-xl text-red-600 font-semibold">
-          Error Loading Course
-        </h2>
-        <p className="text-gray-600">
-          Please try refreshing the page or check your connection.
-        </p>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
+        <h2 className="text-xl text-red-400 font-semibold">Error Loading Course</h2>
+        <p className="text-slate-300 text-base mt-2">Please try refreshing the page.</p>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-6 text-white">
+    <div className="max-w-7xl mx-auto px-4 py-6 mb-8">
+      {/* Breadcrumb Title */}
       <div className="mb-6">
-        <h1 className="text-3xl md:text-4xl font-bold text-orange-500">
-          {courseData[`title_${language}`] || courseData.title_en}
+        <p className="text-base text-slate-400 uppercase tracking-widest mb-1">
+          <Link to="/" className="hover:text-lime-400 transition">Home</Link>
+          <span className="mx-2">/</span>
+          <span className="text-lime-400">{courseData[`title_${language}`]}</span>
+        </p>
+        <h1 className="text-2xl md:text-3xl font-bold text-white">
+          {courseData[`title_${language}`]}
         </h1>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* Left Section - Video & Descriptions */}
-        <div className="flex-1 space-y-10">
-          <div className="bg-black rounded-lg overflow-hidden shadow-lg aspect-video max-h-[500px]">
+        {/* ── Left: Video + Info ── */}
+        <div className="flex-1 space-y-5 min-w-0">
+          {/* Player */}
+          <div className="bg-black rounded-xl overflow-hidden border border-white/8 aspect-video">
             {currentVideo && user ? (
-              <ReactPlayer 
-                url={currentVideo} 
-                controls={true}
+              <ReactPlayer
+                url={currentVideo}
+                controls
                 width="100%"
                 height="100%"
-                config={{ file: { attributes: { controlsList: 'nodownload' } } }} // Security: Prevent easy video download
-               />
+                config={{ file: { attributes: { controlsList: "nodownload" } } }}
+              />
             ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center bg-gray-900 text-gray-500 py-24 px-4 text-center">
-                <FaLock className="text-4xl mb-4 text-gray-600" />
-                <p className="text-lg">
-                  {user ? lang.videoLockedMessage || "This video is locked. Purchase a plan to unlock." : lang.loginRequiredMessage || "Please log in to watch the video."}
+              <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-center px-6">
+                <FaLock className="text-3xl text-slate-600" />
+                <p className="text-base text-slate-300">
+                  {user
+                    ? lang.videoLockedMessage || "This video is locked. Purchase a plan to unlock."
+                    : lang.loginRequiredMessage || "Please log in to watch the video."}
                 </p>
+                {!user && (
+                  <button
+                    onClick={() => setShowLoginModal(true)}
+                    className="mt-1 px-5 py-2 rounded-full bg-lime-400 text-black text-base font-bold hover:bg-lime-300 transition"
+                  >
+                    Log In
+                  </button>
+                )}
               </div>
             )}
           </div>
 
-          <div className="bg-gray-900 p-6 rounded-lg shadow">
-            <h2 className="text-2xl font-semibold mb-4 text-orange-500">{lang.overview || "Overview"}</h2>
-            <p className="text-gray-300 leading-relaxed">
-              {courseData[`description_${language}`] || courseData.description_en}
+          {/* Overview */}
+          <div className="bg-[#111827] border border-white/8 rounded-xl p-5">
+            <h2 className="text-base font-bold text-lime-400 uppercase tracking-wide mb-3">
+              {lang.overview || "Overview"}
+            </h2>
+            <p className="text-slate-300 text-base leading-relaxed">
+              {courseData[`description_${language}`]}
             </p>
           </div>
 
-          <div className="bg-gray-900 p-6 rounded-lg shadow">
-            <h2 className="text-2xl font-semibold mb-4 text-orange-500">{lang.requirements || "Requirements"}</h2>
-            <div className="text-gray-300 leading-relaxed space-y-2">
-              {courseData[`requirement_${language}`] || courseData.requirement_en || "No specific requirements."}
+          {/* Requirements */}
+          <div className="bg-[#111827] border border-white/8 rounded-xl p-5">
+            <h2 className="text-base font-bold text-lime-400 uppercase tracking-wide mb-3">
+              {lang.requirements || "Requirements"}
+            </h2>
+            <div className="text-slate-300 text-base leading-relaxed">
+              {courseData[`requirement_${language}`] || "No specific requirements."}
             </div>
           </div>
         </div>
 
-        {/* Right Section - Playlist Sidebar */}
-        <div className="w-full lg:w-1/4 sticky top-0 self-start overflow-y-auto max-h-[calc(100vh-4rem)] bg-[#0e1217] p-4 rounded-lg shadow-lg border border-gray-800">
-          <h2 className="text-xl font-semibold mb-4 pb-2 border-b border-gray-800">{lang.videoList || "Video List"}</h2>
-          <ul className="space-y-2">
-            {courseData.videos && courseData.videos.length > 0 ? (
-              courseData.videos.map((video, index) => (
+        {/* ── Right: Playlist ── */}
+        <div className="w-full lg:w-72 shrink-0 lg:sticky lg:top-4 self-start">
+          <div className="bg-[#111827] border border-white/8 rounded-xl overflow-hidden">
+            <div className="px-4 py-3 border-b border-white/8">
+              <h2 className="text-base font-bold text-white">{lang.videoList || "Video List"}</h2>
+            </div>
+            <ul className="divide-y divide-white/5 max-h-[70vh] overflow-y-auto">
+              {courseData.videos?.length > 0 ? courseData.videos.map((video, i) => (
                 <li
-                  key={video.id || video.videoId || index}
-                  className={`p-3 border border-slate-800 rounded-md cursor-pointer transition duration-300 flex items-center justify-between ${
-                    video.video_link === currentVideo
-                      ? "bg-orange-600 text-white border-orange-500 font-medium"
-                      : video.is_locked
-                      ? "bg-gray-900/50 text-gray-500 hover:bg-gray-800"
-                      : "bg-gray-900 hover:bg-[#293249] text-gray-300"
-                  }`}
+                  key={video.id || i}
                   onClick={() => handleVideoClick(video)}
+                  className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition text-base ${
+                    video.video_link === currentVideo
+                      ? "bg-lime-400/15 text-lime-400"
+                      : video.is_locked
+                      ? "text-slate-600 cursor-not-allowed"
+                      : "text-slate-300 hover:bg-white/5 hover:text-white"
+                  }`}
                 >
-                  <div className="flex items-center space-x-3 truncate flex-1">
-                    <span className="text-xs text-gray-500 font-mono">{String(index + 1).padStart(2, '0')}</span>
-                    <span className="text-sm truncate">
-                      {video.video_title}
-                    </span>
-                  </div>
-                  <div>
-                    {video.is_locked ? (
-                      <FaLock className="ml-2 text-red-500 text-xs" />
-                    ) : (
-                      <FaPlayCircle className="ml-2 text-green-400 text-sm" />
-                    )}
-                  </div>
+                  <span className="text-base font-mono text-slate-600 w-5 shrink-0">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="flex-1 truncate">{video.video_title}</span>
+                  {video.is_locked
+                    ? <FaLock className="shrink-0 text-base text-slate-600" />
+                    : <FaPlayCircle className={`shrink-0 text-base ${video.video_link === currentVideo ? "text-lime-400" : "text-slate-400"}`} />
+                  }
                 </li>
-              ))
-            ) : (
-              <div className="text-center p-6 text-gray-500">
-                <h2 className="text-sm font-semibold">{lang.noData || "There is no video data."}</h2>
-              </div>
-            )}
-          </ul>
+              )) : (
+                <li className="px-4 py-8 text-center text-slate-400 text-base">
+                  {lang.noData || "No videos available."}
+                </li>
+              )}
+            </ul>
+          </div>
         </div>
       </div>
 
       {/* Login Modal */}
       {showLoginModal && (
         <Modal onClose={() => setShowLoginModal(false)}>
-          {isSignUpPage ? (
-            <SignUp
-              switchToSignIn={() => setIsSignUpPage(false)}
-              onSuccess={handleAuthSuccess}
-            />
-          ) : (
-            <SignIn
-              switchToSignUp={() => setIsSignUpPage(true)}
-              onSuccess={handleAuthSuccess}
-            />
-          )}
+          {isSignUpPage
+            ? <SignUp switchToSignIn={() => setIsSignUpPage(false)} onSuccess={() => { setShowLoginModal(false); window.location.reload(); }} />
+            : <SignIn switchToSignUp={() => setIsSignUpPage(true)} onSuccess={() => { setShowLoginModal(false); window.location.reload(); }} />
+          }
         </Modal>
       )}
 
       {/* Purchase Modal */}
       {showPurchaseModal && (
         <Modal onClose={() => setShowPurchaseModal(false)}>
-          <div className="text-center p-4">
-            <h2 className="text-xl text-black font-semibold">{lang.purchaseRequired || "Purchase Required"}</h2>
-            <p className="my-4 text-gray-700">
-              {lang.purchaseMessage || "This video is premium. Do you want to purchase a plan?"}
+          <div className="text-center p-2">
+            <div className="w-12 h-12 bg-lime-400/15 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FaLock className="text-lime-400 text-lg" />
+            </div>
+            <h2 className="text-lg font-bold text-white mb-2">
+              {lang.purchaseRequired || "Purchase Required"}
+            </h2>
+            <p className="text-slate-300 text-base mb-6">
+              {lang.purchaseMessage || "This video is premium. Purchase a plan to unlock all content."}
             </p>
-            <div className="flex justify-center space-x-4 mt-6">
+            <div className="flex gap-3">
               <Link
                 to="/"
                 state={{ scrollToSection: "plans" }}
-                className="cursor-pointer font-bold text-white bg-orange-500 rounded-full px-6 py-2 hover:bg-orange-600 transition"
+                className="flex-1 py-2.5 rounded-full bg-lime-400 text-black font-bold text-base hover:bg-lime-300 transition text-center"
               >
-                Yes
+                View Plans
               </Link>
               <button
-                className="cursor-pointer font-bold text-gray-700 bg-gray-200 rounded-full px-6 py-2 hover:bg-gray-300 transition"
                 onClick={() => setShowPurchaseModal(false)}
+                className="flex-1 py-2.5 rounded-full border border-white/10 text-slate-300 font-semibold text-base hover:bg-white/5 transition"
               >
-                No
+                Cancel
               </button>
             </div>
           </div>

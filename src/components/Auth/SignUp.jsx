@@ -1,154 +1,70 @@
 import React, { useState, useContext } from "react";
-import "./SignUp.css";
 import axios from "../../axios";
 import { toast } from "react-toastify";
 import { UserContext } from "../../context/UserContext";
+
 const SignUp = ({ switchToSignIn, onSuccess }) => {
   const { fetchUserProfile } = useContext(UserContext);
-  const [first_name, setFirstName] = useState("");
-  const [last_name, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [gender, setGender] = useState("");
-  const [errors, setErrors] = useState({});
+  const [form, setForm] = useState({ first_name: "", last_name: "", email: "", password: "", gender: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Handle Sign Up
+  const handleChange = (e) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
+
   const handleSignUp = async (e) => {
     e.preventDefault();
-    setErrors({}); // Clear previous errors
-
+    setError("");
     try {
       setLoading(true);
-      const response = await axios.post("/register", { 
-        email, 
-        password,
-        first_name,
-        last_name,
-        gender,
-      });
-      const { access_token, data } = response.data;
+      const response = await axios.post("/register", form);
+      const { access_token } = response.data;
       localStorage.setItem("accessToken", access_token);
       await fetchUserProfile();
       setLoading(false);
       onSuccess();
-      toast.success(`Welcome, ${data.name}`);
+      toast.success(`Welcome!`);
     } catch (error) {
-      // If error.response exists, it means the server responded with an error
+      setLoading(false);
       if (error.response) {
-        const { data } = error.response;
-        if (data && data.message) {
-          console.error("Login Failed", data);
-          setError(data.message);
-          setLoading(false);
-        } else {
-          console.error("Unexpected error response", error);
-          setError("Something went wrong. Please try again.");
-          setLoading(false);
-        }
-      }
-      else if (error.request) {
-        setError("Network error: Unable to connect to the server. Please try again.");
-        setLoading(false);
-      }
-      else {
-        setError("An unexpected error occurred. Please try again.");
-        setLoading(false);
+        setError(error.response.data?.message || "Something went wrong.");
+      } else if (error.request) {
+        setError("Network error: Unable to connect to the server.");
+      } else {
+        setError("An unexpected error occurred.");
       }
     }
   };
 
-  // Helper function to determine if a field has an error
-  const getFieldClass = (fieldName) => {
-    return errors[fieldName] ? "input-error" : "";
-  };
-
-  if (error) {
-    return (
-      <div className="error-message flex flex-col justify-center items-center text-center">
-        <h2 className="text-xl text-red-600 font-semibold"> Something went Wrong! </h2>
-        <p className="text-gray-600 text-md">{error}</p>
-      </div>
-    );
-  }
+  const inputCls = "w-full px-4 py-3 bg-bg-card-alt border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-accent transition";
 
   return (
-    <div className="signup-container">
-      <h2>Sign Up</h2>
-
-      {/* Display general error message */}
-      {errors.general && <span className="error">{errors.general}</span>}
-
-      <form onSubmit={handleSignUp}>
-        {errors.first_name && <span className="error-text">{errors.first_name}</span>}
-        <input
-          type="text"
-          placeholder="First Name"
-          value={first_name}
-          onChange={(e) => setFirstName(e.target.value)}
-          className={getFieldClass('first_name')} // Apply error class if needed
-        />
-        {/* Show error for First Name */}
-
-        {errors.last_name && <span className="error-text">{errors.last_name}</span>}
-        <input
-          type="text"
-          placeholder="Last Name"
-          value={last_name}
-          onChange={(e) => setLastName(e.target.value)}
-          className={getFieldClass('last_name')} // Apply error class if needed
-        />
-        {/* Show error for Last Name */}
-
-        {errors.email && <span className="error-text">{errors.email}</span>}
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className={getFieldClass('email')} // Apply error class if needed
-        />
-
-        {errors.password && <span className="error-text">{errors.password}</span>}
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className={getFieldClass('password')} // Apply error class if needed
-        />
-        {/* Show error for Password */}
-
-        {/* Gender Dropdown */}
-        {errors.gender && <span className="error-text">{errors.gender}</span>}
-        <select 
-          value={gender} 
-          onChange={(e) => setGender(e.target.value)} 
-          className={getFieldClass('gender')} // Apply error class if needed
-        >
+    <div className="flex flex-col gap-1">
+      <h2 className="text-2xl font-bold text-white text-center mb-3">Sign Up</h2>
+      {error && <span className="text-red-400 text-sm text-center mb-2">{error}</span>}
+      <form onSubmit={handleSignUp} className="flex flex-col gap-3">
+        <input name="first_name" placeholder="First Name" value={form.first_name} onChange={handleChange} className={inputCls} required />
+        <input name="last_name" placeholder="Last Name" value={form.last_name} onChange={handleChange} className={inputCls} required />
+        <input name="email" type="email" placeholder="Email" value={form.email} onChange={handleChange} className={inputCls} required />
+        <input name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange} className={inputCls} required />
+        <select name="gender" value={form.gender} onChange={handleChange} className={inputCls} required>
           <option value="" disabled>Select Gender</option>
           <option value="male">Male</option>
           <option value="female">Female</option>
           <option value="other">Other</option>
         </select>
-        {/* Show error for Gender */}
-
         {!loading ? (
-          <button type="submit">Sign Up</button>
+          <button type="submit" className="btn mt-1 w-full">Sign Up</button>
         ) : (
-          <button
-            className="bg-gray-400 hover:bg-gray-500 active:bg-gray-600 disabled:bg-gray-300"
-            disabled
-          >
+          <button disabled className="w-full py-3 rounded-xl bg-slate-600 text-slate-400 font-bold cursor-not-allowed">
             Processing...
           </button>
         )}
       </form>
-
-      <p>
+      <p className="mt-3 text-slate-400 text-sm text-center">
         Already have an account?{" "}
-        <button onClick={switchToSignIn}>Sign In</button>
+        <button onClick={switchToSignIn} className="text-accent-light font-semibold underline bg-none border-none cursor-pointer text-sm">
+          Sign In
+        </button>
       </p>
     </div>
   );

@@ -5,27 +5,40 @@ import { FaYoutube, FaFacebook, FaInstagram } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <div className="relative mt-5 text-white">
-      {/* Blur Backgrounds */}
-      <div className="absolute bottom-0 right-[15%] w-[26rem] h-[12rem] blur-[200px] -z-10 bg-blue-custom-1"></div>
-      <div className="absolute bottom-0 left-[15%] w-[26rem] h-[12rem] blur-[200px] -z-10 bg-blue-custom-2"></div>
+    <footer className="relative mt-8 bg-[#0f172a] border-t border-white/10 text-white overflow-hidden">
+      {/* Glow blobs */}
+      <div className="absolute bottom-0 right-[15%] w-72 h-32 blur-[120px] -z-10 bg-lime-500/20 rounded-full" />
+      <div className="absolute bottom-0 left-[15%] w-72 h-32 blur-[120px] -z-10 bg-lime-400/10 rounded-full" />
 
-      {/* Footer Content */}
-      <div className="relative container mx-auto py-6 px-4 flex flex-col lg:flex-row items-center justify-between">
-        {/* Social Links */}
-        <div className="flex space-x-6">
-          <FaYoutube className="w-8 h-8"/>
-          <FaInstagram className="w-8 h-8"/>
-          <FaFacebook className="w-8 h-8"/>
-        </div>
+      <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-6">
         {/* Logo */}
-        <div className="mt-4 lg:mt-0">
-          <Link to="/">
-            <img src={Logo} alt="logo" className="w-48" />
-          </Link>
+        <Link to="/">
+          <img src={Logo} alt="logo" className="w-36 opacity-90 hover:opacity-100 transition" />
+        </Link>
+
+        {/* Copyright */}
+        <p className="text-slate-500 text-base text-center">
+          © {new Date().getFullYear()} FitZone. All rights reserved.
+        </p>
+
+        {/* Social */}
+        <div className="flex gap-5">
+          {[
+            { icon: <FaYoutube />, href: "#" },
+            { icon: <FaInstagram />, href: "#" },
+            { icon: <FaFacebook />, href: "#" },
+          ].map(({ icon, href }, i) => (
+            <a
+              key={i}
+              href={href}
+              className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 text-slate-400 hover:text-lime-400 hover:border-lime-400 transition text-lg"
+            >
+              {icon}
+            </a>
+          ))}
         </div>
       </div>
-    </div>
+    </footer>
   );
 };
 
