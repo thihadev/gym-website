@@ -10,6 +10,7 @@ import SignIn from "../../components/Auth/SignIn";
 import SignUp from "../../components/Auth/SignUp";
 import { UserContext } from "../../context/UserContext.js";
 import ReactPlayer from "react-player";
+import { isFreeMode } from "../../config/features";
 
 const getAccessToken = () => localStorage.getItem("accessToken");
 
@@ -25,6 +26,7 @@ const CourseDetailPage = () => {
   const [isSignUpPage, setIsSignUpPage] = useState(false);
   const { language } = useLanguage();
   const lang = translations[language];
+  const canWatchVideo = isFreeMode || user;
 
   useEffect(() => {
     const activeCourseId = courseId || localStorage.getItem("courseId");
@@ -47,7 +49,7 @@ const CourseDetailPage = () => {
         const course = r.data.data;
         setCourseData(course);
         // ပထမဆုံး လော့ခ်မကျထားတဲ့ ဗီဒီယို Object တစ်ခုလုံးကို ရှာပြီး သိမ်းမည်
-        const first = course.videos?.find((v) => !v.is_locked);
+        const first = isFreeMode ? course.videos?.[0] : course.videos?.find((v) => !v.is_locked);
         setCurrentVideo(first || null);
       })
       .catch((err) => {
@@ -63,8 +65,8 @@ const CourseDetailPage = () => {
   }, [courseId]);
 
   const handleVideoClick = (video) => {
-    if (!user)          { setShowLoginModal(true);    return; }
-    if (video.is_locked){ setShowPurchaseModal(true); return; }
+    if (!isFreeMode && !user) { setShowLoginModal(true); return; }
+    if (!isFreeMode && video.is_locked){ setShowPurchaseModal(true); return; }
     setCurrentVideo(video); // Video Object တစ်ခုလုံးကို state ထဲထည့်မည်
   };
 
@@ -108,7 +110,7 @@ const CourseDetailPage = () => {
             className="bg-black rounded-xl overflow-hidden border border-white/8 aspect-video select-none"
             onContextMenu={handleContextMenu}
           >
-            {currentVideo && user ? (
+            {currentVideo && canWatchVideo ? (
               currentVideo.video_type === "file" ? (
                 /* 🔒 Vimeo Secure Embed Player */
                 <iframe
@@ -183,7 +185,7 @@ const CourseDetailPage = () => {
                   className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition text-base ${
                     currentVideo && video.video_title === currentVideo.video_title
                       ? "bg-lime-400/15 text-lime-400"
-                      : video.is_locked
+                    : !isFreeMode && video.is_locked
                       ? "text-slate-600 cursor-not-allowed"
                       : "text-slate-300 hover:bg-white/5 hover:text-white"
                   }`}
@@ -192,7 +194,7 @@ const CourseDetailPage = () => {
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <span className="flex-1 truncate">{video.video_title}</span>
-                  {video.is_locked
+                  {!isFreeMode && video.is_locked
                     ? <FaLock className="shrink-0 text-base text-slate-600" />
                     : <FaPlayCircle className={`shrink-0 text-base ${currentVideo && video.video_title === currentVideo.video_title ? "text-lime-400" : "text-slate-400"}`} />
                   }
@@ -218,7 +220,7 @@ const CourseDetailPage = () => {
       )}
 
       {/* Purchase Modal */}
-      {showPurchaseModal && (
+      {!isFreeMode && showPurchaseModal && (
         <Modal onClose={() => setShowPurchaseModal(false)}>
           <div className="text-center p-2">
             <div className="w-12 h-12 bg-lime-400/15 rounded-full flex items-center justify-center mx-auto mb-4">

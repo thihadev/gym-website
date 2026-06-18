@@ -1,8 +1,11 @@
 import React from "react";
 import { Link } from "react-scroll";
 import { Link as RouterLink } from "react-router-dom";
+import { isFreeMode } from "../../config/features";
 
-const NAV_LINKS = ["home", "programs", "aboutus", "reasons", "plans"];
+const NAV_LINKS = ["home", "programs", "aboutus", "reasons", "plans"].filter(
+  (section) => !isFreeMode || section !== "plans"
+);
 
 const MobileNav = ({ translation, menuOpened, setMenuOpened, user, logout, openSignIn }) => {
   if (!menuOpened) return null;

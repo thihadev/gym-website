@@ -1,6 +1,6 @@
 import "./App.css";
 import React, { useEffect, lazy, Suspense, useContext } from "react"; // 💡 useContext ပါ ထည့်သွင်းထားသည်
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import Hero from "./components/Hero/Hero";
 import Programs from "./components/Programs/Programs";
 import Reasons from "./components/Reasons/Reasons";
@@ -16,6 +16,7 @@ import TransactionNotifications from "./components/TransactionNotifications";
 import { UserContext, UserProvider } from "./context/UserContext"; // 💡 UserContext ပါ Import လုပ်ထားသည်
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoadingSpinner from "./components/LoadingSpinner";
+import { isFreeMode } from "./config/features";
 
 // Lazy load heavy/less-visited pages
 const CoursesPage = lazy(() => import("./components/Course/Courses"));
@@ -90,14 +91,24 @@ const AppContent = () => {
                 <div id="programs"><Programs /></div>
                 <div id="aboutus"><Testimonials /></div>
                 <div id="reasons"><Reasons /></div>
-                <div id="plans"><Plans /></div>
+                {!isFreeMode && <div id="plans"><Plans /></div>}
               </>
             }
           />
           <Route path="/courses/:category" element={<Suspense fallback={<LoadingSpinner />}><CoursesPage /></Suspense>} />
           <Route path="/course/:slug" element={<Suspense fallback={<LoadingSpinner />}><CourseDetailPage /></Suspense>} />
-          <Route path="/checkout" element={<Suspense fallback={<LoadingSpinner />}><Checkout /></Suspense>} />
-          <Route path="/order" element={<Suspense fallback={<LoadingSpinner />}><PlaceOrder /></Suspense>} />
+          {!isFreeMode && (
+            <>
+              <Route path="/checkout" element={<Suspense fallback={<LoadingSpinner />}><Checkout /></Suspense>} />
+              <Route path="/order" element={<Suspense fallback={<LoadingSpinner />}><PlaceOrder /></Suspense>} />
+            </>
+          )}
+          {isFreeMode && (
+            <>
+              <Route path="/checkout" element={<Navigate to="/" replace />} />
+              <Route path="/order" element={<Navigate to="/" replace />} />
+            </>
+          )}
           <Route
             path="/settings"
             element={

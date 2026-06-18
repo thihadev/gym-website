@@ -11,6 +11,7 @@ import LanguageSelector from "../LanguageSelector";
 import ProfileDropdown from "../Profile/ProfileDropdown";
 import DefaultAvatar from "../../assets/default-avatar.png";
 import { Link } from "react-router-dom";
+import { isFreeMode } from "../../config/features";
 
 const Header = () => {
   const [menuOpened, setMenuOpened] = useState(false);
@@ -29,7 +30,7 @@ const Header = () => {
     { labelKey: "aboutUs", section: "aboutus" },
     { labelKey: "reasons", section: "reasons" },
     { labelKey: "plans", section: "plans" },
-  ];
+  ].filter(({ section }) => !isFreeMode || section !== "plans");
 
   useEffect(() => {
     const handleResize = () => setMobile(window.innerWidth < 768);

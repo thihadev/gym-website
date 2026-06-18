@@ -11,6 +11,7 @@ import { UserContext } from "../../context/UserContext";
 import MobileNav from "./MobileNav";
 import DefaultAvatar from "../../assets/default-avatar.png";
 import NavigationMenu from "./NavigationMenu";
+import { isFreeMode } from "../../config/features";
 
 const HomeHeader = () => {
   const [menuOpened, setMenuOpened] = useState(false);
@@ -29,7 +30,7 @@ const HomeHeader = () => {
     { labelKey: "aboutUs", section: "aboutus" },
     { labelKey: "reasons", section: "reasons" },
     { labelKey: "plans", section: "plans" },
-  ];
+  ].filter(({ section }) => !isFreeMode || section !== "plans");
 
   useEffect(() => {
     const onResize = () => setMobile(window.innerWidth < 768);
