@@ -21,7 +21,7 @@ const Hero = () => {
       <div className="relative w-full flex flex-col">
         <HomeHeader />
 
-        <div className="max-w-[1200px] mx-4 md:ml-32 md:mr-auto my-10 md:my-20 px-4 md:px-8 pb-12 flex flex-col gap-5">
+        <div className="max-w-[1200px] mx-2 md:ml-20 md:mr-auto my-10 md:my-20 px-4 pb-12 flex flex-col gap-5">
 
         {/* Badge */}
         <div className="inline-flex gap-1.5 border border-white/20 rounded-full bg-black/60 backdrop-blur-md text-lime-200 text-[0.72rem] tracking-widest uppercase px-4 py-2 w-fit">

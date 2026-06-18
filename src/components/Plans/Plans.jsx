@@ -59,14 +59,14 @@ const Plans = () => {
   );
 
   if (loading) return (
-    <section className="w-full max-w-[1220px] mx-auto px-[clamp(1rem,4vw,2rem)] py-[clamp(1.5rem,3vw,3rem)] flex flex-col gap-7" id="plans">
+    <section className="w-full max-w-[1220px] mx-auto px-[clamp(0.75rem,3vw,1.5rem)] py-[clamp(1.5rem,3vw,3rem)] flex flex-col gap-7" id="plans">
       <Header />
       <LoadingSpinner />
     </section>
   );
 
   if (error || plans.length === 0) return (
-    <section className="w-full max-w-[1220px] mx-auto px-[clamp(1rem,4vw,2rem)] py-[clamp(1.5rem,3vw,3rem)] flex flex-col gap-7" id="plans">
+    <section className="w-full max-w-[1220px] mx-auto px-[clamp(0.75rem,3vw,1.5rem)] py-[clamp(1.5rem,3vw,3rem)] flex flex-col gap-7" id="plans">
       <Header />
       <div className="flex flex-col items-center justify-center py-16 text-center gap-2">
         <p className="text-2xl">💪</p>
@@ -77,7 +77,7 @@ const Plans = () => {
   );
 
   return (
-    <section className="w-full max-w-[1220px] mx-auto px-[clamp(1rem,4vw,2rem)] py-[clamp(1.5rem,3vw,3rem)] flex flex-col gap-7" id="plans">
+    <section className="w-full max-w-[1220px] mx-auto px-[clamp(0.75rem,3vw,1.5rem)] py-[clamp(1.5rem,3vw,3rem)] flex flex-col gap-7" id="plans">
       <Header />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-start">

@@ -11,7 +11,7 @@ import { useLanguage } from "../../context/LanguageProvider";
 const Reasons = () => {
     const { translation } = useLanguage();
     return (
-        <div className="w-full max-w-[1220px] mx-auto px-[clamp(1rem,4vw,2rem)] py-[clamp(1.5rem,3vw,3rem)] grid grid-cols-1 md:grid-cols-2 gap-8 text-white">
+        <div className="w-full max-w-[1220px] mx-auto px-[clamp(0.75rem,3vw,1.5rem)] py-[clamp(1.5rem,3vw,3rem)] grid grid-cols-1 md:grid-cols-2 gap-8 text-white">
             <div className="grid grid-cols-3 gap-2.5 min-h-[320px] md:min-h-[200px]">
                 <img src={image1} alt="" className="w-full h-full object-cover rounded-xl brightness-90 hover:brightness-100 transition row-span-2" />
                 <img src={image2} alt="" className="w-full h-full object-cover rounded-xl brightness-90 hover:brightness-100 transition col-span-2" />

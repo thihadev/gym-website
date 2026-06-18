@@ -2,7 +2,7 @@ import About from "../../assets/about2.jpg";
 
 const Testimonials = () => {
   return (
-    <section className="w-full max-w-[1220px] mx-auto px-[clamp(1rem,4vw,2rem)] py-[clamp(1.5rem,3vw,3rem)] my-8" id="aboutus">
+    <section className="w-full max-w-[1220px] mx-auto px-[clamp(0.75rem,3vw,1.5rem)] py-[clamp(1.5rem,3vw,3rem)] my-8" id="aboutus">
       <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-bg-card/95 to-bg-card-alt/50 overflow-hidden">
         <div className="flex flex-col md:flex-row items-center gap-8 p-6 md:p-10">
           {/* Image */}

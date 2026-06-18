@@ -13,7 +13,7 @@ const Join = () => {
   };
 
   return (
-    <div className="w-full max-w-[1220px] mx-auto px-[clamp(1rem,4vw,2rem)] py-8 my-8 flex flex-col md:flex-row gap-10 md:gap-20 items-center">
+    <div className="w-full max-w-[1220px] mx-auto px-[clamp(0.75rem,3vw,1.5rem)] py-8 my-8 flex flex-col md:flex-row gap-10 md:gap-20 items-center">
       <div className="text-white font-bold text-3xl md:text-5xl uppercase relative">
         <hr className="absolute -top-3 w-40 border-2 border-slate-400 rounded" />
         <div className="flex gap-3">

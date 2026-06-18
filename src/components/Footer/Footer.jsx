@@ -10,7 +10,7 @@ const Footer = () => {
       <div className="absolute bottom-0 right-[15%] w-72 h-32 blur-[120px] -z-10 bg-lime-500/20 rounded-full" />
       <div className="absolute bottom-0 left-[15%] w-72 h-32 blur-[120px] -z-10 bg-lime-400/10 rounded-full" />
 
-      <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div className="max-w-6xl mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-6">
         {/* Logo */}
         <Link to="/">
           <img src={Logo} alt="logo" className="w-36 opacity-90 hover:opacity-100 transition" />
