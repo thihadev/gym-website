@@ -10,6 +10,7 @@ export default function PlaceOrder() {
 
   const orderDetail = location.state || {};
   const [file, setFile] = useState(null);
+  const [phone, setPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { language, translation } = useLanguage();
 
@@ -31,6 +32,11 @@ export default function PlaceOrder() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!phone.trim()) {
+      toast.error("Please enter your phone number.");
+      return;
+    }
+
     if (!file) {
       toast.error("Please select a payslip to upload.");
       return;
@@ -47,6 +53,7 @@ export default function PlaceOrder() {
     formData.append("package", orderDetail.orderId);
     formData.append("amount", orderDetail.amount);
     formData.append("payment_channel", orderDetail.paymentMethod);
+    formData.append("phone", phone);
     formData.append("payslip", file);
 
     try {
@@ -62,11 +69,21 @@ export default function PlaceOrder() {
       toast.success("Order successfully!");
       navigate("/");
     } catch (error) {
-      const { data } = error.response;
-      if (data && data.message) {
-        toast.info(data.message);
-      } else {
-        toast.error("Something went wrong. Please try again.");
+      if (error.response) {
+        const { data } = error.response;
+        if (data && data.message) {
+          toast.info(data.message);
+        } else {
+          toast.error("Something went wrong. Please try again.");
+        }
+      }
+      else if (error.request) {
+        toast.error(
+          "Cannot connect to server.",
+        );
+      }
+      else {
+        toast.error(`Error: ${error.message}`);
       }
     } finally {
       setIsSubmitting(false);
@@ -99,22 +116,47 @@ export default function PlaceOrder() {
             </div>
             <div className="flex justify-between items-center px-4 py-3 bg-bg-card-alt border border-white/10 rounded-xl">
               <span className="text-slate-400 font-medium">Payment :</span>
-              <span className="text-emerald-400 font-medium">{orderDetail.paymentMethod}</span>
+              <span className="text-emerald-400 font-medium">
+                {orderDetail.paymentMethod}
+              </span>
             </div>
           </div>
         </div>
 
-        {/* Upload */}
+        {/* Form */}
         <div>
-          <h2 className="text-lg font-bold text-white mb-4">{translation("upload")}</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-white/15 rounded-xl cursor-pointer hover:border-accent/50 transition bg-bg-card-alt">
-              <span className="text-3xl mb-2">📄</span>
-              <span className="text-slate-400 text-sm text-center px-4">
-                {file ? file.name : "Click to select payslip image"}
-              </span>
-              <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
-            </label>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block text-slate-400 text-sm font-medium mb-2">
+                {translation("phone")}
+              </label>
+              <input
+                type="text"
+                required
+                placeholder={translation("phone_placeholder")}
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-bg-card-alt text-white placeholder-slate-500 focus:outline-none focus:border-accent transition text-sm"
+              />
+            </div>
+
+            <div>
+              <h2 className="text-sm font-medium text-slate-400 mb-2">
+                {translation("upload")}
+              </h2>
+              <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-white/15 rounded-xl cursor-pointer hover:border-accent/50 transition bg-bg-card-alt">
+                <span className="text-3xl mb-2">📄</span>
+                <span className="text-slate-400 text-sm text-center px-4">
+                  {file ? file.name : "Click to select payslip image"}
+                </span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+              </label>
+            </div>
 
             <div className="flex gap-3 pt-2">
               <button

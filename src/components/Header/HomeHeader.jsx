@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 import Logo from "../../assets/logo.png";
-import { Link } from "react-scroll";
 import { Link as RouterLink } from "react-router-dom";
 import Modal from "../Modal";
 import SignIn from "../Auth/SignIn";
@@ -11,8 +10,7 @@ import { useLanguage } from "../../context/LanguageProvider";
 import { UserContext } from "../../context/UserContext";
 import MobileNav from "./MobileNav";
 import DefaultAvatar from "../../assets/default-avatar.png";
-
-const NAV_SECTIONS = ["home", "programs", "aboutus", "reasons", "plans"];
+import NavigationMenu from "./NavigationMenu";
 
 const HomeHeader = () => {
   const [menuOpened, setMenuOpened] = useState(false);
@@ -24,6 +22,14 @@ const HomeHeader = () => {
   const [langOpen, setLangOpen] = useState(false);
   const { fontSize, translation } = useLanguage();
   const { user, logout, loading } = useContext(UserContext);
+
+    const navLinks = [
+    { labelKey: "home", section: "/" },
+    { labelKey: "programs", section: "programs" },
+    { labelKey: "aboutUs", section: "aboutus" },
+    { labelKey: "reasons", section: "reasons" },
+    { labelKey: "plans", section: "plans" },
+  ];
 
   useEffect(() => {
     const onResize = () => setMobile(window.innerWidth < 768);
@@ -45,19 +51,14 @@ const HomeHeader = () => {
           {!mobile && (
             <div className="flex items-center gap-4">
               <ul className="flex items-center gap-1 font-semibold">
-                {NAV_SECTIONS.map((sec) => (
-                  <li key={sec}>
-                    <Link
-                      to={sec}
-                      smooth={true}
-                      offset={-70}
-                      className="cursor-pointer px-3 py-2 rounded-lg text-slate-300 hover:text-lime-400 hover:bg-white/5 transition text-base"
-                      style={{ fontSize }}
-                    >
-                      {translation(sec === "aboutus" ? "aboutUs" : sec)}
-                    </Link>
-                  </li>
-                ))}
+                <NavigationMenu
+                  links={navLinks}
+                  translation={translation}
+                  fontSize={fontSize}
+                  user={user}
+                  openSignIn={openSignIn}
+                  logout={logout}
+                />
               </ul>
               <LanguageSelector isMobile={false} isOpen={langOpen} onToggle={setLangOpen} />
               {loading ? (

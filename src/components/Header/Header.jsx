@@ -40,7 +40,7 @@ const Header = () => {
   const openSignIn = () => { setIsSignUpPage(false); setShowModal(true); };
 
   return (
-    <header className="w-full bg-bg-base/80 backdrop-blur-md border-b border-white/5 sticky top-0 z-50">
+    <header className="w-full relative z-40">
       <div className="max-w-[1200px] mx-auto px-4 md:px-8 py-3 flex items-center justify-between">
         <Link to="/">
           <img src={Logo} alt="logo" className="w-36 md:w-40" />
@@ -127,9 +127,9 @@ const Header = () => {
       {showModal && (
         <Modal onClose={() => setShowModal(false)}>
           {isSignUpPage ? (
-            <SignUp switchToSignIn={() => setIsSignUpPage(false)} onSuccess={() => setShowModal(false)} />
+            <SignUp switchToSignIn={() => setIsSignUpPage(false)} onSuccess={() => {setShowModal(false); window.location.reload();}} />
           ) : (
-            <SignIn switchToSignUp={() => setIsSignUpPage(true)} onSuccess={() => setShowModal(false)} />
+            <SignIn switchToSignUp={() => setIsSignUpPage(true)} onSuccess={() => {setShowModal(false); window.location.reload();}} />
           )}
         </Modal>
       )}

@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useEffect, lazy, Suspense } from "react";
+import React, { useEffect, lazy, Suspense, useContext } from "react"; // 💡 useContext ပါ ထည့်သွင်းထားသည်
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Hero from "./components/Hero/Hero";
 import Programs from "./components/Programs/Programs";
@@ -13,7 +13,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { LanguageProvider } from "./context/LanguageProvider";
 import TransactionNotifications from "./components/TransactionNotifications";
-import { UserProvider } from "./context/UserContext";
+import { UserContext, UserProvider } from "./context/UserContext"; // 💡 UserContext ပါ Import လုပ်ထားသည်
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoadingSpinner from "./components/LoadingSpinner";
 
@@ -24,33 +24,33 @@ const Checkout = lazy(() => import("./components/Order/Checkout"));
 const PlaceOrder = lazy(() => import("./components/Order/PlaceOrder"));
 const Setting = lazy(() => import("./components/Setting/Setting"));
 
-
-// Component for conditional rendering of the header
 const ConditionalHeader = () => {
   const location = useLocation();
   const isRootPath = location.pathname === "/";
 
-  return !isRootPath && <Header />; // Render Header if not on the root path
+  return !isRootPath && <Header />;
 };
 
 const AppContent = () => {
   const location = useLocation();
+  
+  const { loading: authLoading } = useContext(UserContext);
 
   useEffect(() => {
-    
+    // Auth Loading ဖြစ်နေသေးလျှင် Scroll သွားမည့် Logic ကို မလုပ်ခိုင်းသေးဘဲ စောင့်ခိုင်းမည်
+    if (authLoading) return;
+
     const scrollToSection = () => {
       let section = location.state?.scrollToSection;
 
-      // Default to "hero" if no scrollToSection in state (e.g., after refresh)
       if (!section) {
         if (location.pathname === "/") {
-          section = "hero";
+          section = "/";
         }
       }
   
-      // Scroll to the determined section
       if (section) {
-        const headerHeight = document.querySelector("header")?.offsetHeight || 70; // Adjust offset dynamically
+        const headerHeight = document.querySelector("header")?.offsetHeight || 70;
         const targetElement = document.getElementById(section);
   
         if (targetElement) {
@@ -65,11 +65,17 @@ const AppContent = () => {
       }
     };
   
-    const timer = setTimeout(scrollToSection, 100); // Retry after 100ms
+    const timer = setTimeout(scrollToSection, 100);
     return () => clearTimeout(timer);
-  }, [location]);
+  }, [location, authLoading]);
   
-  
+  if (authLoading) {
+    return (
+      <div className="w-screen h-screen flex items-center justify-center bg-bg-base">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   return (
     <div className="App flex flex-col min-h-screen">
@@ -78,7 +84,7 @@ const AppContent = () => {
         <Routes>
           <Route
             path="/"
-            element={
+            element = {
               <>
                 <div id="hero"><Hero /></div>
                 <div id="programs"><Programs /></div>
@@ -109,20 +115,12 @@ const AppContent = () => {
   );
 };
 
-
 // Main App Component with Router
 const App = () => {
   return (
     <Router>
       <UserProvider>
         <LanguageProvider>
-        {/* <UserContext.Consumer>
-            {({ user, loading }) =>
-              !loading && user ? (
-                <TransactionNotifications user={user} />
-              ) : null
-            }
-          </UserContext.Consumer> */}
           <AppContent />
           <TransactionNotifications/>
           <ToastContainer />

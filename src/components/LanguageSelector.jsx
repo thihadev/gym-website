@@ -32,13 +32,12 @@ const LanguageSelector = ({ isMobile = false, isOpen, onToggle }) => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => onToggle(!isOpen)}
-        className="flex items-center gap-1.5 text-slate-300 hover:text-lime-400 transition text-base font-semibold"
+        className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/15 bg-white/5 text-slate-300 hover:text-lime-400 hover:border-lime-400/50 hover:bg-lime-400/5 transition text-sm font-semibold shadow-sm"
         style={{ fontSize }}
       >
-        {isMobile
-          ? <FaGlobe size={20} />
-          : <span>{language === "en" ? "EN" : "MM"}</span>
-        }
+        <FaGlobe size={14} className="text-slate-400 group-hover:text-lime-400" />
+        <span>{language === "en" ? "EN" : "မြန်မာ"}</span>
+        <span className="text-[10px] text-slate-500">▼</span>
       </button>
 
       {isOpen && (

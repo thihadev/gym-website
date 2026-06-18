@@ -2,13 +2,13 @@ import React from "react";
 import { Link } from "react-scroll";
 import { Link as RouterLink } from "react-router-dom";
 
-const NAV_LINKS = ["hero", "programs", "aboutus", "reasons", "plans"];
+const NAV_LINKS = ["home", "programs", "aboutus", "reasons", "plans"];
 
 const MobileNav = ({ translation, menuOpened, setMenuOpened, user, logout, openSignIn }) => {
   if (!menuOpened) return null;
 
   return (
-    <div className="absolute top-full left-0 w-full bg-[#0f172a] border-t border-white/10 z-50 shadow-2xl animate-fade-in">
+    <div className="absolute top-full left-0 w-full text-center bg-[#0f172a] border-t border-white/10 z-50 shadow-2xl animate-fade-in">
       <ul className="flex flex-col py-4">
         {NAV_LINKS.map((sec) => (
           <li key={sec}>

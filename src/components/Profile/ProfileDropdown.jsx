@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import DefaultAvatar from "../../assets/default-avatar.png";
 import { useLanguage } from "../../context/LanguageProvider";
 import { Link } from "react-router-dom";
@@ -6,10 +6,8 @@ import useNotification from "../../hook/useNotification";
 
 const ProfileDropdown = ({ user, handleLogout }) => {
   const [open, setOpen] = useState(false);
-  const { notificationCount, fetchNotifications } = useNotification();
+  const { notificationCount } = useNotification();
   const { translation } = useLanguage();
-
-  useEffect(() => { fetchNotifications(); }, [fetchNotifications]);
 
   return (
     <div className="relative">
@@ -17,7 +15,7 @@ const ProfileDropdown = ({ user, handleLogout }) => {
         <img
           src={user?.avatar || DefaultAvatar}
           alt="avatar"
-          className="w-9 h-9 rounded-full border-2 border-lime-400/60 hover:border-lime-400 transition object-cover"
+          className="w-12 h-12 rounded-full border-2 border-lime-400/60 hover:border-lime-400 transition object-cover"
         />
       </button>
 

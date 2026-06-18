@@ -20,7 +20,7 @@ const CourseDetailPage = () => {
   const [currentVideo, setCurrentVideo] = useState(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
-  const [loading, setLoading] = useState(true); // စစချင်းမှာ True ပေးထားသည်
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [isSignUpPage, setIsSignUpPage] = useState(false);
   const { language } = useLanguage();
@@ -39,7 +39,6 @@ const CourseDetailPage = () => {
     const url = token ? `/course/${activeCourseId}/private` : `/course/${activeCourseId}`;
     const controller = new AbortController();
 
-    // API မခေါ်ခင် Loading ကို true လုပ်ပြီး Error ကို clear လုပ်မည်
     setLoading(true);
     setError(false);
 
@@ -47,8 +46,9 @@ const CourseDetailPage = () => {
       .then((r) => {
         const course = r.data.data;
         setCourseData(course);
+        // ပထမဆုံး လော့ခ်မကျထားတဲ့ ဗီဒီယို Object တစ်ခုလုံးကို ရှာပြီး သိမ်းမည်
         const first = course.videos?.find((v) => !v.is_locked);
-        setCurrentVideo(first?.video_link || null);
+        setCurrentVideo(first || null);
       })
       .catch((err) => {
         if (err.code !== "ERR_CANCELED") {
@@ -56,7 +56,7 @@ const CourseDetailPage = () => {
         }
       })
       .finally(() => {
-        setLoading(false); // API Response ရမှသာ Loading ကို ပိတ်မည်
+        setLoading(false);
       });
 
     return () => controller.abort();
@@ -65,15 +65,18 @@ const CourseDetailPage = () => {
   const handleVideoClick = (video) => {
     if (!user)          { setShowLoginModal(true);    return; }
     if (video.is_locked){ setShowPurchaseModal(true); return; }
-    setCurrentVideo(video.video_link);
+    setCurrentVideo(video); // Video Object တစ်ခုလုံးကို state ထဲထည့်မည်
   };
 
-  // 💡 ပြင်ဆင်ချက်- loading ဖြစ်နေလျှင် သို့မဟုတ် courseData မရှိသေးလျှင် loading spinner ကို အရင်ပြထားမည်
+  // Right-click နှိပ်ပြီး inspect element လုပ်ခြင်းကို တားဆီးရန်
+  const handleContextMenu = (e) => {
+    e.preventDefault();
+  };
+
   if (loading || (!courseData && !error)) {
     return <LoadingSpinner />;
   }
 
-  // Loading ပြီးသွားလို့ တကယ်ကြီး Error တက်မှသာ Error Screen ကို ပြမည်
   if (error || !courseData) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
@@ -100,16 +103,31 @@ const CourseDetailPage = () => {
       <div className="flex flex-col lg:flex-row gap-6">
         {/* ── Left: Video + Info ── */}
         <div className="flex-1 space-y-5 min-w-0">
-          {/* Player */}
-          <div className="bg-black rounded-xl overflow-hidden border border-white/8 aspect-video">
+          {/* Player Container */}
+          <div 
+            className="bg-black rounded-xl overflow-hidden border border-white/8 aspect-video select-none"
+            onContextMenu={handleContextMenu}
+          >
             {currentVideo && user ? (
-              <ReactPlayer
-                url={currentVideo}
-                controls
-                width="100%"
-                height="100%"
-                config={{ file: { attributes: { controlsList: "nodownload" } } }}
-              />
+              currentVideo.video_type === "file" ? (
+                /* 🔒 Vimeo Secure Embed Player */
+                <iframe
+                  src={`https://player.vimeo.com/video/${currentVideo.videoId}?badge=0&autopause=0&player_id=0&app_id=58473&pip=0`}
+                  frameBorder="0"
+                  allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+                  style={{ width: "100%", height: "100%" }}
+                  title={currentVideo.video_title}
+                ></iframe>
+              ) : (
+                /* 📺 YouTube standard ReactPlayer */
+                <ReactPlayer
+                  url={currentVideo.video_link}
+                  controls
+                  width="100%"
+                  height="100%"
+                  config={{ file: { attributes: { controlsList: "nodownload" } } }}
+                />
+              )
             ) : (
               <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-center px-6">
                 <FaLock className="text-3xl text-slate-600" />
@@ -163,7 +181,7 @@ const CourseDetailPage = () => {
                   key={video.id || i}
                   onClick={() => handleVideoClick(video)}
                   className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition text-base ${
-                    video.video_link === currentVideo
+                    currentVideo && video.video_title === currentVideo.video_title
                       ? "bg-lime-400/15 text-lime-400"
                       : video.is_locked
                       ? "text-slate-600 cursor-not-allowed"
@@ -176,7 +194,7 @@ const CourseDetailPage = () => {
                   <span className="flex-1 truncate">{video.video_title}</span>
                   {video.is_locked
                     ? <FaLock className="shrink-0 text-base text-slate-600" />
-                    : <FaPlayCircle className={`shrink-0 text-base ${video.video_link === currentVideo ? "text-lime-400" : "text-slate-400"}`} />
+                    : <FaPlayCircle className={`shrink-0 text-base ${currentVideo && video.video_title === currentVideo.video_title ? "text-lime-400" : "text-slate-400"}`} />
                   }
                 </li>
               )) : (
