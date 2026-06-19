@@ -36,7 +36,6 @@ const LanguageSelector = ({ isMobile = false, isOpen, onToggle }) => {
         style={{ fontSize }}
       >
         <FaGlobe size={14} className="text-slate-400 group-hover:text-lime-400" />
-        <span>{language === "en" ? "EN" : "မြန်မာ"}</span>
         <span className="text-[10px] text-slate-500">▼</span>
       </button>
 

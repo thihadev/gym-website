@@ -160,6 +160,34 @@ const CourseDetailPage = () => {
             </p>
           </div>
 
+          {/* Instructor */}
+          {(courseData.instructor_name) && (
+            <div className="bg-[#111827] border border-white/8 rounded-xl p-5">
+              <h2 className="text-base font-bold text-lime-400 uppercase tracking-wide mb-3">
+                {lang.instructor || "Instructor"}
+              </h2>
+              <div className="flex items-center gap-10">
+                {courseData.instructor_profile && (
+                  <img
+                    src={courseData.instructor_profile}
+                    alt={courseData.instructor_name}
+                    className="w-28 rounded-full object-cover border-2 border-lime-400/30"
+                  />
+                )}
+                <div>
+                  <p className="text-white font-bold text-lg">
+                    {courseData.instructor_name}
+                  </p>
+                  {courseData.instructor_bio ? (
+                    <p className="text-slate-300 text-sm leading-relaxed mt-1">
+                      {courseData.instructor_bio}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Requirements */}
           <div className="bg-[#111827] border border-white/8 rounded-xl p-5">
             <h2 className="text-base font-bold text-lime-400 uppercase tracking-wide mb-3">

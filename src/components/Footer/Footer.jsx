@@ -18,7 +18,7 @@ const Footer = () => {
 
         {/* Copyright */}
         <p className="text-slate-500 text-base text-center">
-          © {new Date().getFullYear()} FitZone. All rights reserved.
+          © {new Date().getFullYear()} Body By U. All rights reserved.
         </p>
 
         {/* Social */}
