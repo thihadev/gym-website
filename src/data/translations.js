@@ -34,7 +34,9 @@ const translations = {
       why_four : "RELIABLE PAARTNERS",
       our_partner : "OUR PARTNERS",
       phone: "Phone Number",
-      phone_placeholder: "Enter phone number used for payment"
+      phone_placeholder: "Enter phone number used for payment",
+      pendingTransactionTitle: "Transaction Pending",
+      pendingTransactionMessage: "Your transaction is under review. Please wait for approval to unlock premium content."
     },
     mm: {
       home: "ပင်မစာမျက်နှာ",
@@ -71,7 +73,9 @@ const translations = {
       why_four : "ယုံကြည်စိတ်ချရသော လုပ်ဖော်ကိုင်ဖက်များ",
       our_partner : "လုပ်ဖော်ကိုင်ဖက်များ",
       phone: "ဖုန်းနံပါတ်",
-      phone_placeholder: "ငွေပေးချေရာတွင် အသုံးပြုသော ဖုန်းနံပါတ် ရိုက်ထည့်ပါ"
+      phone_placeholder: "ငွေပေးချေရာတွင် အသုံးပြုသော ဖုန်းနံပါတ် ရိုက်ထည့်ပါ",
+      pendingTransactionTitle: "ငွေပေးချေမှု စောင့်ဆိုင်းနေရပါသည်",
+      pendingTransactionMessage: "သင့်ငွေပေးချေမှုကို စစ်ဆေးနေပါသည်။ Premium အကြောင်းအရာများကို ဖွင့်ရန် အတည်ပြုချက်ကို စောင့်ပါ။"
     },
   };
   

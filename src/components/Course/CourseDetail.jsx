@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import LoadingSpinner from "../LoadingSpinner";
 import translations from "../../data/translations.js";
 import { useLanguage } from "../../context/LanguageProvider";
-import { FaLock, FaPlayCircle } from "react-icons/fa";
+import { FaLock, FaPlayCircle, FaClock } from "react-icons/fa";
 import Modal from "../../components/Modal";
 import SignIn from "../../components/Auth/SignIn";
 import SignUp from "../../components/Auth/SignUp";
@@ -21,12 +21,14 @@ const CourseDetailPage = () => {
   const [currentVideo, setCurrentVideo] = useState(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+  const [showPendingModal, setShowPendingModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [isSignUpPage, setIsSignUpPage] = useState(false);
   const { language } = useLanguage();
   const lang = translations[language];
   const canWatchVideo = isFreeMode || user;
+  const isVideoAccessible = (video) => isFreeMode || (user && user.is_premium) || !video.is_locked;
 
   useEffect(() => {
     const activeCourseId = courseId || localStorage.getItem("courseId");
@@ -48,8 +50,7 @@ const CourseDetailPage = () => {
       .then((r) => {
         const course = r.data.data;
         setCourseData(course);
-        // ပထမဆုံး လော့ခ်မကျထားတဲ့ ဗီဒီယို Object တစ်ခုလုံးကို ရှာပြီး သိမ်းမည်
-        const first = isFreeMode ? course.videos?.[0] : course.videos?.find((v) => !v.is_locked);
+        const first = course.videos?.[0] || course.videos?.find((v) => isVideoAccessible(v));
         setCurrentVideo(first || null);
       })
       .catch((err) => {
@@ -66,8 +67,12 @@ const CourseDetailPage = () => {
 
   const handleVideoClick = (video) => {
     if (!isFreeMode && !user) { setShowLoginModal(true); return; }
-    if (!isFreeMode && video.is_locked){ setShowPurchaseModal(true); return; }
-    setCurrentVideo(video); // Video Object တစ်ခုလုံးကို state ထဲထည့်မည်
+    if (!isVideoAccessible(video)) {
+      if (user?.has_pending) { setShowPendingModal(true); }
+      else { setShowPurchaseModal(true); }
+      return;
+    }
+    setCurrentVideo(video);
   };
 
   // Right-click နှိပ်ပြီး inspect element လုပ်ခြင်းကို တားဆီးရန်
@@ -213,7 +218,7 @@ const CourseDetailPage = () => {
                   className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition text-base ${
                     currentVideo && video.video_title === currentVideo.video_title
                       ? "bg-lime-400/15 text-lime-400"
-                    : !isFreeMode && video.is_locked
+                    : !isFreeMode && !isVideoAccessible(video)
                       ? "text-slate-600 cursor-not-allowed"
                       : "text-slate-300 hover:bg-white/5 hover:text-white"
                   }`}
@@ -222,7 +227,7 @@ const CourseDetailPage = () => {
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <span className="flex-1 truncate">{video.video_title}</span>
-                  {!isFreeMode && video.is_locked
+                  {!isFreeMode && !isVideoAccessible(video)
                     ? <FaLock className="shrink-0 text-base text-slate-600" />
                     : <FaPlayCircle className={`shrink-0 text-base ${currentVideo && video.video_title === currentVideo.video_title ? "text-lime-400" : "text-slate-400"}`} />
                   }
@@ -275,6 +280,29 @@ const CourseDetailPage = () => {
                 Cancel
               </button>
             </div>
+          </div>
+        </Modal>
+      )}
+
+      {/* Pending Transaction Modal */}
+      {!isFreeMode && showPendingModal && (
+        <Modal onClose={() => setShowPendingModal(false)}>
+          <div className="text-center p-2">
+            <div className="w-12 h-12 bg-amber-400/15 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FaClock className="text-amber-400 text-lg" />
+            </div>
+            <h2 className="text-lg font-bold text-white mb-2">
+              {lang.pendingTransactionTitle || "Transaction Pending"}
+            </h2>
+            <p className="text-slate-300 text-base mb-6">
+              {lang.pendingTransactionMessage || "Your transaction is under review. Please wait for approval to unlock premium content."}
+            </p>
+            <button
+              onClick={() => setShowPendingModal(false)}
+              className="w-full py-2.5 rounded-full bg-lime-400 text-black font-bold text-base hover:bg-lime-300 transition"
+            >
+              OK
+            </button>
           </div>
         </Modal>
       )}

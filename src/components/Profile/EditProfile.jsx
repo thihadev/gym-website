@@ -59,12 +59,14 @@ const EditProfile = ({ user, setUser }) => {
         </select>
       </div>
 
+      <div className="mt-6 flex justify-center gap-3">
       <button
         onClick={saveProfile}
-        className="w-full py-2.5 rounded-lg bg-lime-400 text-black font-bold text-base hover:bg-lime-300 transition mt-2"
+        className="px-4 py-2 rounded-lg bg-lime-400 text-black font-bold text-base hover:bg-lime-300 transition mt-2"
       >
-        Save Changes
+        Update
       </button>
+      </div>
     </div>
   );
 };
