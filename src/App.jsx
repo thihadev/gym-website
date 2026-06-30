@@ -38,7 +38,6 @@ const AppContent = () => {
   const { loading: authLoading } = useContext(UserContext);
 
   useEffect(() => {
-    // Auth Loading ဖြစ်နေသေးလျှင် Scroll သွားမည့် Logic ကို မလုပ်ခိုင်းသေးဘဲ စောင့်ခိုင်းမည်
     if (authLoading) return;
 
     const scrollToSection = () => {

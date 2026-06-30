@@ -75,7 +75,6 @@ const CourseDetailPage = () => {
     setCurrentVideo(video);
   };
 
-  // Right-click နှိပ်ပြီး inspect element လုပ်ခြင်းကို တားဆီးရန်
   const handleContextMenu = (e) => {
     e.preventDefault();
   };
@@ -126,7 +125,7 @@ const CourseDetailPage = () => {
                   title={currentVideo.video_title}
                 ></iframe>
               ) : (
-                /* 📺 YouTube standard ReactPlayer */
+                /*  YouTube standard ReactPlayer */
                 <ReactPlayer
                   url={currentVideo.video_link}
                   controls

@@ -3,7 +3,7 @@ import axios from "../../axios.js";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useLanguage } from "../../context/LanguageProvider";
-import { UserContext } from "../../context/UserContext"; // 💡 သင့် Context လမ်းကြောင်းအတိုင်း သေချာစစ်ပေးပါ
+import { UserContext } from "../../context/UserContext";
 import LoadingSpinner from "../LoadingSpinner.jsx";
 import Modal from "../Modal";
 import SignIn from "../Auth/SignIn";
@@ -11,11 +11,10 @@ import SignUp from "../Auth/SignUp";
 
 const Plans = () => {
   const [plans, setPlans] = useState([]);
-  const [loading, setLoading] = useState(true); // Plans API Loading
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const { language, translation } = useLanguage();
   
-  // 💡 Context ဆီက 'loading' ကို 'authLoading' အဖြစ် Alias လုပ်ပြီး ဆွဲယူလိုက်ခြင်း
   const { user, loading: authLoading, fetchUserProfile } = useContext(UserContext); 
   
   const [showModal, setShowModal] = useState(false);
@@ -41,7 +40,6 @@ const Plans = () => {
       return;
     }
     
-    // တကယ်လို့ Backend က 'has_pending' ပါ ပြန်ပေးလာရင် ဤနေရာတွင် စစ်နိုင်သည်
     if (user.has_pending) {
       toast.info("Your previous order is pending verification.");
       return;
@@ -83,8 +81,6 @@ const Plans = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-start">
         {plans.map((plan, i) => {
           
-          // 💡 Logic အဓိကအချက်- Auth profile API ကို တောင်းနေတုန်း (authLoading === true) ဆိုရင်လည်း 
-          // ခလုတ်ကို ပိတ် (disabled) ထားမှာဖြစ်ပြီး၊ auth loading ပြီးသွားရင်တော့ premium user ဟုတ်မဟုတ်အပေါ် မူတည်ပြီး ဆုံးဖြတ်ပါမယ်။
           const isButtonDisabled = authLoading || (user && (user.is_premium || user.has_pending));
 
           return (
@@ -113,10 +109,10 @@ const Plans = () => {
                 className={`btn mt-2 font-bold text-center transition-all ${
                   isButtonDisabled ? "opacity-40 cursor-not-allowed bg-slate-700 text-slate-400 hover:transform-none" : ""
                 }`}
-                disabled={isButtonDisabled} // 💡 Auth Loading စစ်နေစဉ် နှိပ်ခွင့် ပိတ်ထားမည်
+                disabled={isButtonDisabled}
               >
                 {authLoading 
-                  ? "Checking..." // 💡 Refresh လုပ်လိုက်တဲ့ စက္ကန့်ပိုင်းအတွင်း ခလုတ်ထဲမှာ ပြသမည့်စာသား
+                  ? "Checking..."
                   : translation("getnow")
                 }
               </button>

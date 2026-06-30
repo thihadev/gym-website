@@ -10,11 +10,10 @@ export const setPusherInstance = (token) => {
     return null;
   }
 
-  // Production မှာ တကယ့် pusher key နဲ့ cluster ထည့်ပေးရပါမယ်
   pusherInstance = new Pusher(process.env.REACT_APP_PUSHER_KEY, {
-    cluster: 'ap1', // အဆင်ပြေမယ့် Cluster ပြောင်းပါ
+    cluster: 'ap1',
     encrypted: true,
-    authEndpoint: `${process.env.REACT_APP_PUSHER_URL}`, // အဆင်ပြေမယ့် API Endpoint ပြောင်းပါ
+    authEndpoint: `${process.env.REACT_APP_PUSHER_URL}`,
     auth: {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -31,6 +30,6 @@ export const getPusherInstance = () => pusherInstance;
 export const disconnectPusher = () => {
   if (pusherInstance) {
     pusherInstance.disconnect();
-    pusherInstance = null; // ပြဿနာဖြေရှင်းချက်- null ပြန်လုပ်ပေးခြင်း
+    pusherInstance = null;
   }
 };

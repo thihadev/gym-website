@@ -8,7 +8,6 @@ const TransactionNotifications = () => {
   const { user } = useContext(UserContext);
   const { fetchNotifications } = useNotification();
 
-  // Custom hook မှ State များကို ရယူအသုံးပြုခြင်း
   const { modalVisible, modalMessage, closeModal } = usePusherNotifications(user, fetchNotifications);
 
   return (

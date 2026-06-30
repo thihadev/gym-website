@@ -7,7 +7,6 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Security Tip: Token ကို localStorage အစား HTTP-Only Cookie သုံးရန် အပြင်းအထန် အကြံပြုပါသည် (XSS ဘေးမှ ကာကွယ်ရန်)
   const fetchUserProfile = useCallback(async () => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
@@ -19,7 +18,6 @@ export const UserProvider = ({ children }) => {
       const response = await axios.get("profile");
       setUser(response.data.data);
     } catch (error) {
-      // ပြဿနာဖြေရှင်းချက်- Production-safe logging (🔴 High)
       if (error.response && (error.response.status === 401 || error.response.status === 403)) {
         console.warn("Session expired or unauthorized. Logging out...");
       } else {
@@ -34,7 +32,6 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   const logout = useCallback(async () => {
-    // Client-side state ကို အရင်ရှင်းခြင်းဖြင့် ပိုမိုမြန်ဆန်ချောမွေ့စေသည်
     localStorage.removeItem("accessToken");
     setUser(null);
 

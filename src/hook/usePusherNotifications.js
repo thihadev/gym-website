@@ -38,7 +38,6 @@ const usePusherNotifications = (user, fetchNotifications) => {
 
     return () => {
       if (channel) {
-        // ပြဿနာဖြေရှင်းချက်- pusher.unbind_all() အစား သက်ဆိုင်ရာပွဲစဉ်ကိုပဲ တိကျစွာဖြုတ်ခြင်း (🟡 Medium)
         channel.unbind("pusher:subscription_error", handleSubscriptionError);
         channel.unbind("TransactionUpdated", handleTransactionUpdated);
         pusher.unsubscribe(channelName);
