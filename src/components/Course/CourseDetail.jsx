@@ -63,7 +63,7 @@ const CourseDetailPage = () => {
       });
 
     return () => controller.abort();
-  }, [courseId]);
+  }, [courseId, user]);
 
   const handleVideoClick = (video) => {
     if (!isFreeMode && !user) { setShowLoginModal(true); return; }
