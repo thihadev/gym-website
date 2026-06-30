@@ -50,7 +50,7 @@ const CourseDetailPage = () => {
       .then((r) => {
         const course = r.data.data;
         setCourseData(course);
-        const first = course.videos?.[0] || course.videos?.find((v) => isVideoAccessible(v));
+        const first = course.videos?.[0] || course.videos?.find((v) => isFreeMode || (user?.is_premium) || !v.is_locked);
         setCurrentVideo(first || null);
       })
       .catch((err) => {
