@@ -13,8 +13,8 @@ import { UserContext } from "../../context/UserContext";
 
 const paymentMethods = [
   { id: "Kpay",    name: "KPay",    icon: QR  },
-  { id: "WavePay", name: "WavePay", icon: QR2 },
-  { id: "AyaPay",  name: "AyaPay",  icon: QR3 },
+  // { id: "WavePay", name: "WavePay", icon: QR2 },
+  // { id: "AyaPay",  name: "AyaPay",  icon: QR3 },
 ];
 
 const Checkout = () => {
