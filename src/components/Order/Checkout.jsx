@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import QR from "../../assets/kpay-logo.png";
 import QR2 from "../../assets/wave.png";
 import QR3 from "../../assets/aya.png";
+import LOGO from "../../assets/kpay-logo1.png";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "../../axios";
 import Modal from "../Modal";
@@ -12,7 +13,7 @@ import { useLanguage } from "../../context/LanguageProvider";
 import { UserContext } from "../../context/UserContext";
 
 const paymentMethods = [
-  { id: "Kpay",    name: "KPay",    icon: QR  },
+  { id: "Kpay",    name: "KPay", paylogo : LOGO,   icon: QR  },
   // { id: "WavePay", name: "WavePay", icon: QR2 },
   // { id: "AyaPay",  name: "AyaPay",  icon: QR3 },
 ];
@@ -88,14 +89,21 @@ const Checkout = () => {
                   <button
                     key={m.id}
                     onClick={() => setSelectedPayment(m.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-base font-medium transition ${
+                    className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border text-base font-medium transition ${
                       selectedPayment === m.id
                         ? "border-accent bg-accent-dim text-white"
                         : "border-white/10 bg-bg-card-alt text-slate-300 hover:border-white/20"
                     }`}
                   >
-                    <img src={m.icon} alt={m.name} className="w-7 h-7 object-contain rounded" />
-                    <span>{m.name}</span>
+                    <div className="flex items-center gap-3">
+                      <img src={m.paylogo} alt={m.name} className="w-7 h-7 object-contain rounded" />
+                      <span>{m.name}</span>
+                    </div>
+                    <span className="text-accent font-bold">
+                      09966920300
+                      <br />
+                      (U Nay Lin)
+                    </span>
                   </button>
                 ))}
               </div>
@@ -107,8 +115,12 @@ const Checkout = () => {
             {/* QR Code */}
             {qrIcon && selectedPlan ? (
               <div className="bg-bg-card border border-white/10 rounded-2xl p-8 flex flex-col items-center gap-5">
+                <div>
                 <p className="text-base text-slate-400">{translation("scan")}</p>
-                <img src={qrIcon} alt="QR" className="w-44 h-44 object-contain rounded-lg" />
+                {/* <span  className="text-base text-slate-400">09966920300</span> */}
+                </div>
+                
+                <img src={qrIcon} alt="QR" className="w-56 h-56 object-contain rounded-lg" />
                 <div className="text-center">
                   <p className="text-lg font-bold text-white">{selectedPlan[`title_${language}`]}</p>
                   <p className="text-2xl font-black text-accent mt-1">{selectedPlan[`price_${language}`]}</p>
