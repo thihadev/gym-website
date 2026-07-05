@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import QR from "../../assets/kpay-logo.png";
-import QR2 from "../../assets/wave.png";
-import QR3 from "../../assets/aya.png";
+// import QR2 from "../../assets/wave.png";
+// import QR3 from "../../assets/aya.png";
 import LOGO from "../../assets/kpay-logo1.png";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "../../axios";
